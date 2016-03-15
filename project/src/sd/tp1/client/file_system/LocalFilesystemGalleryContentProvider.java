@@ -1,4 +1,4 @@
-package sd.tp1.example;
+package sd.tp1.client.file_system;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,8 +8,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import sd.tp1.gui.GalleryContentProvider;
-import sd.tp1.gui.Gui;
+import sd.tp1.Album;
+import sd.tp1.Picture;
+import sd.tp1.GalleryContentProvider;
+import sd.tp1.client.gui.Gui;
 
 /*
  * This class provides the album/picture content to the gui/main application.
@@ -125,7 +127,7 @@ public class LocalFilesystemGalleryContentProvider implements GalleryContentProv
 
 	
 	
-	static class FileAlbum implements GalleryContentProvider.Album {
+	static class FileAlbum implements Album {
 		final File dir;
 
 		FileAlbum(File dir) {
@@ -138,7 +140,7 @@ public class LocalFilesystemGalleryContentProvider implements GalleryContentProv
 		}
 	}
 
-	static class FilePicture implements GalleryContentProvider.Picture {
+	static class FilePicture implements Picture {
 		final File file;
 
 		FilePicture(File file) {

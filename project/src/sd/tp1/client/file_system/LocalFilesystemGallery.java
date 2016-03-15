@@ -1,8 +1,8 @@
-package sd.tp1.example;
+package sd.tp1.client.file_system;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import sd.tp1.gui.impl.GalleryWindow;
+import sd.tp1.client.gui.impl.GalleryWindow;
 
 /*
  * Launches the local filesystem gallery application, pointing to the current directory.

@@ -1,4 +1,6 @@
-package sd.tp1.gui;
+package sd.tp1;
+
+import sd.tp1.client.gui.Gui;
 
 import java.util.List;
 
@@ -29,7 +31,7 @@ public interface GalleryContentProvider {
 	/*
 	 * Returns the list of pictures belonging to the given album. The provider must filter any duplicates.
 	 */
-	public List<Picture> getListOfPictures( Album album );
+	public List<Picture> getListOfPictures(Album album );
 	
 	/*
 	 * Returns the bitmap data of a given picture, in a given album.
@@ -58,26 +60,5 @@ public interface GalleryContentProvider {
 	 * If true is returned, the GUI is updated and the picture is removed from the album view.
 	 */
 	public boolean deletePicture( Album album, Picture picture );
-	
-	/*
-	 * The GUI expects objects representing albums to implement this interface.
-	 * 
-	 * The implementing class can include any data the content provider might
-	 * find useful to associate with an album, such as the list of pictures that
-	 * it contains. 
-	 */
-	interface Album {
-		String getName();
-	}
-	
-	/*
-	 * The GUI expects objects representing pictures to implement this interface.
-	 * 
-	 * The implementing class can include any data the content provider might
-	 * find useful to associate with a picture, for instance its bitmap data or
-	 * where to get it from. 
-	 */
-	interface Picture {
-		String getName();		
-	}
+
 }

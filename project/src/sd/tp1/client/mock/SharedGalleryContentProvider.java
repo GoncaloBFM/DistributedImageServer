@@ -1,23 +1,19 @@
-package sd.tp1;
+package sd.tp1.client.mock;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import sd.tp1.gui.GalleryContentProvider;
-import sd.tp1.gui.Gui;
+import sd.tp1.Album;
+import sd.tp1.GalleryContentProvider;
+import sd.tp1.Picture;
+import sd.tp1.client.gui.Gui;
 
 /*
  * This class provides the album/picture content to the gui/main application.
  * 
  * Project 1 implementation should complete this class. 
  */
-public class SharedGalleryContentProvider implements GalleryContentProvider{
+public class SharedGalleryContentProvider implements GalleryContentProvider {
 
 	Gui gui;	
 
@@ -115,7 +111,7 @@ public class SharedGalleryContentProvider implements GalleryContentProvider{
 	/**
 	 * Represents a shared album.
 	 */
-	static class SharedAlbum implements GalleryContentProvider.Album {
+	static class SharedAlbum implements Album {
 		final String name;
 
 		SharedAlbum(String name) {
@@ -131,7 +127,7 @@ public class SharedGalleryContentProvider implements GalleryContentProvider{
 	/**
 	 * Represents a shared picture.
 	 */
-	static class SharedPicture implements GalleryContentProvider.Picture {
+	static class SharedPicture implements Picture {
 		final String name;
 
 		SharedPicture(String name) {

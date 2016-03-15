@@ -1,6 +1,6 @@
-package sd.tp1.gui;
+package sd.tp1.client.gui;
 
-import sd.tp1.gui.GalleryContentProvider.Album;
+import sd.tp1.Album;
 
 /*
  * The GUI provides this interface to the main application.

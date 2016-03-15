@@ -1,4 +1,4 @@
-package sd.tp1.gui.impl;
+package sd.tp1.client.gui.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -29,10 +29,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import sd.tp1.gui.GalleryContentProvider;
-import sd.tp1.gui.GalleryContentProvider.Album;
-import sd.tp1.gui.GalleryContentProvider.Picture;
-import sd.tp1.gui.Gui;
+import sd.tp1.GalleryContentProvider;
+import sd.tp1.Album;
+import sd.tp1.Picture;
+import sd.tp1.client.gui.Gui;
 
 /*
  * Implements the Gallery.

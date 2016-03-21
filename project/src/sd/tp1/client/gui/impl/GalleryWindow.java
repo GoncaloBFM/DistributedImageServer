@@ -29,10 +29,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import sd.tp1.GalleryContentProvider;
 import sd.tp1.Album;
 import sd.tp1.Picture;
 import sd.tp1.client.gui.Gui;
+import sd.tp1.client.gui.GuiGalleryContentProvider;
 
 /*
  * Implements the Gallery.
@@ -55,10 +55,10 @@ public class GalleryWindow implements Gui {
 
 	AlbumView currentAlbum;
 
-	GalleryContentProvider contentProvider;
+	GuiGalleryContentProvider contentProvider;
 	ExecutorService executor = Executors.newFixedThreadPool(WORKER_THREADS);
 
-	public GalleryWindow(GalleryContentProvider contentProvider) {
+	public GalleryWindow(GuiGalleryContentProvider contentProvider) {
 		this.contentProvider = contentProvider;
 	}
 

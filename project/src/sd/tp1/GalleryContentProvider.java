@@ -4,25 +4,8 @@ import sd.tp1.client.gui.Gui;
 
 import java.util.List;
 
-/*
- * The GUI will request content to display from an object
- * implementing this interface.
- * 
- * Down calls allow the GUI to request data and delete albums/picture or
- * create new ones.
- * 
- * The GUI provides up calls (Gui interface) to allow the content provider
- * to update the GUI programmatically without user intervention.
- * 
- */
 public interface GalleryContentProvider {
 
-	/*
-	 * Registers the GUI in the content provider to allow
-	 * the provider to update the GUI programmatically (cf. Gui interface)
-	 */
-	public void register( Gui gui );
-	
 	/*
 	 * Returns the list of available albums. The provider must filter any duplicates.
 	 */

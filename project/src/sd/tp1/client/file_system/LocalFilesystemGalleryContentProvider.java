@@ -12,6 +12,7 @@ import sd.tp1.Album;
 import sd.tp1.Picture;
 import sd.tp1.GalleryContentProvider;
 import sd.tp1.client.gui.Gui;
+import sd.tp1.client.gui.GuiGalleryContentProvider;
 
 /*
  * This class provides the album/picture content to the gui/main application.
@@ -25,7 +26,7 @@ import sd.tp1.client.gui.Gui;
  * Deletes are simulated by renaming the objects. 
  * 
  */
-public class LocalFilesystemGalleryContentProvider implements GalleryContentProvider{
+public class LocalFilesystemGalleryContentProvider implements GuiGalleryContentProvider {
 
 	Gui gui;	
 	final File root;

@@ -1,27 +1,31 @@
 package sd.tp1.client.mock;
 
+import sd.tp1.Album;
+import sd.tp1.Picture;
+import sd.tp1.SharedAlbum;
+import sd.tp1.SharedPicture;
+import sd.tp1.client.gui.Gui;
+import sd.tp1.client.gui.GuiGalleryContentProvider;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import sd.tp1.Album;
-import sd.tp1.GalleryContentProvider;
-import sd.tp1.Picture;
-import sd.tp1.client.gui.Gui;
-
-/*
+/**
+ * Created by apontes on 3/21/16.
+ */ /*
  * This class provides the album/picture content to the gui/main application.
- * 
- * Project 1 implementation should complete this class. 
+ *
+ * Project 1 implementation should complete this class.
  */
-public class SharedGalleryContentProvider implements GalleryContentProvider {
+public class SharedGalleryContentProvider implements GuiGalleryContentProvider {
 
-	Gui gui;	
+	Gui gui;
 
 	SharedGalleryContentProvider() {
 		// TODO: code to do when shared gallery starts
 	}
 
-	
+
 	/**
 	 *  Downcall from the GUI to register itself, so that it can be updated via upcalls.
 	 */
@@ -38,7 +42,7 @@ public class SharedGalleryContentProvider implements GalleryContentProvider {
 	 */
 	@Override
 	public List<Album> getListOfAlbums() {
-		// TODO: obtain remote information 
+		// TODO: obtain remote information
 		List<Album> lst = new ArrayList<Album>();
 		lst.add( new SharedAlbum("SD"));
 		lst.add( new SharedAlbum("RC"));
@@ -46,12 +50,12 @@ public class SharedGalleryContentProvider implements GalleryContentProvider {
 	}
 
 	/**
-	 * Returns the list of pictures for the given album. 
+	 * Returns the list of pictures for the given album.
 	 * On error this method should return null.
 	 */
 	@Override
 	public List<Picture> getListOfPictures(Album album) {
-		// TODO: obtain remote information 
+		// TODO: obtain remote information
 		List<Picture> lst = new ArrayList<Picture>();
 		lst.add( new SharedPicture("aula 1"));
 		lst.add( new SharedPicture("aula 2"));
@@ -65,7 +69,7 @@ public class SharedGalleryContentProvider implements GalleryContentProvider {
 	 */
 	@Override
 	public byte[] getPictureData(Album album, Picture picture) {
-		// TODO: obtain remote information 
+		// TODO: obtain remote information
 		return null;
 	}
 
@@ -75,7 +79,7 @@ public class SharedGalleryContentProvider implements GalleryContentProvider {
 	 */
 	@Override
 	public Album createAlbum(String name) {
-		// TODO: contact servers to create album 
+		// TODO: contact servers to create album
 		return new SharedAlbum(name);
 	}
 
@@ -84,16 +88,16 @@ public class SharedGalleryContentProvider implements GalleryContentProvider {
 	 */
 	@Override
 	public void deleteAlbum(Album album) {
-		// TODO: contact servers to delete album 
+		// TODO: contact servers to delete album
 	}
-	
+
 	/**
 	 * Add a new picture to an album.
 	 * On error this method should return null.
 	 */
 	@Override
 	public Picture uploadPicture(Album album, String name, byte[] data) {
-		// TODO: contact servers to add picture name with contents data 
+		// TODO: contact servers to add picture name with contents data
 		return new SharedPicture(name);
 	}
 
@@ -103,40 +107,8 @@ public class SharedGalleryContentProvider implements GalleryContentProvider {
 	 */
 	@Override
 	public boolean deletePicture(Album album, Picture picture) {
-		// TODO: contact servers to delete picture from album 
+		// TODO: contact servers to delete picture from album
 		return true;
 	}
-
-	
-	/**
-	 * Represents a shared album.
-	 */
-	static class SharedAlbum implements Album {
-		final String name;
-
-		SharedAlbum(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-	}
-
-	/**
-	 * Represents a shared picture.
-	 */
-	static class SharedPicture implements Picture {
-		final String name;
-
-		SharedPicture(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-	}
 }
+

@@ -1,19 +1,18 @@
-package sd.tp1.server.ws;
+package sd.tp1.server.soap;
 
 import sd.tp1.server.HeartbeatAnnouncer;
 import sd.tp1.server.ServiceAnnouncer;
 
 import javax.xml.ws.Endpoint;
 import java.io.File;
-import java.net.URL;
 
 /**
  * Created by apontes on 3/21/16.
  */
-public class WSServerRun {
+public class SoapServerRun {
 
-    private static final int MIN_PORT = 1024;
-    private static final int MAX_PORT = 65535;
+    private static final int MIN_PORT = 8080; //1024;
+    private static final int MAX_PORT = 8080; //65535;
 
     private static final int DEFAULT_PORT = generateRandomPort();
     private static final String DEFAULT_ROOT = ".";
@@ -31,7 +30,7 @@ public class WSServerRun {
         int port = (args.length >= 3) ? Integer.parseInt(args[2]) : DEFAULT_PORT;
 
         String url = String.format("http://%s:%d/%s", "0.0.0.0", port, serverPath);
-        Endpoint.publish(String.format("http://%s:%d/%s", "0.0.0.0", port, serverPath), new WSServer(root));
+        Endpoint.publish(String.format("http://%s:%d/%s", "0.0.0.0", port, serverPath), new SoapServer(root));
         System.err.println(String.format("Server started at port %s, root:%s", port, root.getAbsoluteFile()));
 
         ServiceAnnouncer announcer = (new HeartbeatAnnouncer(url));

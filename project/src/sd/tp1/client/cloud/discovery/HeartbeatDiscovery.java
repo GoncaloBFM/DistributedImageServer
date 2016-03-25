@@ -1,7 +1,8 @@
-package sd.tp1.client;
+package sd.tp1.client.cloud.discovery;
 
-import sd.tp1.client.ws.WSServer;
-import sd.tp1.client.ws.WSServerService;
+import sd.tp1.client.cloud.Server;
+import sd.tp1.client.cloud.HashServerManager;
+import sd.tp1.client.cloud.ServerHandler;
 
 import java.io.IOException;
 import java.net.*;
@@ -35,14 +36,14 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
 
 
     @Override
-    public void discoverService(ServiceHandler handler) {
+    public void discoverService(ServerHandler handler) {
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate((Runnable) () -> {
             for (String key: serverMap.keySet()) {
                 HeartbeatServer server = serverMap.get(key);
                 if (server.getCurrentState() != HeartbeatServer.State.OFFLINE && server.getTimeSinceLastBeat() > ALLOWED_TIME_SINCE_LAST_BEAT) {
                     server.setCurrentState(HeartbeatServer.State.OFFLINE);
-                    handler.serviceNotAnymore(server.getEntity());
+                    handler.serverLost(server.getEntity());
                 }
             }
         }, SWIPE_INITIAL_DELAY_SECONDS, SWIPE_DELAY_SECONDS, TimeUnit.SECONDS);
@@ -80,23 +81,23 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
                     server.setCurrentState(HeartbeatServer.State.ONLINE);
                 }
                 else{
-                    URL wsURL = new URL(url);
-                    WSServerService service = new WSServerService(wsURL);
-                    WSServer entity = service.getWSServerPort();
-                    serverMap.put(url,new HeartbeatServer(wsURL, entity));
-                    handler.serviceDiscovered(entity);
+                    URL wsUrl = new URL(url);
+                    Server entity = HashServerManager.getServerManager().getServer(wsUrl);
+                    serverMap.put(url,new HeartbeatServer(wsUrl, entity));
+                    handler.serverAdded(entity);
                 }
             }
         }.start();
     }
+
     private static class HeartbeatServer {
         private enum State {ONLINE, OFFLINE}
         private State currentState;
-        private WSServer entity;
+        private Server entity;
         private long timeOfLastBeat;
         private URL url;
 
-        public HeartbeatServer(URL url, WSServer entity) {
+        public HeartbeatServer(URL url, Server entity) {
             this.url = url;
             this.entity = entity;
             setNewTimeOfLastBeat();
@@ -111,7 +112,7 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
             currentState = newState;
         }
 
-        public WSServer getEntity() {
+        public Server getEntity() {
             return entity;
         }
         public long getTimeSinceLastBeat() {

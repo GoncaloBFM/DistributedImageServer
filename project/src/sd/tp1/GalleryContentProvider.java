@@ -1,7 +1,5 @@
 package sd.tp1;
 
-import sd.tp1.client.gui.Gui;
-
 import java.util.List;
 
 public interface GalleryContentProvider {

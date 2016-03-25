@@ -1,8 +1,7 @@
-package sd.tp1.server.ws;
+package sd.tp1.server.soap;
 
 import sd.tp1.SharedAlbum;
 import sd.tp1.SharedPicture;
-import sd.tp1.server.Server;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -17,15 +16,15 @@ import java.util.List;
  * Created by apontes on 3/21/16.
  */
 @WebService
-public class WSServer{
+public class SoapServer {
 
     private File root;
 
-    public WSServer() throws NotDirectoryException {
+    public SoapServer() throws NotDirectoryException {
         this(new File("."));
     }
 
-    public WSServer(File root) throws NotDirectoryException {
+    public SoapServer(File root) throws NotDirectoryException {
         if(!root.isDirectory())
             throw new NotDirectoryException(root.getAbsolutePath());
         this.root = root;
@@ -38,7 +37,6 @@ public class WSServer{
             list.add(new SharedAlbum(iFile.getName()));
 
         return list;
-
     }
 
     @WebMethod

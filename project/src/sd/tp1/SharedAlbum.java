@@ -4,7 +4,7 @@ package sd.tp1;
  * Represents a shared album.
  */
 public class SharedAlbum implements Album {
-	String name;
+	public String name;
 
 	public SharedAlbum(){}
 

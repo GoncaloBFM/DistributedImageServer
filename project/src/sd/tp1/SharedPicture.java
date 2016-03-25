@@ -4,7 +4,7 @@ package sd.tp1;
  * Represents a shared picture.
  */
 public class SharedPicture implements Picture {
-	String name;
+	public String name;
 
 	public SharedPicture(){}
 

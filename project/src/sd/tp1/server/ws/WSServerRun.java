@@ -1,8 +1,11 @@
 package sd.tp1.server.ws;
 
+import sd.tp1.server.HeartbeatAnnouncer;
+import sd.tp1.server.ServiceAnnouncer;
+
 import javax.xml.ws.Endpoint;
 import java.io.File;
-import java.net.InetAddress;
+import java.net.URL;
 
 /**
  * Created by apontes on 3/21/16.
@@ -27,8 +30,12 @@ public class WSServerRun {
         String serverPath = (args.length >= 2) ? args[1] : DEFAULT_SERVICE_PATH;
         int port = (args.length >= 3) ? Integer.parseInt(args[2]) : DEFAULT_PORT;
 
+        String url = String.format("http://%s:%d/%s", "0.0.0.0", port, serverPath);
         Endpoint.publish(String.format("http://%s:%d/%s", "0.0.0.0", port, serverPath), new WSServer(root));
         System.err.println(String.format("Server started at port %s, root:%s", port, root.getAbsoluteFile()));
+
+        ServiceAnnouncer announcer = (new HeartbeatAnnouncer(url));
+        announcer.announceService();
     }
 
     static int generateRandomPort(){

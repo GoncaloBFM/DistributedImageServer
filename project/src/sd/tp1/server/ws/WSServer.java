@@ -2,6 +2,7 @@ package sd.tp1.server.ws;
 
 import sd.tp1.SharedAlbum;
 import sd.tp1.SharedPicture;
+import sd.tp1.server.Server;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -16,7 +17,7 @@ import java.util.List;
  * Created by apontes on 3/21/16.
  */
 @WebService
-public class WSServer {
+public class WSServer{
 
     private File root;
 
@@ -87,7 +88,7 @@ public class WSServer {
     }
 
     private File openAlbum(SharedAlbum album){
-        return this.openAlbum(album);
+        return this.openAlbum(album.getName());
     }
 
     private File openAlbum(String albumName){

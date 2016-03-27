@@ -25,6 +25,19 @@ public class SharedGalleryContentProvider implements GuiGalleryContentProvider {
 
 	SharedGalleryContentProvider() {
 		// TODO: code to do when shared gallery starts
+		HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
+			@Override
+			public void serverAdded(Server server) {
+				if(gui != null)
+					gui.updateAlbums();
+			}
+
+			@Override
+			public void serverLost(Server server) {
+				if(gui != null)
+					gui.updateAlbums();
+			}
+		});
 	}
 
 

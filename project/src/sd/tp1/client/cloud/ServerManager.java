@@ -1,5 +1,7 @@
 package sd.tp1.client.cloud;
 
+import sd.tp1.client.cloud.data.CloudAlbum;
+
 import java.net.URL;
 import java.util.Collection;
 
@@ -10,5 +12,8 @@ public interface ServerManager {
     Collection<Server> getServers();
     Server getServer(URL url);
 
-    void setServerDownListner();
+    Server getServerToCreateAlbum();
+    Collection<Server> getServerToUploadPicture(CloudAlbum album);
+
+    void addServerHandler(ServerHandler handler);
 }

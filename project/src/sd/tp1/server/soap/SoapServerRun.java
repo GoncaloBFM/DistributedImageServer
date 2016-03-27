@@ -16,7 +16,7 @@ public class SoapServerRun {
 
     private static final int DEFAULT_PORT = generateRandomPort();
     private static final String DEFAULT_ROOT = ".";
-    private static final String DEFAULT_SERVICE_PATH = "FileServer";
+    private static final String DEFAULT_SERVICE_PATH = "PictureServer";
 
     /**
      *
@@ -31,7 +31,7 @@ public class SoapServerRun {
 
         String url = String.format("http://%s:%d/%s", "0.0.0.0", port, serverPath);
         Endpoint.publish(String.format("http://%s:%d/%s", "0.0.0.0", port, serverPath), new SoapServer(root));
-        System.err.println(String.format("Server started at port %s, root:%s", port, root.getAbsoluteFile()));
+        System.err.println(String.format("Server started at port %s, root:%s, path:%s", port, root.getAbsoluteFile(), serverPath));
 
         ServiceAnnouncer announcer = (new HeartbeatAnnouncer(url));
         announcer.announceService();

@@ -4,6 +4,10 @@ import sd.tp1.Album;
 import sd.tp1.Picture;
 import sd.tp1.SharedAlbum;
 import sd.tp1.SharedPicture;
+import sd.tp1.client.cloud.HashServerManager;
+import sd.tp1.client.cloud.Server;
+import sd.tp1.client.cloud.ServerHandler;
+import sd.tp1.client.cloud.ServerManager;
 import sd.tp1.client.gui.Gui;
 import sd.tp1.client.gui.GuiGalleryContentProvider;
 
@@ -23,6 +27,19 @@ public class SharedGalleryContentProvider implements GuiGalleryContentProvider {
 
 	SharedGalleryContentProvider() {
 		// TODO: code to do when shared gallery starts
+		HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
+			@Override
+			public void serverAdded(Server server) {
+				if(gui != null)
+					gui.updateAlbums();
+			}
+
+			@Override
+			public void serverLost(Server server) {
+				if(gui != null)
+					gui.updateAlbums();
+			}
+		});
 	}
 
 

@@ -2,6 +2,7 @@ package sd.tp1.server.soap;
 
 import sd.tp1.SharedAlbum;
 import sd.tp1.SharedPicture;
+import sd.tp1.server.HeartbeatAnnouncer;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -18,6 +19,10 @@ import java.util.List;
 @WebService
 public class SoapServer {
 
+    //TODO Assure location, and make it make sense
+    //public static String SERVICE_TO_ANNOUNCE = "42845_43178_Server";
+    public static String SERVICE_TO_ANNOUNCE = "http://localhost:8080/PictureServer";
+
     private File root;
 
     public SoapServer() throws NotDirectoryException {
@@ -28,6 +33,10 @@ public class SoapServer {
         if(!root.isDirectory())
             throw new NotDirectoryException(root.getAbsolutePath());
         this.root = root;
+
+        HeartbeatAnnouncer announcer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE);
+        announcer.announceService();
+
     }
 
     @WebMethod

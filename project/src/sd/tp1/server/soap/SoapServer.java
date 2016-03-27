@@ -51,7 +51,7 @@ public class SoapServer {
     @WebMethod
     public List<SharedPicture> getListOfPictures(SharedAlbum album) {
         List<SharedPicture> list = new LinkedList<>();
-        for(File iFile : openAlbum(album).listFiles(x -> x.isDirectory() && !x.getName().contains(".delete")))
+        for(File iFile : openAlbum(album).listFiles(x -> !x.isDirectory() && !x.getName().contains(".delete")))
             list.add(new SharedPicture(iFile.getName()));
 
         return list;

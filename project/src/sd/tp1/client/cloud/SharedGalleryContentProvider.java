@@ -100,7 +100,7 @@ public class SharedGalleryContentProvider implements GuiGalleryContentProvider {
 				if(cloudPicture == null){
 					cloudPicture = new CloudPicture(p.getName());
 					pictureMap.put(p.getName(), cloudPicture);
-					lst.add(p);
+					lst.add(cloudPicture);
 				}
 
 				cloudPicture.addServer(s);

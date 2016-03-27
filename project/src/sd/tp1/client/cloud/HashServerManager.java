@@ -35,8 +35,9 @@ public class HashServerManager implements ServerManager {
 
             @Override
             public void serverLost(Server server) {
+                //TODO something
                 for(ServerHandler handler : serverHandlers)
-                    handler.serverLost(server);
+                    ;//handler.serverLost(server);
             }
         });
     }

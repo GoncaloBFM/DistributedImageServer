@@ -23,6 +23,9 @@ import java.util.*;
 public class SharedGalleryContentProvider implements GuiGalleryContentProvider {
 	Gui gui;
 
+	//TODO caching algorithm
+
+
 	SharedGalleryContentProvider() {
 		// TODO: code to do when shared gallery starts
 		HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
@@ -98,7 +101,7 @@ public class SharedGalleryContentProvider implements GuiGalleryContentProvider {
 				CloudPicture cloudPicture = pictureMap.get(p.getName());
 
 				if(cloudPicture == null){
-					cloudPicture = new CloudPicture(p.getName());
+					cloudPicture = new CloudPicture(p.getName(), cloudAlbum);
 					pictureMap.put(p.getName(), cloudPicture);
 					lst.add(cloudPicture);
 				}
@@ -168,7 +171,7 @@ public class SharedGalleryContentProvider implements GuiGalleryContentProvider {
 		for(Server s : HashServerManager.getServerManager().getServerToUploadPicture(cloudAlbum)){
 			Picture p = s.uploadPicture(album, name, data);
 			if(p != null){
-				CloudPicture cloudPicture = new CloudPicture(p.getName());
+				CloudPicture cloudPicture = new CloudPicture(p.getName(), cloudAlbum);
 				cloudPicture.addServer(s);
 				return cloudPicture;
 			}

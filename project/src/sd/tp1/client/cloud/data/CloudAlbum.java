@@ -31,4 +31,5 @@ public class CloudAlbum implements Album {
     public void addServer(Server server){
         this.servers.add(server);
     }
+    public void remServer(Server server) { this.servers.remove(server); }
 }

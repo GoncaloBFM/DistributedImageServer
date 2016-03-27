@@ -1,5 +1,6 @@
 package sd.tp1.client.cloud.data;
 
+import sd.tp1.Album;
 import sd.tp1.Picture;
 import sd.tp1.client.cloud.Server;
 
@@ -16,8 +17,10 @@ public class CloudPicture implements Picture {
     private String name;
     private List<Server> servers = new LinkedList<>();
 
-    public CloudPicture(String name){
-        this.name = name;
+    private CloudAlbum album;
+
+    public CloudPicture(String name, CloudAlbum album){
+        this.name = name;this.album = album;
     }
 
     @Override
@@ -31,5 +34,10 @@ public class CloudPicture implements Picture {
 
     public void addServer(Server server){
         this.servers.add(server);
+    }
+    public void remServer(Server server) { this.servers.remove(server); }
+
+    public CloudAlbum getAlbum(){
+        return this.album;
     }
 }

@@ -2,12 +2,8 @@ package sd.tp1.client.cloud;
 
 import sd.tp1.Album;
 import sd.tp1.Picture;
-import sd.tp1.SharedAlbum;
-import sd.tp1.SharedPicture;
 import sd.tp1.client.cloud.data.CloudAlbum;
 import sd.tp1.client.cloud.data.CloudPicture;
-import sd.tp1.client.cloud.data.ThreeMap;
-import sd.tp1.client.cloud.discovery.ServiceDiscovery;
 import sd.tp1.client.gui.Gui;
 import sd.tp1.client.gui.GuiGalleryContentProvider;
 

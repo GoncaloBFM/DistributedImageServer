@@ -24,7 +24,7 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
 
     private static int SWIPE_INITIAL_DELAY_SECONDS = 0;
     private static int SWIPE_DELAY_SECONDS = 10;
-    private static long ALLOWED_TIME_SINCE_LAST_BEAT = 100;
+    private static long ALLOWED_TIME_SINCE_LAST_BEAT = 5000;
 
     private Map<String, HeartbeatServer> serverMap = new HashMap<>();
     private String serviceToDiscover;
@@ -41,7 +41,7 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
         exec.scheduleAtFixedRate((Runnable) () -> {
             for (String key: serverMap.keySet()) {
                 HeartbeatServer server = serverMap.get(key);
-                if (server.getCurrentState() != HeartbeatServer.State.OFFLINE && server.getTimeSinceLastBeat() > ALLOWED_TIME_SINCE_LAST_BEAT) {
+                if (server.getCurrentState() == HeartbeatServer.State.ONLINE && server.getTimeSinceLastBeat() > ALLOWED_TIME_SINCE_LAST_BEAT) {
                     server.setCurrentState(HeartbeatServer.State.OFFLINE);
                     handler.serverLost(server.getEntity());
                 }
@@ -64,7 +64,7 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
 
                 for(;;) {
                     try {
-                        byte[] buff = new byte[65536];
+                        byte[] buff = new byte[65535];
                         DatagramPacket p = new DatagramPacket(buff, buff.length);
                         socket.receive(p);
                         handleServiceHeartbeat(new String(p.getData(), 0, p.getLength()));

@@ -33,8 +33,6 @@ public class SoapServerRun {
         Endpoint.publish(String.format("http://%s:%d/%s", "0.0.0.0", port, serverPath), new SoapServer(root));
         System.err.println(String.format("Server started at port %s, root:%s, path:%s", port, root.getAbsoluteFile(), serverPath));
 
-        ServiceAnnouncer announcer = (new HeartbeatAnnouncer(url));
-        announcer.announceService();
     }
 
     static int generateRandomPort(){

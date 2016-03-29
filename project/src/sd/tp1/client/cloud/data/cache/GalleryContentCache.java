@@ -8,12 +8,8 @@ import sd.tp1.client.cloud.Server;
  */
 public interface GalleryContentCache extends GalleryContentProvider{
 
-    void notifyServerDown(Server server);
-    void notifyServerUp(Server server);
-
-    //TODO assure need
-    void notifyServerUpdate(Server server);
+    void serverDown(Server server);
+    void serverUp(Server server);
 
     void addContentChangeHandler(ContentChangeHandler handler);
-
 }

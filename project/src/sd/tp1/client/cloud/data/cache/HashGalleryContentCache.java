@@ -2,80 +2,120 @@ package sd.tp1.client.cloud.data.cache;
 
 import sd.tp1.Album;
 import sd.tp1.Picture;
+import sd.tp1.client.cloud.HashServerManager;
 import sd.tp1.client.cloud.Server;
 import sd.tp1.client.cloud.data.CloudAlbum;
 import sd.tp1.client.cloud.data.CloudPicture;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * Created by apontes on 3/27/16.
  */
+//TODO concurrent implement
 public class HashGalleryContentCache implements GalleryContentCache{
 
-    private Map<String, CloudAlbum> albumMap = new HashMap<>();
-    private Map<String, CloudPicture> pictureMap = new HashMap<>();
+    private static long CACHE_TIMEOUT = 5000L;
 
-    private Map<Server, List<CloudAlbum>> serverAlbumMap = new HashMap<>();
-    private Map<Server, List<CloudPicture>> serverPictureMap = new HashMap<>();
+    private Map<String, CloudAlbum> albumMap = new ConcurrentHashMap<>();
+    private Map<String, CloudPicture> pictureMap = new ConcurrentHashMap<>();
 
-    private List<ContentChangeHandler> contentChangeHandlers = new LinkedList<>();
+    private Map<Server, List<CloudAlbum>> serverAlbumMap = new ConcurrentHashMap<>();
+    private Map<Server, List<CloudPicture>> serverPictureMap = new ConcurrentHashMap<>();
+
+    private Collection<ContentChangeHandler> contentChangeHandlers = new ConcurrentLinkedQueue<>();
+
+    private Map<URL, Long> lastAlbumListFetch = new ConcurrentHashMap<>();
+    private Map<String, Long> lastAlbumContentFecth = new ConcurrentHashMap<>();
+    private Map<String, Long> lastPictureFetch = new ConcurrentHashMap<>();
+
+    private Collection<Server> serverCollection = new ConcurrentLinkedQueue<>();
 
     private String hashCode(Album album){
         return album.getName();
     }
 
     private String hashCode(Album album, Picture picture){
-        return hashCode(album) + picture.getName();
+        return String.format("%s // %s", hashCode(album), picture.getName());
     }
 
     @Override
-    public void notifyServerDown(Server server) {
+    public void serverDown(Server server) {
         List<CloudAlbum> cloudAlbums = serverAlbumMap.remove(server);
         List<CloudPicture> cloudPictures = serverPictureMap.remove(server);
-        boolean collectionChange = false;
 
+
+        Set<CloudAlbum> modifiedAlbums = new HashSet<>(cloudAlbums.size());
+
+        //Remove server from Albums and store unavailable albums
         if(cloudAlbums != null)
             for(CloudAlbum album : cloudAlbums) {
                 album.remServer(server);
-                if(album.getServers().size() == 0) {
-                    albumMap.remove(this.hashCode(album));
-                    collectionChange = true;
-                }
+                if(album.getServers().size() == 0)
+                    modifiedAlbums.add(
+                            albumMap.remove(this.hashCode(album)));
             }
 
+        //Remove server from Picture and store modified albums
         if(cloudPictures != null)
             for(CloudPicture picture : cloudPictures) {
                 picture.remServer(server);
-                if(picture.getServers().size() == 0) {
-                    pictureMap.remove(this.hashCode(picture.getAlbum(), picture));
-                    collectionChange = true;
-                }
+                if(picture.getServers().size() == 0)
+                    modifiedAlbums.add(
+                            pictureMap.remove(this.hashCode(picture.getAlbum(), picture)).getAlbum());
             }
 
-        if(collectionChange)
-            notifyContentChange();
-
+        modifiedAlbums.forEach(x -> this.notifyContentChange(x));
     }
 
+    //TODO improve notification system thread queuing
     private void notifyContentChange(){
-        for(ContentChangeHandler handler : this.contentChangeHandlers)
-            handler.contentChange();
+        this.contentChangeHandlers.forEach(ContentChangeHandler::contentChange);
+    }
+
+    //TODO improve notification system thread queuing
+    private void notifyContentChange(CloudAlbum album){
+        this.contentChangeHandlers.forEach(x -> x.contentChange(album));
     }
 
 
     //TODO implement
     @Override
-    public void notifyServerUp(Server server) {
-
+    public void serverUp(Server server) {
+        fetchAlbumList(server).forEach(x -> notifyContentChange(x));
     }
 
-    @Override
-    public void notifyServerUpdate(Server server) {
+    private List<CloudAlbum> fetchAlbumList(Server server){
+        List<Album> fetchedAlbums = server.getListOfAlbums();
+        List<CloudAlbum> cloudAlbumList = new LinkedList<>();
 
+        if(fetchedAlbums == null)
+            return Collections.EMPTY_LIST;
+
+        for(Album album : fetchedAlbums){
+            CloudAlbum cloudAlbum = this.albumMap.get(hashCode(album));
+
+            if(cloudAlbum == null){
+                cloudAlbum = new CloudAlbum(album.getName());
+                this.albumMap.put(album.getName(), cloudAlbum);
+            }
+
+            cloudAlbumList.add(cloudAlbum);
+        }
+
+        this.serverAlbumMap.put(server, Collections.unmodifiableList(cloudAlbumList));
+        this.lastAlbumListFetch.put(server.getUrl(), System.currentTimeMillis());
+
+        return cloudAlbumList;
+    }
+
+    private boolean isAlbumListUpdated(Server server){
+        //TODO verify
+        return this.lastAlbumListFetch.get(server.getUrl()) - System.currentTimeMillis() >= -CACHE_TIMEOUT;
     }
 
     @Override
@@ -85,7 +125,16 @@ public class HashGalleryContentCache implements GalleryContentCache{
 
     @Override
     public List<Album> getListOfAlbums() {
-        return null;
+        List<Album> albumList = new LinkedList<>();
+
+        this.serverCollection.forEach(server -> {
+            List<CloudAlbum> serverAlbums = isAlbumListUpdated(server) ?
+                    this.serverAlbumMap.get(server) : fetchAlbumList(server);
+
+            serverAlbums.forEach(albumList::add);
+        });
+
+        return albumList;
     }
 
     @Override

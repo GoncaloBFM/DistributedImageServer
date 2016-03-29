@@ -16,9 +16,12 @@ import java.util.stream.Collectors;
  */
 public class SoapServerWrapper implements Server {
 
-    SoapServer server;
+    private SoapServer server;
+    private final URL url;
 
     public SoapServerWrapper(URL url){
+        this.url = url;
+
         SoapServerService soapServerService = new SoapServerService(url);
         this.server = soapServerService.getSoapServerPort();
     }
@@ -100,5 +103,10 @@ public class SoapServerWrapper implements Server {
         }
 
         return false;
+    }
+
+    @Override
+    public URL getUrl() {
+        return this.url;
     }
 }

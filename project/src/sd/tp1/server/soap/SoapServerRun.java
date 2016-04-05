@@ -13,6 +13,7 @@ import java.nio.file.NotDirectoryException;
 public class SoapServerRun {
 
     private static final String SERVICE_TO_ANNOUNCE = "42845_43178_SOAP";
+    private static final int ANNOUNCE_ON_PORT = 6969;
 
     private static final int MIN_PORT = 8080; //1024;
     private static final int MAX_PORT = 8080; //65535;
@@ -41,7 +42,7 @@ public class SoapServerRun {
         }
         System.out.println(String.format("Server started at port %s, root:%s, path:%s", port, root.getAbsoluteFile(), serverPath));
 
-        ServiceAnnouncer serviceAnnouncer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE, serverPath, port);
+        ServiceAnnouncer serviceAnnouncer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE, ANNOUNCE_ON_PORT, serverPath, port);
         serviceAnnouncer.announceService();
 
         System.out.println("Service announcer started! ;)");

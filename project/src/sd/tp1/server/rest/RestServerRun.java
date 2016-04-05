@@ -17,6 +17,7 @@ import java.nio.file.NotDirectoryException;
  */
 public class RestServerRun {
     private static final String SERVICE_TO_ANNOUNCE = "42845_43178_REST";
+    private static final int ANNOUNCE_ON_PORT = 6968;
 
     private static final int MIN_PORT = 8080; //1024;
     private static final int MAX_PORT = 8080; //65535;
@@ -44,7 +45,7 @@ public class RestServerRun {
         config.register(server);
         JdkHttpServerFactory.createHttpServer(baseUri, config);
 
-        ServiceAnnouncer serviceAnnouncer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE, serverPath, port);
+        ServiceAnnouncer serviceAnnouncer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE,ANNOUNCE_ON_PORT, serverPath, port);
         serviceAnnouncer.announceService();
 
         System.out.println("Service announcer started! ;)");

@@ -5,7 +5,6 @@ import java.net.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 /**
  * Created by apontes on 3/21/16.
@@ -16,15 +15,23 @@ public class HeartbeatAnnouncer implements ServiceAnnouncer {
     private static int HEART_BEAT_DELAY_SECONDS = 1;
 
     private static String ADDRESS = "239.255.255.255";
+    private static int DEFAULT_PORT = 6969;
 
     private String serviceToAnnounce;
-    private int port;
-    private String file;
+    private int announceOnPort;
 
-    public HeartbeatAnnouncer(String serviceToAnnounce, String file, int port) {
+    private int serverPort;
+    private String serverPath;
+
+    public HeartbeatAnnouncer(String serviceToAnnounce, String serverPath, int serverPort){
+        this(serviceToAnnounce, DEFAULT_PORT, serverPath, serverPort);
+    }
+
+    public HeartbeatAnnouncer(String serviceToAnnounce, int announceOnPort, String serverPath, int serverPort) {
         this.serviceToAnnounce = serviceToAnnounce;
-        this.file = file;
-        this.port = port;
+        this.serverPath = serverPath;
+        this.serverPort = serverPort;
+        this.announceOnPort = announceOnPort;
     }
 
     @Override
@@ -34,9 +41,9 @@ public class HeartbeatAnnouncer implements ServiceAnnouncer {
         final DatagramPacket packet;
         try {
             multicastSocket = new MulticastSocket();
-            byte[] input = String.format("%s@%s", serviceToAnnounce, file).getBytes();
+            byte[] input = String.format("%s@%d:/%s", serviceToAnnounce, serverPort, serverPath).getBytes();
             packet = new DatagramPacket(input, input.length);
-            packet.setPort(port);
+            packet.setPort(announceOnPort);
             packet.setAddress(InetAddress.getByName(ADDRESS));
         } catch (IOException e) {
             e.printStackTrace();

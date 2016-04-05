@@ -7,6 +7,7 @@ import sd.tp1.client.cloud.ServerHandler;
 import java.io.IOException;
 import java.net.*;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -24,7 +25,7 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
 
     //224.0.0.0 -- 239.255.255.255
     private static String ADDRESS = "239.255.255.255";
-    private static int PORT = 6969;
+    private static int DEFAUTL_PORT = 6969;
 
     private static int SWIPE_INITIAL_DELAY_SECONDS = 0;
     private static int SWIPE_DELAY_SECONDS = 10;
@@ -33,9 +34,15 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
     private final Map<URL, HeartbeatServer> serverMap = new HashMap<>();
     private String serviceToDiscover;
 
+    private int port;
 
-    public HeartbeatDiscovery(String serviceToDiscover) {
+    public HeartbeatDiscovery(String serviceToDiscover){
+        this(serviceToDiscover, DEFAUTL_PORT);
+    }
+
+    public HeartbeatDiscovery(String serviceToDiscover, int port) {
         this.serviceToDiscover = serviceToDiscover;
+        this.port = port;
     }
 
 
@@ -62,7 +69,7 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
                 MulticastSocket socket = null;
                 try {
                     address = InetAddress.getByName(ADDRESS);
-                    socket = new MulticastSocket(PORT);
+                    socket = new MulticastSocket(port);
                     socket.joinGroup(address);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -86,10 +93,26 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
                 if(!data.startsWith(serviceToDiscover))
                     return;
 
+                String file; int port;
+
+                try{
+                    data = data.split("@")[1];
+                    String[] portFile = data.split(":");
+
+                    port = Integer.parseInt(portFile[0]);
+                    file = portFile[1];
+
+                }
+                catch(Exception e){
+                    LOGGER.severe("Invalid packet data: " + data);
+                    return;
+                }
+
+
                 URL url = new URL("http",
-                        p.getAddress().toString(),
-                        p.getPort(),
-                        data.split("@")[0]);
+                        p.getAddress().getHostAddress(),
+                        port,
+                        file);
 
                 HeartbeatServer server = serverMap.get(url);
                 if(server != null){
@@ -102,7 +125,8 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
                     synchronized (serverMap){
                         LOGGER.info(String.format("Server discovered %s", url.toString()));
 
-                        serverMap.put(url, new HeartbeatServer(url));
+                        server = new HeartbeatServer(url);
+                        serverMap.put(url, server);
                         handler.serviceDiscovered(serviceToDiscover, server.getURL());
                     }
                 }

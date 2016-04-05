@@ -48,7 +48,8 @@ public class RestServer {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getListOfAlbums() {
         List<SharedAlbum> listOfAlbums = this.dataManager.loadListOfAlbums();
-        return Response.ok(listOfAlbums).build();
+        SharedAlbum[] array = listOfAlbums.toArray(new SharedAlbum[listOfAlbums.size()]);
+        return Response.ok(array).build();
     }
 
     @GET
@@ -57,7 +58,8 @@ public class RestServer {
     public Response getListOfPictures(@PathParam("album") String album) {
         List<SharedPicture> listOfPictures = this.dataManager.loadListOfPictures(new SharedAlbum(album));
         if (listOfPictures != null) {
-            return Response.ok(listOfPictures).build();
+            SharedPicture[] array = listOfPictures.toArray(new SharedPicture[listOfPictures.size()]);
+            return Response.ok(array).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -73,11 +75,10 @@ public class RestServer {
     @DELETE
     @Path("/deletePicture/{album}/{picture}")
     public Response deletePicture(@PathParam("album") String album, @PathParam("picture") String picture) {
-        if (!this.dataManager.deletePicture(new SharedAlbum(album), new SharedPicture(picture))) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        } else {
+        if (this.dataManager.deletePicture(new SharedAlbum(album), new SharedPicture(picture))) {
             return Response.ok().build();
         }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @GET

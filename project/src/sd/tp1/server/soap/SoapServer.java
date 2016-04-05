@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.NotDirectoryException;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by apontes on 3/21/16.
@@ -19,9 +20,10 @@ import java.util.List;
 @WebService
 public class SoapServer {
 
+    private static final Logger logger = Logger.getLogger(SoapServer.class.getName());
+
     //TODO Assure location, and make it make sense
     //public static String SERVICE_TO_ANNOUNCE = "42845_43178_Server";
-    public static String SERVICE_TO_ANNOUNCE = "http://localhost:8080/PictureServer";
     private DataManager dataManager;
 
     public SoapServer() throws NotDirectoryException {
@@ -30,18 +32,18 @@ public class SoapServer {
 
     public SoapServer(File root) throws NotDirectoryException {
         this.dataManager = new FileDataManager(root);
-        HeartbeatAnnouncer announcer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE);
-        announcer.announceService();
 
     }
 
     @WebMethod
     public List<SharedAlbum> getListOfAlbums() {
+        logger.entering(getClass().getName(), "getListOfAlbums");
         return dataManager.loadListOfAlbums();
     }
 
     @WebMethod
     public List<SharedPicture> getListOfPictures(SharedAlbum album) {
+        logger.entering(getClass().getName(), "getListOfPictures");
         return dataManager.loadListOfPictures(album);
 
     }

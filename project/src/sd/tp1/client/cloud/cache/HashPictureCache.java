@@ -47,6 +47,8 @@ public class HashPictureCache implements PictureCache{
         int diskDiff = 0;
         int ramDiff = 0;
 
+        this.swap(content.length);
+
         synchronized (this.pictureRamList) {
             if(cachedPicture == null){
                 cachedPicture = new CachedPicture(album, picture, content);

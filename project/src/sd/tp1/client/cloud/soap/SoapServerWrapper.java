@@ -3,9 +3,7 @@ package sd.tp1.client.cloud.soap;
 import sd.tp1.Album;
 import sd.tp1.Picture;
 import sd.tp1.client.cloud.Server;
-import sd.tp1.client.cloud.soap.stubs.IOException_Exception;
-import sd.tp1.client.cloud.soap.stubs.SoapServer;
-import sd.tp1.client.cloud.soap.stubs.SoapServerService;
+import sd.tp1.client.cloud.soap.stubs.*;
 
 import java.net.URL;
 import java.util.List;
@@ -36,7 +34,11 @@ public class SoapServerWrapper implements Server {
 
     @Override
     public List<Picture> getListOfPictures(Album album) {
-        return server.getListOfPictures(new AlbumWrapper(album))
+        List<SharedPicture> pictures = server.getListOfPictures(new AlbumWrapper(album));
+        if(pictures == null)
+            return null;
+
+        return pictures
                 .stream()
                 .<Picture>map(p -> new PictureWrapper(p))
                 .collect(Collectors.toList());
@@ -44,65 +46,37 @@ public class SoapServerWrapper implements Server {
 
     @Override
     public byte[] getPictureData(Album album, Picture picture) {
-        try {
-            return server.getPictureData(new AlbumWrapper(album), new PictureWrapper(picture));
-        } catch (IOException_Exception e) {
-            //TODO something
-            e.printStackTrace();
-        }
-
-        return null;
+        return server.getPictureData(new AlbumWrapper(album), new PictureWrapper(picture));
     }
 
     @Override
     public Album createAlbum(String name) {
-        try {
-            return new AlbumWrapper(server.createAlbum(name));
-        } catch (IOException_Exception e) {
-            //TODO something
-            e.printStackTrace();
-        }
-
-        return null;
+        SharedAlbum album = server.createAlbum(name);
+        return new AlbumWrapper(album);
     }
 
     @Override
     public Picture uploadPicture(Album album, String name, byte[] data) {
-        try {
-            return new PictureWrapper(server.uploadPicture(
-                    new AlbumWrapper(album),
-                    name,
-                    data
-            ));
+        SharedPicture picture = server.uploadPicture(
+                new AlbumWrapper(album),
+                name,
+                data
+        );
 
-        } catch (IOException_Exception e) {
-            //TODO something
-            e.printStackTrace();
-        }
+        if(picture == null)
+            return null;
 
-        return null;
+        return new PictureWrapper(picture);
     }
 
     @Override
     public void deleteAlbum(Album album) {
-        try {
-            server.deleteAlbum(new AlbumWrapper(album));
-        } catch (IOException_Exception e) {
-            //TODO something
-            e.printStackTrace();
-        }
+        server.deleteAlbum(new AlbumWrapper(album));
     }
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
-        try {
-            return server.deletePicture(new AlbumWrapper(album), new PictureWrapper(picture));
-        } catch (IOException_Exception e) {
-            //TODO something
-            e.printStackTrace();
-        }
-
-        return false;
+        return server.deletePicture(new AlbumWrapper(album), new PictureWrapper(picture));
     }
 
     @Override

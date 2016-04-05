@@ -19,11 +19,11 @@ public interface DataManager {
 
     byte[] loadPictureData(SharedAlbum album, SharedPicture picture);
 
-    SharedAlbum createAlbum(String name) throws IOException;
+    SharedAlbum createAlbum(String name);
 
     SharedPicture uploadPicture(SharedAlbum album, String name, byte[] data);
 
-    void deleteAlbum(SharedAlbum album) throws IOException;
+    void deleteAlbum(SharedAlbum album);
 
     boolean deletePicture(SharedAlbum album, SharedPicture picture);
 }

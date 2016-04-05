@@ -164,14 +164,15 @@ public class SharedGalleryContentProvider implements GuiGalleryContentProvider {
 	public Picture uploadPicture(Album album, String name, byte[] data) {
 		// TODO: contact servers to add picture name with contents data
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
-		for(Server s : HashServerManager.getServerManager().getServerToUploadPicture(cloudAlbum)){
-			Picture p = s.uploadPicture(album, name, data);
-			if(p != null){
-				CloudPicture cloudPicture = new CloudPicture(p.getName(), cloudAlbum);
-				cloudPicture.addServer(s);
-				return cloudPicture;
-			}
+		Server server = HashServerManager.getServerManager().getServerToUploadPicture(cloudAlbum);
+
+		Picture p = server.uploadPicture(album, name, data);
+		if(p != null){
+			CloudPicture cloudPicture = new CloudPicture(p.getName(), cloudAlbum);
+			cloudPicture.addServer(server);
+			return cloudPicture;
 		}
+
 
 		return null;
 	}

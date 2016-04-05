@@ -8,7 +8,6 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Action;
-import javax.xml.ws.FaultAction;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
@@ -59,42 +58,32 @@ public interface SoapServer {
      * @param arg0
      * @return
      *     returns byte[]
-     * @throws IOException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "getPictureData", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.GetPictureData")
     @ResponseWrapper(localName = "getPictureDataResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.GetPictureDataResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/getPictureDataRequest", output = "http://soap.server.tp1.sd/SoapServer/getPictureDataResponse", fault = {
-        @FaultAction(className = IOException_Exception.class, value = "http://soap.server.tp1.sd/SoapServer/getPictureData/Fault/IOException")
-    })
+    @Action(input = "http://soap.server.tp1.sd/SoapServer/getPictureDataRequest", output = "http://soap.server.tp1.sd/SoapServer/getPictureDataResponse")
     public byte[] getPictureData(
         @WebParam(name = "arg0", targetNamespace = "")
         SharedAlbum arg0,
         @WebParam(name = "arg1", targetNamespace = "")
-        SharedPicture arg1)
-        throws IOException_Exception
-    ;
+        SharedPicture arg1);
 
     /**
      * 
      * @param arg0
      * @return
      *     returns sd.tp1.client.cloud.soap.stubs.SharedAlbum
-     * @throws IOException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "createAlbum", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.CreateAlbum")
     @ResponseWrapper(localName = "createAlbumResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.CreateAlbumResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/createAlbumRequest", output = "http://soap.server.tp1.sd/SoapServer/createAlbumResponse", fault = {
-        @FaultAction(className = IOException_Exception.class, value = "http://soap.server.tp1.sd/SoapServer/createAlbum/Fault/IOException")
-    })
+    @Action(input = "http://soap.server.tp1.sd/SoapServer/createAlbumRequest", output = "http://soap.server.tp1.sd/SoapServer/createAlbumResponse")
     public SharedAlbum createAlbum(
         @WebParam(name = "arg0", targetNamespace = "")
-        String arg0)
-        throws IOException_Exception
-    ;
+        String arg0);
 
     /**
      * 
@@ -103,41 +92,31 @@ public interface SoapServer {
      * @param arg0
      * @return
      *     returns sd.tp1.client.cloud.soap.stubs.SharedPicture
-     * @throws IOException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "uploadPicture", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.UploadPicture")
     @ResponseWrapper(localName = "uploadPictureResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.UploadPictureResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/uploadPictureRequest", output = "http://soap.server.tp1.sd/SoapServer/uploadPictureResponse", fault = {
-        @FaultAction(className = IOException_Exception.class, value = "http://soap.server.tp1.sd/SoapServer/uploadPicture/Fault/IOException")
-    })
+    @Action(input = "http://soap.server.tp1.sd/SoapServer/uploadPictureRequest", output = "http://soap.server.tp1.sd/SoapServer/uploadPictureResponse")
     public SharedPicture uploadPicture(
         @WebParam(name = "arg0", targetNamespace = "")
         SharedAlbum arg0,
         @WebParam(name = "arg1", targetNamespace = "")
         String arg1,
         @WebParam(name = "arg2", targetNamespace = "")
-        byte[] arg2)
-        throws IOException_Exception
-    ;
+        byte[] arg2);
 
     /**
      * 
      * @param arg0
-     * @throws IOException_Exception
      */
     @WebMethod
     @RequestWrapper(localName = "deleteAlbum", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.DeleteAlbum")
     @ResponseWrapper(localName = "deleteAlbumResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.DeleteAlbumResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/deleteAlbumRequest", output = "http://soap.server.tp1.sd/SoapServer/deleteAlbumResponse", fault = {
-        @FaultAction(className = IOException_Exception.class, value = "http://soap.server.tp1.sd/SoapServer/deleteAlbum/Fault/IOException")
-    })
+    @Action(input = "http://soap.server.tp1.sd/SoapServer/deleteAlbumRequest", output = "http://soap.server.tp1.sd/SoapServer/deleteAlbumResponse")
     public void deleteAlbum(
         @WebParam(name = "arg0", targetNamespace = "")
-        SharedAlbum arg0)
-        throws IOException_Exception
-    ;
+        SharedAlbum arg0);
 
     /**
      * 
@@ -145,21 +124,16 @@ public interface SoapServer {
      * @param arg0
      * @return
      *     returns boolean
-     * @throws IOException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "deletePicture", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.DeletePicture")
     @ResponseWrapper(localName = "deletePictureResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.DeletePictureResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/deletePictureRequest", output = "http://soap.server.tp1.sd/SoapServer/deletePictureResponse", fault = {
-        @FaultAction(className = IOException_Exception.class, value = "http://soap.server.tp1.sd/SoapServer/deletePicture/Fault/IOException")
-    })
+    @Action(input = "http://soap.server.tp1.sd/SoapServer/deletePictureRequest", output = "http://soap.server.tp1.sd/SoapServer/deletePictureResponse")
     public boolean deletePicture(
         @WebParam(name = "arg0", targetNamespace = "")
         SharedAlbum arg0,
         @WebParam(name = "arg1", targetNamespace = "")
-        SharedPicture arg1)
-        throws IOException_Exception
-    ;
+        SharedPicture arg1);
 
 }

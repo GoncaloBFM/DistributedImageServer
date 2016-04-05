@@ -10,7 +10,7 @@ import javax.xml.namespace.QName;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the sd.tp1.client.cloud.soap.stubs package.
+ * generated in the sd.tp1.client.cloud.soap.stubs package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -31,7 +31,6 @@ public class ObjectFactory {
     private final static QName _DeleteAlbumResponse_QNAME = new QName("http://soap.server.tp1.sd/", "deleteAlbumResponse");
     private final static QName _CreateAlbumResponse_QNAME = new QName("http://soap.server.tp1.sd/", "createAlbumResponse");
     private final static QName _DeletePicture_QNAME = new QName("http://soap.server.tp1.sd/", "deletePicture");
-    private final static QName _IOException_QNAME = new QName("http://soap.server.tp1.sd/", "IOException");
     private final static QName _UploadPictureResponse_QNAME = new QName("http://soap.server.tp1.sd/", "uploadPictureResponse");
     private final static QName _DeleteAlbum_QNAME = new QName("http://soap.server.tp1.sd/", "deleteAlbum");
     private final static QName _DeletePictureResponse_QNAME = new QName("http://soap.server.tp1.sd/", "deletePictureResponse");
@@ -95,14 +94,6 @@ public class ObjectFactory {
      */
     public DeletePicture createDeletePicture() {
         return new DeletePicture();
-    }
-
-    /**
-     * Create an instance of {@link IOException }
-     * 
-     */
-    public IOException createIOException() {
-        return new IOException();
     }
 
     /**
@@ -246,15 +237,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "deletePicture")
     public JAXBElement<DeletePicture> createDeletePicture(DeletePicture value) {
         return new JAXBElement<DeletePicture>(_DeletePicture_QNAME, DeletePicture.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link IOException }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "IOException")
-    public JAXBElement<IOException> createIOException(IOException value) {
-        return new JAXBElement<IOException>(_IOException_QNAME, IOException.class, null, value);
     }
 
     /**

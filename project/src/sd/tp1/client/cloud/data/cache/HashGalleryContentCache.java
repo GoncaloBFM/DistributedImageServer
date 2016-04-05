@@ -2,16 +2,14 @@ package sd.tp1.client.cloud.data.cache;
 
 import sd.tp1.Album;
 import sd.tp1.Picture;
-import sd.tp1.client.cloud.HashServerManager;
 import sd.tp1.client.cloud.Server;
 import sd.tp1.client.cloud.data.CloudAlbum;
 import sd.tp1.client.cloud.data.CloudPicture;
 
-import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.SynchronousQueue;
+import java.util.stream.Collectors;
 
 /**
  * Created by apontes on 3/27/16.
@@ -20,19 +18,15 @@ import java.util.concurrent.SynchronousQueue;
 public class HashGalleryContentCache implements GalleryContentCache{
 
     private static long CACHE_TIMEOUT = 5000L;
+    private static int  RETRIES_ON_ERROR = 3;
 
-    private Map<String, CloudAlbum> albumMap = new ConcurrentHashMap<>();
-    private Map<String, CloudPicture> pictureMap = new ConcurrentHashMap<>();
+    private Map<String, CachedAlbumList> albumListMap = new ConcurrentHashMap<>();
+    private Map<String, CachedAlbum> albumMap = new ConcurrentHashMap<>();
+    private Map<String, CachedPicture> pictureMap = new ConcurrentHashMap<>();
 
-    private Map<Server, List<CloudAlbum>> serverAlbumMap = new ConcurrentHashMap<>();
-    private Map<Server, List<CloudPicture>> serverPictureMap = new ConcurrentHashMap<>();
+    private Map<String, List<CachedPicture>> serverPictureMap = new ConcurrentHashMap<>();
 
     private Collection<ContentChangeHandler> contentChangeHandlers = new ConcurrentLinkedQueue<>();
-
-    private Map<URL, Long> lastAlbumListFetch = new ConcurrentHashMap<>();
-    private Map<String, Long> lastAlbumContentFecth = new ConcurrentHashMap<>();
-    private Map<String, Long> lastPictureFetch = new ConcurrentHashMap<>();
-
     private Collection<Server> serverCollection = new ConcurrentLinkedQueue<>();
 
     private String hashCode(Album album){
@@ -43,33 +37,43 @@ public class HashGalleryContentCache implements GalleryContentCache{
         return String.format("%s // %s", hashCode(album), picture.getName());
     }
 
+    private String hashCode(Server server){
+        return server.getUrl().toString();
+    }
+
+    private String hashCode(CloudPicture picture){
+        return this.hashCode(picture.getAlbum(), picture);
+    }
+
     @Override
     public void serverDown(Server server) {
-        List<CloudAlbum> cloudAlbums = serverAlbumMap.remove(server);
-        List<CloudPicture> cloudPictures = serverPictureMap.remove(server);
+        String hash = hashCode(server);
+        List<CachedAlbum> cachedAlbumList = this.albumListMap.remove(hash).getAlbumList();
+        List<CachedPicture> cachedPictureList = this.serverPictureMap.remove(hash);
 
-
-        Set<CloudAlbum> modifiedAlbums = new HashSet<>(cloudAlbums.size());
+        Set<CachedAlbum> modifiedAlbums = new HashSet<>(cachedAlbumList.size());
 
         //Remove server from Albums and store unavailable albums
-        if(cloudAlbums != null)
-            for(CloudAlbum album : cloudAlbums) {
+        if(cachedAlbumList != null)
+            for(CachedAlbum album : cachedAlbumList) {
                 album.remServer(server);
                 if(album.getServers().size() == 0)
                     modifiedAlbums.add(
-                            albumMap.remove(this.hashCode(album)));
+                            this.albumMap.remove(this.hashCode(album)));
             }
 
         //Remove server from Picture and store modified albums
-        if(cloudPictures != null)
-            for(CloudPicture picture : cloudPictures) {
+        if(cachedPictureList != null)
+            for(CachedPicture picture : cachedPictureList) {
                 picture.remServer(server);
-                if(picture.getServers().size() == 0)
-                    modifiedAlbums.add(
-                            pictureMap.remove(this.hashCode(picture.getAlbum(), picture)).getAlbum());
+                if(picture.getServers().size() == 0) {
+                    CachedPicture cachedPicture = this.pictureMap.remove(this.hashCode(picture));
+                    modifiedAlbums.add(cachedPicture.getAlbum());
+                }
             }
 
-        modifiedAlbums.forEach(x -> this.notifyContentChange(x));
+        this.serverCollection.remove(server);
+        modifiedAlbums.forEach(x -> {x.makeDirty(); this.notifyContentChange(x); });
     }
 
     //TODO improve notification system thread queuing
@@ -86,36 +90,37 @@ public class HashGalleryContentCache implements GalleryContentCache{
     //TODO implement
     @Override
     public void serverUp(Server server) {
-        fetchAlbumList(server).forEach(x -> notifyContentChange(x));
+        this.serverCollection.add(server);
+        this.fetchAlbumList(server).forEach(x -> notifyContentChange(x));
     }
 
-    private List<CloudAlbum> fetchAlbumList(Server server){
-        List<Album> fetchedAlbums = server.getListOfAlbums();
-        List<CloudAlbum> cloudAlbumList = new LinkedList<>();
+    private List<CachedAlbum> fetchAlbumList(Server server){
+        List<Album> fetchedAlbums = null;
 
-        if(fetchedAlbums == null)
+        for(int i = 0; fetchedAlbums == null && i < RETRIES_ON_ERROR; i++)
+            fetchedAlbums = server.getListOfAlbums();
+
+        if(fetchedAlbums == null) {
             return Collections.EMPTY_LIST;
-
-        for(Album album : fetchedAlbums){
-            CloudAlbum cloudAlbum = this.albumMap.get(hashCode(album));
-
-            if(cloudAlbum == null){
-                cloudAlbum = new CloudAlbum(album.getName());
-                this.albumMap.put(album.getName(), cloudAlbum);
-            }
-
-            cloudAlbumList.add(cloudAlbum);
         }
 
-        this.serverAlbumMap.put(server, Collections.unmodifiableList(cloudAlbumList));
-        this.lastAlbumListFetch.put(server.getUrl(), System.currentTimeMillis());
+        List<CachedAlbum> albumList = new LinkedList<>();
 
-        return cloudAlbumList;
-    }
+        for(Album album : fetchedAlbums){
+            CachedAlbum cachedAlbum = this.albumMap.get(hashCode(album));
 
-    private boolean isAlbumListUpdated(Server server){
-        //TODO verify
-        return this.lastAlbumListFetch.get(server.getUrl()) - System.currentTimeMillis() >= -CACHE_TIMEOUT;
+            if(cachedAlbum == null){
+                cachedAlbum = new CachedAlbum(album.getName(), null);
+                this.albumMap.put(album.getName(), cachedAlbum);
+            }
+
+            albumList.add(cachedAlbum);
+        }
+
+        albumList = Collections.unmodifiableList(albumList);
+        this.albumListMap.put(hashCode(server), new CachedAlbumList(server, albumList));
+
+        return albumList;
     }
 
     @Override
@@ -128,8 +133,9 @@ public class HashGalleryContentCache implements GalleryContentCache{
         List<Album> albumList = new LinkedList<>();
 
         this.serverCollection.forEach(server -> {
-            List<CloudAlbum> serverAlbums = isAlbumListUpdated(server) ?
-                    this.serverAlbumMap.get(server) : fetchAlbumList(server);
+            CachedAlbumList cachedAlbumList = this.albumListMap.get(hashCode(server));
+            List<? extends Album> serverAlbums = cachedAlbumList.isDirty() ?
+                    fetchAlbumList(server) : cachedAlbumList.getAlbumList();
 
             serverAlbums.forEach(albumList::add);
         });
@@ -137,9 +143,43 @@ public class HashGalleryContentCache implements GalleryContentCache{
         return albumList;
     }
 
+    private List<CachedPicture> fetchPictureList(Album album){
+        CachedAlbum cachedAlbum = this.albumMap.get(hashCode(album));
+        if(cachedAlbum == null)
+            throw new RuntimeException(String.format("No references for album %s", album));
+
+        for(Server server : cachedAlbum.getServers()){
+            List<Picture> fetchedPictures = null;
+            for(int i = 0; i < RETRIES_ON_ERROR && fetchedPictures == null; i++)
+                fetchedPictures = server.getListOfPictures(album);
+
+            //List<CachedPicture> serverPictures = this.serverPictureMap.get()
+            for(Picture picture : fetchedPictures){
+                CachedPicture cachedPicture = this.pictureMap.get(hashCode(album, picture));
+
+                if(cachedPicture == null){
+                    cachedPicture = new CachedPicture(picture.getName(), cachedAlbum, null);
+                    this.pictureMap.put(hashCode(cachedPicture), cachedPicture);
+                }
+
+                cachedPicture.addServer(server);
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public List<Picture> getListOfPictures(Album album) {
-        return null;
+        CachedAlbum cachedAlbum = this.albumMap.get(hashCode(album));
+        if(cachedAlbum == null || cachedAlbum.isDirty() || cachedAlbum.getPictures() == null){
+
+
+
+        }
+
+        return (List<Picture>) (List<?>) cachedAlbum.getPictures();
+        //.stream().map(x -> x).collect(Collectors.toList());
     }
 
     @Override

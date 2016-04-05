@@ -9,4 +9,8 @@ import java.net.URL;
  */
 public interface Server extends GalleryContentProvider {
     URL getUrl();
+
+    default boolean equals(Server server){
+        return server.getUrl().equals(this.getUrl());
+    }
 }

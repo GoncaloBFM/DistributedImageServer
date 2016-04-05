@@ -38,6 +38,7 @@ public class CachedServer implements Server{
             else
                 this.listOfAlbums.recache(fetchedAlbumList);
         }
+
         return this.listOfAlbums.get();
     }
 
@@ -48,7 +49,7 @@ public class CachedServer implements Server{
             List<Picture> fetchedPictureList = this.server.getListOfPictures(album);
 
             if(cachedPictureList == null){
-                cachedPictureList = new CachedObject<List<Picture>>(fetchedPictureList);
+                cachedPictureList = new CachedObject<>(fetchedPictureList);
                 this.picturesMap.put(album.getName(), cachedPictureList);
             }
             else

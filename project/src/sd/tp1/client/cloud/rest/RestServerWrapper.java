@@ -64,7 +64,7 @@ public class RestServerWrapper implements Server {
 
     @Override
     public Album createAlbum(String name) {
-        Response response = target.path("/createAlbum/" + name).request().post(null);
+        Response response = target.path("/createAlbum/" + name).request().post(Entity.entity(name, MediaType.APPLICATION_JSON));
         return new SharedAlbum(name);
     }
 

@@ -114,7 +114,10 @@ public class HashPictureCache implements PictureCache{
 
     @Override
     public long length() {
-        return this.lengthOnDisk() + this.lengthOnRam();
+        this.lock.lock();
+        long result = this.lengthOnDisk() + this.lengthOnRam();
+        this.lock.unlock();
+        return result;
     }
 
     @Override

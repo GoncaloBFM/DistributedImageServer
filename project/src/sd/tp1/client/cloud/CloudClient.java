@@ -188,7 +188,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 
 		CloudPicture cloudPicture = (CloudPicture) picture;
 		for(Server s : cloudPicture.getServers())
-		del = s.deletePicture(album, picture) && del;
+			del = s.deletePicture(album, picture) && del;
 
 		return del;
 	}

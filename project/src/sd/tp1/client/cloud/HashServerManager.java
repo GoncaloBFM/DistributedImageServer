@@ -1,5 +1,6 @@
 package sd.tp1.client.cloud;
 
+import sd.tp1.Album;
 import sd.tp1.client.cloud.cache.CachedServer;
 import sd.tp1.client.cloud.data.CloudAlbum;
 import sd.tp1.client.cloud.discovery.HeartbeatDiscovery;
@@ -107,14 +108,18 @@ public class HashServerManager implements ServerManager {
 
     @Override
     public Server getServerToCreateAlbum() {
-        //TODO improve
-        return serverCollection.iterator().next();
+        Random metaDados = new Random();
+        int size = serverCollection.size();
+        int i = metaDados.nextInt(size);
+        return serverCollection.toArray(new Server[size])[i];
     }
 
     @Override
     public Server getServerToUploadPicture(CloudAlbum album){
-        //TODO improve
-        return album.getServers().iterator().next();
+        Random metaDados = new Random();
+        Collection<Server> collection = album.getServers();
+        int i = metaDados.nextInt(collection.size());
+        return collection.toArray(new Server[collection.size()])[i];
     }
 
     @Override

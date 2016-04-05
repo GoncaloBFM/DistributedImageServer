@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="pictureName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -27,14 +27,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "sharedPicture", propOrder = {
-    "name"
+    "pictureName"
 })
 public class SharedPicture {
 
-    protected String name;
+    protected String pictureName;
 
     /**
-     * Gets the value of the name property.
+     * Gets the value of the pictureName property.
      * 
      * @return
      *     possible object is
@@ -42,19 +42,19 @@ public class SharedPicture {
      *     
      */
     public String getPictureName() {
-        return name;
+        return pictureName;
     }
 
     /**
-     * Sets the value of the name property.
+     * Sets the value of the pictureName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setName(String value) {
-        this.name = value;
+    public void setPictureName(String value) {
+        this.pictureName = value;
     }
 
 }

@@ -49,8 +49,7 @@ public class RestServer {
     public Response getListOfAlbums() {
         List<SharedAlbum> listOfAlbums = this.dataManager.loadListOfAlbums();
         SharedAlbum[] array = listOfAlbums.toArray(new SharedAlbum[listOfAlbums.size()]);
-        throw new RuntimeException();
-        //return Response.ok(array).build();
+        return Response.ok(array).build();
     }
 
     @GET

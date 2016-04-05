@@ -15,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -46,14 +48,14 @@ public class RestServerWrapper implements Server {
 
     @Override
     public List<Album> getListOfAlbums() {
-        List<Album> list = this.target.path("/getListOfAlbums").request().accept(MediaType.APPLICATION_JSON).get(List.class);
-        return list;
+        SharedAlbum[] list = this.target.path("/getListOfAlbums").request().accept(MediaType.APPLICATION_JSON).get(SharedAlbum[].class);
+        return new LinkedList<>(Arrays.asList(list));
     }
 
     @Override
     public List<Picture> getListOfPictures(Album album) {
-        List<Picture> list = this.target.path("/getListOfPictures/" + album.getName()).request().accept(MediaType.APPLICATION_JSON).get(List.class);
-        return list;
+        SharedPicture[] list = this.target.path("/getListOfPictures/" + album.getName()).request().accept(MediaType.APPLICATION_JSON).get(SharedPicture[].class);
+        return new LinkedList<>(Arrays.asList(list));
     }
 
     @Override

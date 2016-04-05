@@ -10,10 +10,9 @@ import java.util.Collection;
  */
 public interface ServerManager {
     Collection<Server> getServers();
-    Server getServer(URL url);
 
     Server getServerToCreateAlbum();
-    Collection<Server> getServerToUploadPicture(CloudAlbum album);
+    Server getServerToUploadPicture(CloudAlbum album);
 
     void addServerHandler(ServerHandler handler);
 }

@@ -8,14 +8,18 @@ import java.io.IOException;
 import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * Created by apontes on 3/21/16.
  */
 public class HeartbeatDiscovery implements ServiceDiscovery {
+
+    private static final Logger LOGGER = Logger.getLogger(HeartbeatDiscovery.class.getName());
 
 
     //224.0.0.0 -- 239.255.255.255
@@ -26,7 +30,7 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
     private static int SWIPE_DELAY_SECONDS = 10;
     private static long ALLOWED_TIME_SINCE_LAST_BEAT = 5000;
 
-    private Map<String, HeartbeatServer> serverMap = new HashMap<>();
+    private final Map<URL, HeartbeatServer> serverMap = new HashMap<>();
     private String serviceToDiscover;
 
 
@@ -36,14 +40,17 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
 
 
     @Override
-    public void discoverService(ServerHandler handler) {
+    public void discoverService(ServiceHandler handler) {
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate((Runnable) () -> {
-            for (String key: serverMap.keySet()) {
-                HeartbeatServer server = serverMap.get(key);
-                if (server.getCurrentState() == HeartbeatServer.State.ONLINE && server.getTimeSinceLastBeat() > ALLOWED_TIME_SINCE_LAST_BEAT) {
-                    server.setCurrentState(HeartbeatServer.State.OFFLINE);
-                    handler.serverLost(server.getEntity());
+            synchronized (this.serverMap){
+                for (HeartbeatServer server: serverMap.values()) {
+                    if (server.getCurrentState() == HeartbeatServer.State.ONLINE && server.getTimeSinceLastBeat() > ALLOWED_TIME_SINCE_LAST_BEAT) {
+                        LOGGER.info(String.format("Server lost %s", server.getURL()));
+
+                        server.setCurrentState(HeartbeatServer.State.OFFLINE);
+                        handler.serviceLost(this.serviceToDiscover, server.getURL());
+                    }
                 }
             }
         }, SWIPE_INITIAL_DELAY_SECONDS, SWIPE_DELAY_SECONDS, TimeUnit.SECONDS);
@@ -67,24 +74,37 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
                         byte[] buff = new byte[65535];
                         DatagramPacket p = new DatagramPacket(buff, buff.length);
                         socket.receive(p);
-                        handleServiceHeartbeat(new String(p.getData(), 0, p.getLength()));
+                        handleServiceHeartbeat(p);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             }
 
-            private void handleServiceHeartbeat(String url) throws MalformedURLException {
+            private void handleServiceHeartbeat(DatagramPacket p) throws MalformedURLException {
+                String data = new String(p.getData(), 0, p.getLength());
+                if(!data.startsWith(serviceToDiscover))
+                    return;
+
+                URL url = new URL("http",
+                        p.getAddress().toString(),
+                        p.getPort(),
+                        data.split("@")[0]);
+
                 HeartbeatServer server = serverMap.get(url);
                 if(server != null){
+                    LOGGER.info(String.format("Server rediscovered %s", url.toString()));
+
                     server.setNewTimeOfLastBeat();
                     server.setCurrentState(HeartbeatServer.State.ONLINE);
                 }
                 else{
-                    URL wsUrl = new URL(url);
-                    Server entity = HashServerManager.getServerManager().getServer(wsUrl);
-                    serverMap.put(url,new HeartbeatServer(wsUrl, entity));
-                    handler.serverAdded(entity);
+                    synchronized (serverMap){
+                        LOGGER.info(String.format("Server discovered %s", url.toString()));
+
+                        serverMap.put(url, new HeartbeatServer(url));
+                        handler.serviceDiscovered(serviceToDiscover, server.getURL());
+                    }
                 }
             }
         }.start();
@@ -93,13 +113,11 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
     private static class HeartbeatServer {
         private enum State {ONLINE, OFFLINE}
         private State currentState;
-        private Server entity;
         private long timeOfLastBeat;
         private URL url;
 
-        public HeartbeatServer(URL url, Server entity) {
+        public HeartbeatServer(URL url) {
             this.url = url;
-            this.entity = entity;
             setNewTimeOfLastBeat();
 
         }
@@ -112,9 +130,6 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
             currentState = newState;
         }
 
-        public Server getEntity() {
-            return entity;
-        }
         public long getTimeSinceLastBeat() {
             return System.currentTimeMillis() - timeOfLastBeat;
         }

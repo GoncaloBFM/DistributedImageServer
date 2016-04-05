@@ -33,7 +33,7 @@ public class RestServerRun {
         ResourceConfig config = new ResourceConfig();
         RestServer server = null;
         try {
-            server = new RestServer(root);
+            server = new RestServer("PictureServ", root);
         } catch (NotDirectoryException e) {
             e.printStackTrace();
         }

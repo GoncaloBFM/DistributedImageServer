@@ -1,5 +1,6 @@
 package sd.tp1.server.rest;
 
+import sd.tp1.Picture;
 import sd.tp1.SharedAlbum;
 import sd.tp1.SharedPicture;
 import sd.tp1.server.DataManager;
@@ -15,17 +16,17 @@ import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Path("/PictureServer")
+@Path("/{serverName}")
 public class RestServer {
 
     private String root;
     private DataManager dataManager;
 
-    public RestServer() throws NotDirectoryException {
+    public RestServer(@PathParam("album") String serverName) throws NotDirectoryException {
         this.dataManager = new FileDataManager();
     }
 
-    public RestServer(File root) throws NotDirectoryException {
+    public RestServer(@PathParam("album") String serverName, File root) throws NotDirectoryException {
         this.dataManager = new FileDataManager(root);
         this.root = root.toString();
     }
@@ -34,9 +35,10 @@ public class RestServer {
     @Path("/createAlbum/{albumName}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createAlbum(@PathParam("albumName") String albumName) {
-        try {
-            return Response.ok(this.dataManager.createAlbum(albumName)).build();
-        } catch (IOException e) {
+        SharedAlbum album = this.dataManager.createAlbum(albumName);
+        if (album != null) {
+            return Response.ok(album).build();
+        } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
@@ -54,41 +56,38 @@ public class RestServer {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getListOfPictures(@PathParam("album") String album) {
         List<SharedPicture> listOfPictures = this.dataManager.loadListOfPictures(new SharedAlbum(album));
-        return Response.ok(listOfPictures).build();
-    }
-
-    @DELETE
-    @Path("/deleteAlbum/{album}")
-    public Response deleteAlbum(@PathParam("album") String album) {
-        try {
-            this.dataManager.deleteAlbum(new SharedAlbum(album));
-            return Response.ok().build();
-        } catch (IOException e) {
+        if (listOfPictures != null) {
+            return Response.ok(listOfPictures).build();
+        } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
     @DELETE
+    @Path("/deleteAlbum/{album}")
+    public Response deleteAlbum(@PathParam("album") String album) {
+        this.dataManager.deleteAlbum(new SharedAlbum(album));
+        return Response.ok().build();
+    }
+
+    @DELETE
     @Path("/deletePicture/{album}/{picture}")
     public Response deletePicture(@PathParam("album") String album, @PathParam("picture") String picture) {
-        try {
-            if (!this.dataManager.deletePicture(new SharedAlbum(album), new SharedPicture(picture))){
-                return Response.status(Response.Status.BAD_REQUEST).build();
-            } else {
-                return Response.ok().build();
-            }
-        } catch (IOException e) {
+        if (!this.dataManager.deletePicture(new SharedAlbum(album), new SharedPicture(picture))) {
             return Response.status(Response.Status.BAD_REQUEST).build();
+        } else {
+            return Response.ok().build();
         }
     }
 
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Path("/getPictureData/{album}/{picture}")
-    public Response getPictureData(@PathParam("album") String album, @PathParam("picture")String picture) {
-        try {
-            return Response.ok(dataManager.loadPictureData(new SharedAlbum(album), new SharedPicture(picture))).build();
-        } catch (IOException e) {
+    public Response getPictureData(@PathParam("album") String album, @PathParam("picture") String picture) {
+        byte[] bytes = dataManager.loadPictureData(new SharedAlbum(album), new SharedPicture(picture));
+        if (bytes != null) {
+            return Response.ok(bytes).build();
+        } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
@@ -97,9 +96,10 @@ public class RestServer {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/uploadPicture/{album}/{picture}")
     public Response uploadPicture(@PathParam("album") String album,@PathParam("picture") String picture, byte[] data) {
-        try {
-            return Response.ok(dataManager.uploadPicture(new SharedAlbum(album), picture, data)).build();
-        } catch (IOException e) {
+        SharedPicture newPicture = dataManager.uploadPicture(new SharedAlbum(album), picture, data);
+        if(newPicture != null) {
+            return Response.ok().build();
+        } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }

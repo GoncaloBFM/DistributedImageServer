@@ -25,7 +25,10 @@ public class CacheCloudClient extends CloudClient{
         if(data != null)
             return data;
 
-        return super.getPictureData(album, picture);
+        data = super.getPictureData(album, picture);
+        this.pictureCache.put(album, picture, data);
+
+        return data;
     }
 
     /**

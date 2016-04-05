@@ -4,7 +4,7 @@ package sd.tp1.client.cloud.cache;
  * Created by apontes on 4/5/16.
  */
 public class CachedObject<T> implements Cached<T> {
-    private static final long DEFAULT_TTL = 10000;
+    private static final long DEFAULT_TTL = 10000L;
 
     private long cachedAt;
     private long expiration;
@@ -51,7 +51,7 @@ public class CachedObject<T> implements Cached<T> {
 
     @Override
     public boolean isDirty() {
-        return this.dirty || this.ttl() > 0;
+        return this.dirty || this.ttl() < 0;
     }
 
     @Override

@@ -43,7 +43,7 @@ public class CachedServer implements Server{
 
     @Override
     public List<Picture> getListOfPictures(Album album) {
-        Cached<List<Picture>> cachedPictureList = this.picturesMap.get(album);
+        Cached<List<Picture>> cachedPictureList = this.picturesMap.get(album.getName());
         if(cachedPictureList == null || cachedPictureList.isDirty()){
             List<Picture> fetchedPictureList = this.server.getListOfPictures(album);
 

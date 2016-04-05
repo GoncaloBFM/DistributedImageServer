@@ -31,7 +31,13 @@ public class RestServerRun {
 
         URI baseUri = UriBuilder.fromUri("http://0.0.0.0/").port(port).build();
         ResourceConfig config = new ResourceConfig();
-        config.register(RestServer.class);
+        RestServer server = null;
+        try {
+            server = new RestServer(root);
+        } catch (NotDirectoryException e) {
+            e.printStackTrace();
+        }
+        config.register(server);
         JdkHttpServerFactory.createHttpServer(baseUri, config);
     }
 

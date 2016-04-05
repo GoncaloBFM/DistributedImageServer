@@ -19,8 +19,8 @@ public class RestServerRun {
     private static final String SERVICE_TO_ANNOUNCE = "42845_43178_REST";
     private static final int ANNOUNCE_ON_PORT = 6968;
 
-    private static final int MIN_PORT = 8080; //1024;
-    private static final int MAX_PORT = 8080; //65535;
+    private static final int MIN_PORT = 1024; //1024;
+    private static final int MAX_PORT = 65535; //65535;
 
     private static final int DEFAULT_PORT = generateRandomPort();
     private static final String DEFAULT_ROOT = ".";

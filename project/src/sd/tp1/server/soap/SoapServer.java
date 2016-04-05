@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.NotDirectoryException;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -37,39 +38,44 @@ public class SoapServer {
 
     @WebMethod
     public List<SharedAlbum> getListOfAlbums() {
-        logger.entering(getClass().getName(), "getListOfAlbums");
+        logger.info("getListOfAlbums");
         return dataManager.loadListOfAlbums();
     }
 
     @WebMethod
     public List<SharedPicture> getListOfPictures(SharedAlbum album) {
-        logger.entering(getClass().getName(), "getListOfPictures");
+        logger.info("getListOfPictures" + "(album=" + album.getName()+")");
         return dataManager.loadListOfPictures(album);
 
     }
 
     @WebMethod
     public byte[] getPictureData(SharedAlbum album, SharedPicture picture){
+        logger.info("getPictureData"+"(album=" + album.getName()+", picture=" + picture.getName()+")");
         return dataManager.loadPictureData(album, picture);
     }
 
     @WebMethod
     public SharedAlbum createAlbum(String name){
+        logger.info("createAlbum" + "(album=" + name + ")");
         return dataManager.createAlbum(name);
     }
 
     @WebMethod
     public SharedPicture uploadPicture(SharedAlbum album, String name, byte[] data){
+        logger.info("uploadPicture" + "(album=" + album.getName()+", picture=" + name+")");
         return dataManager.uploadPicture(album, name, data);
     }
 
     @WebMethod
     public void deleteAlbum(SharedAlbum album){
+        logger.info("deleteAlbum" + "(album=" + album.getName()+")");
         dataManager.deleteAlbum(album);
     }
 
     @WebMethod
     public boolean deletePicture(SharedAlbum album, SharedPicture picture) {
+        logger.info("deletePicture" + "(album=" + album.getName()+", picture=" + picture.getName()+")");
         return dataManager.deletePicture(album, picture);
     }
 }

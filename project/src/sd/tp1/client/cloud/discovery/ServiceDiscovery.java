@@ -11,5 +11,5 @@ public interface ServiceDiscovery {
      * Search for service providers for given service
      * @param handler service handler
      */
-    void discoverService(ServerHandler handler);
+    void discoverService(ServiceHandler handler);
 }

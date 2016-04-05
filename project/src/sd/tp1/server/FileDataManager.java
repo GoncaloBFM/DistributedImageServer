@@ -87,7 +87,7 @@ public class FileDataManager implements DataManager {
     }
 
     @Override
-    public void deleteAlbum(SharedAlbum album) throws IOException {
+    public void deleteAlbum(SharedAlbum album) {
         File folder = openAlbum(album);
         folder.renameTo(new File(folder.getAbsolutePath() + ".delete"));
     }

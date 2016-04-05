@@ -10,5 +10,5 @@ package sd.tp1;
  * where to get it from.
  */
 public interface Picture {
-    String getName();
+    String getPictureName();
 }

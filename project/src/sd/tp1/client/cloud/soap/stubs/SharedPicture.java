@@ -41,7 +41,7 @@ public class SharedPicture {
      *     {@link String }
      *     
      */
-    public String getName() {
+    public String getPictureName() {
         return name;
     }
 

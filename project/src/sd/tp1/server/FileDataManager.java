@@ -117,7 +117,7 @@ public class FileDataManager implements DataManager {
     }
 
     private File openPicture(SharedAlbum album, SharedPicture picture){
-        return openPicture(album.getName(), picture.getName());
+        return openPicture(album.getName(), picture.getPictureName());
     }
 }
 

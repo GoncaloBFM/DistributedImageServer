@@ -4,15 +4,12 @@ import sd.tp1.SharedAlbum;
 import sd.tp1.SharedPicture;
 import sd.tp1.server.DataManager;
 import sd.tp1.server.FileDataManager;
-import sd.tp1.server.HeartbeatAnnouncer;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.NotDirectoryException;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -51,7 +48,7 @@ public class SoapServer {
 
     @WebMethod
     public byte[] getPictureData(SharedAlbum album, SharedPicture picture){
-        logger.info("getPictureData"+"(album=" + album.getName()+", picture=" + picture.getName()+")");
+        logger.info("getPictureData"+"(album=" + album.getName()+", picture=" + picture.getPictureName()+")");
         return dataManager.loadPictureData(album, picture);
     }
 
@@ -75,7 +72,7 @@ public class SoapServer {
 
     @WebMethod
     public boolean deletePicture(SharedAlbum album, SharedPicture picture) {
-        logger.info("deletePicture" + "(album=" + album.getName()+", picture=" + picture.getName()+")");
+        logger.info("deletePicture" + "(album=" + album.getName()+", picture=" + picture.getPictureName()+")");
         return dataManager.deletePicture(album, picture);
     }
 }

@@ -1,0 +1,42 @@
+package sd.tp1.client.cloud.data;
+
+import sd.tp1.client.cloud.Server;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+/**
+ * Created by apontes on 4/5/16.
+ */
+public abstract class AbstractCloudObject implements CloudObject{
+
+    private Collection<Server> serverCollection = new ConcurrentLinkedQueue<>();
+
+    @Override
+    public void addServer(Server server) {
+        this.serverCollection.add(server);
+    }
+
+    @Override
+    public void remServer(Server server) {
+        this.serverCollection.remove(server);
+    }
+
+    @Override
+    public Collection<Server> getServers() {
+        Iterator<Server> iterator = this.serverCollection.iterator();
+        Collection<Server> serverCollection = new LinkedList<>();
+        while(iterator.hasNext())
+            serverCollection.add(iterator.next());
+
+        return Collections.unmodifiableCollection(serverCollection);
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return this.serverCollection.size() > 0;
+    }
+}

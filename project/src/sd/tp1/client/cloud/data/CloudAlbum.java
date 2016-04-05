@@ -10,9 +10,8 @@ import java.util.List;
 /**
  * Created by apontes on 3/27/16.
  */
-public class CloudAlbum implements Album {
+public class CloudAlbum extends AbstractCloudObject implements Album {
     private String name;
-    private List<Server> servers = new LinkedList<>();
 
     public CloudAlbum(String name){
         this.name = name;
@@ -22,14 +21,4 @@ public class CloudAlbum implements Album {
     public String getName() {
         return name;
     }
-
-
-    public List<Server> getServers(){
-        return Collections.unmodifiableList(this.servers);
-    }
-
-    public void addServer(Server server){
-        this.servers.add(server);
-    }
-    public void remServer(Server server) { this.servers.remove(server); }
 }

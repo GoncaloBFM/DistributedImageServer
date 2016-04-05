@@ -12,8 +12,7 @@ public class SharedPicture implements Picture {
 		this.name = name;
 	}
 
-	@Override
-	public String getName() {
+	public String getPictureName() {
 		return name;
 	}
 }

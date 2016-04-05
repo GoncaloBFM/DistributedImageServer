@@ -148,8 +148,7 @@ public class LocalFilesystemGalleryContentProvider implements GuiGalleryContentP
 			this.file = file;
 		}
 
-		@Override
-		public String getName() {
+		public String getPictureName() {
 			return file.getName();
 		}
 

@@ -16,13 +16,13 @@ import java.util.*;
  *
  * Project 1 implementation should complete this class.
  */
-public class SharedGalleryContentProvider implements GuiGalleryContentProvider {
+public class CloudClient implements GuiGalleryContentProvider {
 	Gui gui;
 
 	//TODO caching algorithm
 
 
-	SharedGalleryContentProvider() {
+	CloudClient() {
 		// TODO: code to do when shared gallery starts
 		HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
 			@Override
@@ -94,11 +94,11 @@ public class SharedGalleryContentProvider implements GuiGalleryContentProvider {
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
 		for(Server s : cloudAlbum.getServers()){
 			for(Picture p : s.getListOfPictures(album)){
-				CloudPicture cloudPicture = pictureMap.get(p.getName());
+				CloudPicture cloudPicture = pictureMap.get(p.getPictureName());
 
 				if(cloudPicture == null){
-					cloudPicture = new CloudPicture(p.getName(), cloudAlbum);
-					pictureMap.put(p.getName(), cloudPicture);
+					cloudPicture = new CloudPicture(p.getPictureName(), cloudAlbum);
+					pictureMap.put(p.getPictureName(), cloudPicture);
 					lst.add(cloudPicture);
 				}
 
@@ -168,7 +168,7 @@ public class SharedGalleryContentProvider implements GuiGalleryContentProvider {
 
 		Picture p = server.uploadPicture(album, name, data);
 		if(p != null){
-			CloudPicture cloudPicture = new CloudPicture(p.getName(), cloudAlbum);
+			CloudPicture cloudPicture = new CloudPicture(p.getPictureName(), cloudAlbum);
 			cloudPicture.addServer(server);
 			return cloudPicture;
 		}

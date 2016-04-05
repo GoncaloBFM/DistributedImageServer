@@ -7,12 +7,12 @@ import sd.tp1.client.gui.impl.GalleryWindow;
 /*
  * Launches the local shared gallery application.
  */
-public class SharedGallery extends Application {
+public class CloudClientRun extends Application {
 
 	GalleryWindow window;
 	
-	public SharedGallery() {
-		window = new GalleryWindow( new SharedGalleryContentProvider());
+	public CloudClientRun() {
+		window = new GalleryWindow( new CloudClient());
 	}	
 	
 	

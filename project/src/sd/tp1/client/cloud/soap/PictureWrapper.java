@@ -8,10 +8,10 @@ import sd.tp1.client.cloud.soap.stubs.SharedPicture;
  */
 class PictureWrapper extends SharedPicture implements Picture {
     PictureWrapper(SharedPicture picture){
-        super.name = picture.getName();
+        super.name = picture.getPictureName();
     }
 
     public PictureWrapper(Picture picture) {
-        super.name = picture.getName();
+        super.name = picture.getPictureName();
     }
 }

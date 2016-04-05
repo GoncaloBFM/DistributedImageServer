@@ -319,7 +319,7 @@ public class GalleryWindow implements Gui {
 
 			this.album = album;
 			this.picture = picture;
-			super.setText(picture.getName());
+			super.setText(picture.getPictureName());
 			executor.execute(() -> load());
 		}
 
@@ -363,7 +363,7 @@ public class GalleryWindow implements Gui {
 			Stage newStage = new Stage();
 			newStage.setWidth(primaryStage.getWidth());
 			newStage.setHeight(primaryStage.getHeight());
-			newStage.setTitle(picture.getName());
+			newStage.setTitle(picture.getPictureName());
 			Scene scene = new Scene(borderPane, Color.BLACK);
 			newStage.setScene(scene);
 			newStage.show();

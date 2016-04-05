@@ -9,7 +9,6 @@ import sd.tp1.client.cloud.data.CloudPicture;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 /**
  * Created by apontes on 3/27/16.
@@ -34,7 +33,7 @@ public class HashGalleryContentCache implements GalleryContentCache{
     }
 
     private String hashCode(Album album, Picture picture){
-        return String.format("%s // %s", hashCode(album), picture.getName());
+        return String.format("%s // %s", hashCode(album), picture.getPictureName());
     }
 
     private String hashCode(Server server){
@@ -158,7 +157,7 @@ public class HashGalleryContentCache implements GalleryContentCache{
                 CachedPicture cachedPicture = this.pictureMap.get(hashCode(album, picture));
 
                 if(cachedPicture == null){
-                    cachedPicture = new CachedPicture(picture.getName(), cachedAlbum, null);
+                    cachedPicture = new CachedPicture(picture.getPictureName(), cachedAlbum, null);
                     this.pictureMap.put(hashCode(cachedPicture), cachedPicture);
                 }
 

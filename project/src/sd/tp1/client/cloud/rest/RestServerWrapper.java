@@ -7,14 +7,12 @@ import sd.tp1.SharedAlbum;
 import sd.tp1.SharedPicture;
 import sd.tp1.client.cloud.Server;
 
-import javax.ws.rs.Path;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
@@ -60,7 +58,7 @@ public class RestServerWrapper implements Server {
 
     @Override
     public byte[] getPictureData(Album album, Picture picture) {
-        byte[] bytes  = this.target.path("/getPictureData/" + album.getName() + "/" + picture.getName()).request().accept(MediaType.APPLICATION_OCTET_STREAM).get(byte[].class);
+        byte[] bytes  = this.target.path("/getPictureData/" + album.getName() + "/" + picture.getPictureName()).request().accept(MediaType.APPLICATION_OCTET_STREAM).get(byte[].class);
         return bytes;
     }
 
@@ -83,7 +81,7 @@ public class RestServerWrapper implements Server {
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
-        Response response = this.target.path("/deletePicture/" + album.getName() + "/" + picture.getName()).request().delete();
+        Response response = this.target.path("/deletePicture/" + album.getName() + "/" + picture.getPictureName()).request().delete();
         return response.getStatus() == Response.Status.ACCEPTED.getStatusCode();
     }
 }

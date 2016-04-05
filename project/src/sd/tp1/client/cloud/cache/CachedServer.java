@@ -7,6 +7,7 @@ import sd.tp1.client.cloud.Server;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by apontes on 4/5/16.
@@ -16,7 +17,7 @@ public class CachedServer implements Server{
     Server server;
 
     Cached<List<Album>> listOfAlbums;
-    Map<String, Cached<List<Picture>>> picturesMap;
+    Map<String, Cached<List<Picture>>> picturesMap = new ConcurrentHashMap<>();
 
     public CachedServer(Server server){
         this.server = server;

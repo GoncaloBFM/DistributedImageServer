@@ -43,14 +43,35 @@ public class HashPictureCache implements PictureCache{
 
     @Override
     public void put(Album album, Picture picture, byte[] content) {
-        synchronized (this.pictureRamList){
-            CachedPicture cachedPicture = new CachedPicture(album, picture, content);
-            this.pictureMap.put(hashCode(album, picture), cachedPicture);
-            this.pictureRamList.add(cachedPicture);
+        CachedPicture cachedPicture = this.pictureMap.get(hashCode(album, picture));
+        int diskDiff = 0;
+        int ramDiff = 0;
+
+        synchronized (this.pictureRamList) {
+            if(cachedPicture == null){
+                cachedPicture = new CachedPicture(album, picture, content);
+                this.pictureMap.put(hashCode(album, picture), cachedPicture);
+                this.pictureRamList.add(cachedPicture);
+
+                ramDiff += cachedPicture.length();
+            }
+            else{
+                if(cachedPicture.isOnDisk())
+                    diskDiff -= cachedPicture.length();
+
+                if(cachedPicture.isOnRam())
+                    ramDiff -= cachedPicture.length();
+
+                cachedPicture.recache(content);
+                this.pictureRamList.add(cachedPicture);
+
+                ramDiff += cachedPicture.length();
+            }
         }
 
         this.lock.lock();
-        this.ramLength += content.length;
+        this.ramLength += ramDiff;
+        this.diskLength += diskDiff;
         this.lock.unlock();
     }
 

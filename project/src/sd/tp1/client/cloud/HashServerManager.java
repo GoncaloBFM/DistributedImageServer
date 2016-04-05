@@ -1,5 +1,6 @@
 package sd.tp1.client.cloud;
 
+import sd.tp1.client.cloud.cache.CachedServer;
 import sd.tp1.client.cloud.data.CloudAlbum;
 import sd.tp1.client.cloud.discovery.HeartbeatDiscovery;
 import sd.tp1.client.cloud.discovery.ServiceDiscovery;
@@ -56,8 +57,8 @@ public class HashServerManager implements ServerManager {
 
     private Server create(String service, URL url){
         switch (service){
-            case SOAP_SERVICE: return new SoapServerWrapper(url);
-            case REST_SERVICE: return new RestServerWrapper(url);
+            case SOAP_SERVICE: return new CachedServer(new SoapServerWrapper(url));
+            case REST_SERVICE: return new CachedServer(new RestServerWrapper(url));
         }
 
         return null;
@@ -113,7 +114,7 @@ public class HashServerManager implements ServerManager {
     @Override
     public Server getServerToUploadPicture(CloudAlbum album){
         //TODO improve
-        return album.getServers().get(0);
+        return album.getServers().iterator().next();
     }
 
     @Override

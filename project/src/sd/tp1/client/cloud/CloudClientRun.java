@@ -12,7 +12,7 @@ public class CloudClientRun extends Application {
 	GalleryWindow window;
 	
 	public CloudClientRun() {
-		window = new GalleryWindow( new CloudClient());
+		window = new GalleryWindow( new CacheCloudClient());
 	}	
 	
 	

@@ -67,13 +67,19 @@ public class RestServerWrapper implements Server {
     @Override
     public Album createAlbum(String name) {
         Response response = target.path("/createAlbum/" + name).request().post(Entity.entity(name, MediaType.APPLICATION_JSON));
-        return new SharedAlbum(name);
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            return new SharedAlbum(name);
+        }
+        return null;
     }
 
     @Override
     public Picture uploadPicture(Album album, String name, byte[] data) {
         Response response = this.target.path("/uploadPicture/" + album.getName() + "/" + name).request().post(Entity.entity(data, MediaType.APPLICATION_OCTET_STREAM_TYPE));
-        return new SharedPicture();
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            return new SharedPicture();
+        }
+        return null;
     }
 
     @Override
@@ -84,7 +90,7 @@ public class RestServerWrapper implements Server {
     @Override
     public boolean deletePicture(Album album, Picture picture) {
         Response response = this.target.path("/deletePicture/" + album.getName() + "/" + picture.getPictureName()).request().delete();
-        return response.getStatus() == Response.Status.ACCEPTED.getStatusCode();
+        return response.getStatus() == Response.Status.OK.getStatusCode();
     }
 }
 

@@ -1,6 +1,7 @@
 package sd.tp1.client.cloud.rest;
 
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientResponse;
 import sd.tp1.Album;
 import sd.tp1.Picture;
 import sd.tp1.SharedAlbum;
@@ -54,13 +55,17 @@ public class RestServerWrapper implements Server {
 
     @Override
     public List<Picture> getListOfPictures(Album album) {
-        SharedPicture[] list = this.target.path("/getListOfPictures/" + album.getName()).request().accept(MediaType.APPLICATION_JSON).get(SharedPicture[].class);
-        return new LinkedList<>(Arrays.asList(list));
+        if (this.target.path("/getListOfPictures/" + album.getName()).request().accept(MediaType.APPLICATION_JSON).get().getStatus() == Response.Status.OK.getStatusCode()) {
+            SharedPicture[] list = this.target.path("/getListOfPictures/" + album.getName()).request().accept(MediaType.APPLICATION_JSON).get(SharedPicture[].class);
+            return new LinkedList<>(Arrays.asList(list));
+        } else {
+            return null;
+        }
     }
 
     @Override
     public byte[] getPictureData(Album album, Picture picture) {
-        byte[] bytes  = this.target.path("/getPictureData/" + album.getName() + "/" + picture.getPictureName()).request().accept(MediaType.APPLICATION_OCTET_STREAM).get(byte[].class);
+        byte[] bytes = this.target.path("/getPictureData/" + album.getName() + "/" + picture.getPictureName()).request().accept(MediaType.APPLICATION_OCTET_STREAM).get(byte[].class);
         return bytes;
     }
 

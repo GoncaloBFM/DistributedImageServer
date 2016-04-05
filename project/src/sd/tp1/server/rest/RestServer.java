@@ -49,7 +49,8 @@ public class RestServer {
     public Response getListOfAlbums() {
         List<SharedAlbum> listOfAlbums = this.dataManager.loadListOfAlbums();
         SharedAlbum[] array = listOfAlbums.toArray(new SharedAlbum[listOfAlbums.size()]);
-        return Response.ok(array).build();
+        throw new RuntimeException();
+        //return Response.ok(array).build();
     }
 
     @GET
@@ -86,11 +87,8 @@ public class RestServer {
     @Path("/getPictureData/{album}/{picture}")
     public Response getPictureData(@PathParam("album") String album, @PathParam("picture") String picture) {
         byte[] bytes = dataManager.loadPictureData(new SharedAlbum(album), new SharedPicture(picture));
-        if (bytes != null) {
-            return Response.ok(bytes).build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+        return Response.ok(bytes).build();
+
     }
 
     @POST

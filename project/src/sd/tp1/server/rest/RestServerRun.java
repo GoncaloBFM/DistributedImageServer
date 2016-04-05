@@ -2,6 +2,8 @@ package sd.tp1.server.rest;
 
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import sd.tp1.server.HeartbeatAnnouncer;
+import sd.tp1.server.ServiceAnnouncer;
 import sd.tp1.server.soap.SoapServer;
 
 import javax.ws.rs.core.UriBuilder;
@@ -14,6 +16,8 @@ import java.nio.file.NotDirectoryException;
  * Created by gbfm on 3/29/16.
  */
 public class RestServerRun {
+    private static final String SERVICE_TO_ANNOUNCE = "42845_43178_REST";
+
     private static final int MIN_PORT = 8080; //1024;
     private static final int MAX_PORT = 8080; //65535;
 
@@ -33,12 +37,17 @@ public class RestServerRun {
         ResourceConfig config = new ResourceConfig();
         RestServer server = null;
         try {
-            server = new RestServer("PictureServ", root);
+            server = new RestServer(serverPath, root);
         } catch (NotDirectoryException e) {
             e.printStackTrace();
         }
         config.register(server);
         JdkHttpServerFactory.createHttpServer(baseUri, config);
+
+        ServiceAnnouncer serviceAnnouncer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE, serverPath, port);
+        serviceAnnouncer.announceService();
+
+        System.out.println("Service announcer started! ;)");
     }
 
     static int generateRandomPort(){

@@ -36,9 +36,7 @@ public class SoapServer {
     @WebMethod
     public List<SharedAlbum> getListOfAlbums() {
         logger.info("getListOfAlbums");
-        throw new RuntimeException();
-
-        //return dataManager.loadListOfAlbums();
+        return dataManager.loadListOfAlbums();
     }
 
     @WebMethod

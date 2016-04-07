@@ -5,6 +5,7 @@ import sd.tp1.Album;
 import sd.tp1.Picture;
 import sd.tp1.client.cloud.LoggedAbstractServer;
 import sd.tp1.client.cloud.Server;
+import sd.tp1.client.cloud.aux.SafeInvoker;
 import sd.tp1.client.cloud.soap.stubs.*;
 
 import javax.xml.ws.soap.SOAPFaultException;
@@ -18,10 +19,6 @@ import java.util.stream.Collectors;
  */
 public class SoapServerWrapper extends LoggedAbstractServer implements Server {
 
-    private static final Logger LOGGER = Logger.getLogger(SoapServerWrapper.class.getName());
-    private static final int MAX_TRIES = 3;
-    private static final int WAIT_ON_FAIL = 1000;
-
     private SoapServer server;
     private final URL url;
 
@@ -33,31 +30,11 @@ public class SoapServerWrapper extends LoggedAbstractServer implements Server {
         this.server = soapServerService.getSoapServerPort();
     }
 
-    private <T> T safeInvoke(Producer<T> producer){
-        for(int i = 0; i < MAX_TRIES; i++){
-            try {
-                return producer.call();
-            }
-            catch(SOAPFaultException e){
-                LOGGER.info("Server call failed! Retrying... :" + url);
-
-                try {
-                    Thread.sleep(WAIT_ON_FAIL);
-                } catch (InterruptedException e1) {
-                    //Do nothing
-                }
-            }
-        }
-
-        LOGGER.severe("Server error: " + url);
-        return null;
-    }
-
     @Override
     public List<Album> getListOfAlbums() {
         super.getListOfAlbums();
 
-        List<SharedAlbum> list = safeInvoke(server::getListOfAlbums);
+        List<SharedAlbum> list = SafeInvoker.invoke(this, server::getListOfAlbums);
 
         if(list == null)
             return null;
@@ -72,7 +49,8 @@ public class SoapServerWrapper extends LoggedAbstractServer implements Server {
     public List<Picture> getListOfPictures(Album album) {
         super.getListOfPictures(album);
 
-        List<SharedPicture> pictures = safeInvoke(() -> server.getListOfPictures(new AlbumWrapper(album)));
+        List<SharedPicture> pictures = SafeInvoker.invoke(this, () ->
+                server.getListOfPictures(new AlbumWrapper(album)));
         if(pictures == null)
             return null;
 
@@ -85,12 +63,14 @@ public class SoapServerWrapper extends LoggedAbstractServer implements Server {
     @Override
     public byte[] getPictureData(Album album, Picture picture) {
         super.getPictureData(album, picture);
-        return safeInvoke(() -> server.getPictureData(new AlbumWrapper(album), new PictureWrapper(picture)));
+        return SafeInvoker.invoke(this, () ->
+                server.getPictureData(new AlbumWrapper(album), new PictureWrapper(picture)));
     }
 
     @Override
     public Album createAlbum(String name) {
-        SharedAlbum album = safeInvoke(() -> server.createAlbum(name));
+        SharedAlbum album = SafeInvoker.invoke(this, () ->
+                server.createAlbum(name));
         if(album == null)
             return null;
 
@@ -100,7 +80,8 @@ public class SoapServerWrapper extends LoggedAbstractServer implements Server {
     @Override
     public Picture uploadPicture(Album album, String name, byte[] data) {
         super.uploadPicture(album, name, data);
-        SharedPicture picture = safeInvoke(() -> server.uploadPicture(
+        SharedPicture picture = SafeInvoker.invoke(this, () ->
+                server.uploadPicture(
                 new AlbumWrapper(album),
                 name,
                 data
@@ -115,13 +96,17 @@ public class SoapServerWrapper extends LoggedAbstractServer implements Server {
     @Override
     public void deleteAlbum(Album album) {
         super.deleteAlbum(album);
-        safeInvoke(() -> {server.deleteAlbum(new AlbumWrapper(album)); return null; });
+        SafeInvoker.invoke(this, () -> {
+            server.deleteAlbum(new AlbumWrapper(album));
+            return null;
+        });
     }
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
         super.deletePicture(album, picture);
-        Boolean bool = safeInvoke(() -> server.deletePicture(new AlbumWrapper(album), new PictureWrapper(picture)));
+        Boolean bool = SafeInvoker.invoke(this, () ->
+                server.deletePicture(new AlbumWrapper(album), new PictureWrapper(picture)));
         if(bool == null)
             return false;
 

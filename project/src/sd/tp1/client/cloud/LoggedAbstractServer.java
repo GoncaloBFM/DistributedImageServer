@@ -1,9 +1,11 @@
 package sd.tp1.client.cloud;
 
+import org.glassfish.jersey.internal.util.Producer;
 import sd.tp1.Album;
 import sd.tp1.Picture;
 import sd.tp1.client.cloud.Server;
 
+import javax.xml.ws.soap.SOAPFaultException;
 import java.net.URL;
 import java.util.List;
 import java.util.logging.Logger;
@@ -15,6 +17,7 @@ public abstract class LoggedAbstractServer implements Server {
 
     private final Logger logger;
     private final String caller;
+
 
     public LoggedAbstractServer(String caller) {
         this.logger =  Logger.getLogger(caller);

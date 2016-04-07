@@ -38,7 +38,7 @@ public abstract class LoggedAbstractServer implements Server {
 
     @Override
     public byte[] getPictureData(Album album, Picture picture) {
-        logger.info(caller+".getPictureData(album=" + album+", picture=" + picture.getPictureName()+")");
+        logger.info(caller+".getPictureData(album=" + album.getName() +", picture=" + picture.getPictureName()+")");
         return null;
     }
 
@@ -50,19 +50,19 @@ public abstract class LoggedAbstractServer implements Server {
 
     @Override
     public Picture uploadPicture(Album album, String name, byte[] data) {
-        logger.info(caller+".uploadPicture(album=" + album+", picture=" + name+")");
+        logger.info(caller+".uploadPicture(album=" + album.getName() +", picture=" + name+")");
         return null;
     }
 
     @Override
     public void deleteAlbum(Album album) {
-        logger.info(caller+".deleteAlbum(album=" + album+")");
+        logger.info(caller+".deleteAlbum(album=" + album.getName()+")");
 
     }
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
-        logger.info(caller+".uploadPicture(album=" + album+", picture=" + picture.getPictureName()+")");
+        logger.info(caller+".uploadPicture(album=" + album.getName()+", picture=" + picture.getPictureName()+")");
         return false;
     }
 }

@@ -4,10 +4,8 @@ import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import sd.tp1.server.HeartbeatAnnouncer;
 import sd.tp1.server.ServiceAnnouncer;
-import sd.tp1.server.soap.SoapServer;
 
 import javax.ws.rs.core.UriBuilder;
-import javax.xml.ws.Endpoint;
 import java.io.File;
 import java.net.URI;
 import java.nio.file.NotDirectoryException;
@@ -46,7 +44,7 @@ public class RestServerRun {
         JdkHttpServerFactory.createHttpServer(baseUri, config);
 
         ServiceAnnouncer serviceAnnouncer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE,ANNOUNCE_ON_PORT, serverPath, port);
-        serviceAnnouncer.announceService();
+        serviceAnnouncer.startAnnounceService();
 
         System.out.println("Service announcer started! ;)");
     }

@@ -108,6 +108,7 @@ public class GalleryWindow implements Gui {
 		albums = new Scene(root);
 		albums.getStylesheets().add(getClass().getResource("gallery.css").toExternalForm());
 
+
 		contentProvider.getListOfAlbums().forEach(album -> {
 			final AlbumView av = new AlbumView(album);
 			tile.getChildren().add(av);

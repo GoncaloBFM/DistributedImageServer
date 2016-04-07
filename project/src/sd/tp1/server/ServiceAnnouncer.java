@@ -7,5 +7,6 @@ import java.net.URL;
  */
 public interface ServiceAnnouncer {
 
-    void announceService();
+    void startAnnounceService();
+    void stopAnnounceService();
 }

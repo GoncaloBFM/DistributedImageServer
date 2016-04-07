@@ -63,7 +63,11 @@ public class CloudClient implements GuiGalleryContentProvider {
 		Collection<Server> servers = HashServerManager.getServerManager().getServers();
 		for(Server s : servers){
 			//Verify if should be a Set
-			for(Album album : s.getListOfAlbums()){
+			List<Album> albumList = s.getListOfAlbums();
+			if(albumList == null)
+				continue;
+
+			for(Album album : albumList){
 				CloudAlbum cloudAlbum = albums.get(album.getName());
 
 				if(cloudAlbum == null){

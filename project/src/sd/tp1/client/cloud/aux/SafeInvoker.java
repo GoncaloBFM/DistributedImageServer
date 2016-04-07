@@ -19,7 +19,7 @@ public class SafeInvoker {
             try {
                 return producer.call();
             }
-            catch(SOAPFaultException e){
+            catch(Exception e){
                 LOGGER.warning("Server call failed! Retrying... :" + server.getUrl());
 
                 try {

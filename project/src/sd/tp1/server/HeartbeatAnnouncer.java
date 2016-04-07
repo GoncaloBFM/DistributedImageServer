@@ -2,9 +2,7 @@ package sd.tp1.server;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Created by apontes on 3/21/16.
@@ -23,6 +21,8 @@ public class HeartbeatAnnouncer implements ServiceAnnouncer {
     private int serverPort;
     private String serverPath;
 
+    private ScheduledFuture scheduled;
+
     public HeartbeatAnnouncer(String serviceToAnnounce, String serverPath, int serverPort){
         this(serviceToAnnounce, DEFAULT_PORT, serverPath, serverPort);
     }
@@ -35,7 +35,9 @@ public class HeartbeatAnnouncer implements ServiceAnnouncer {
     }
 
     @Override
-    public void announceService() {
+    public void startAnnounceService() {
+        if(this.scheduled != null)
+            return;
 
         final MulticastSocket multicastSocket;
         final DatagramPacket packet;
@@ -51,12 +53,18 @@ public class HeartbeatAnnouncer implements ServiceAnnouncer {
         }
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate((Runnable) () -> {
+        this.scheduled = exec.scheduleAtFixedRate((Runnable) () -> {
             try {
                 multicastSocket.send(packet);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }, HEART_BEAT_INITIAL_DELAY_SECONDS, HEART_BEAT_DELAY_SECONDS, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void stopAnnounceService() {
+        if(this.scheduled != null && this.scheduled.cancel(false))
+            this.scheduled = null;
     }
 }

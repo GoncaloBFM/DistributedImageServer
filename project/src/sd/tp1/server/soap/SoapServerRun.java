@@ -22,6 +22,9 @@ public class SoapServerRun {
     private static final String DEFAULT_ROOT = ".";
     private static final String DEFAULT_SERVICE_PATH = "PictureServer";
 
+    private static ServiceAnnouncer announcer;
+    private static Endpoint endpoint;
+
     /**
      *
      * @param args 0: Root; 1:ServerPath; 2:Port;
@@ -36,14 +39,14 @@ public class SoapServerRun {
 
         String url = String.format("http://%s:%d/%s", "0.0.0.0", port, serverPath);
         try {
-            Endpoint.publish(String.format("http://%s:%d/%s", "0.0.0.0", port, serverPath), new SoapServer(root));
+            endpoint = Endpoint.publish(String.format("http://%s:%d/%s", "0.0.0.0", port, serverPath), new SoapServer(root));
         } catch (NotDirectoryException e) {
             e.printStackTrace();
         }
         System.out.println(String.format("Server started at port %s, root:%s, path:%s", port, root.getAbsoluteFile(), serverPath));
 
-        ServiceAnnouncer serviceAnnouncer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE, ANNOUNCE_ON_PORT, serverPath, port);
-        serviceAnnouncer.announceService();
+        announcer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE, ANNOUNCE_ON_PORT, serverPath, port);
+        announcer.startAnnounceService();
 
         System.out.println("Service announcer started! ;)");
 

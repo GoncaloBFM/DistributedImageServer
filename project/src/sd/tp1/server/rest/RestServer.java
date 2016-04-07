@@ -15,9 +15,13 @@ import java.io.IOException;
 import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Path("/{serverName}")
 public class RestServer {
+
+    private static final Logger logger = Logger.getLogger(RestServer.class.getSimpleName());
+
 
     private String root;
     private DataManager dataManager;
@@ -35,6 +39,7 @@ public class RestServer {
     @Path("/createAlbum/{albumName}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createAlbum(@PathParam("albumName") String albumName) {
+        logger.info("createAlbum" + "(album=" + albumName + ")");
         SharedAlbum album = this.dataManager.createAlbum(albumName);
         if (album != null) {
             return Response.ok().build();
@@ -47,6 +52,7 @@ public class RestServer {
     @Path("/getListOfAlbums")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getListOfAlbums() {
+        logger.info("getListOfAlbums");
         List<SharedAlbum> listOfAlbums = this.dataManager.loadListOfAlbums();
         SharedAlbum[] array = listOfAlbums.toArray(new SharedAlbum[listOfAlbums.size()]);
         return Response.ok(array).build();
@@ -56,6 +62,7 @@ public class RestServer {
     @Path("/getListOfPictures/{album}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getListOfPictures(@PathParam("album") String album) {
+        logger.info("getListOfPictures" + "(album=" + album +")");
         List<SharedPicture> listOfPictures = this.dataManager.loadListOfPictures(new SharedAlbum(album));
         if (listOfPictures != null) {
             SharedPicture[] array = listOfPictures.toArray(new SharedPicture[listOfPictures.size()]);
@@ -68,6 +75,7 @@ public class RestServer {
     @DELETE
     @Path("/deleteAlbum/{album}")
     public Response deleteAlbum(@PathParam("album") String album) {
+        logger.info("deleteAlbum" + "(album=" + album+")");
         this.dataManager.deleteAlbum(new SharedAlbum(album));
         return Response.ok().build();
     }
@@ -75,6 +83,7 @@ public class RestServer {
     @DELETE
     @Path("/deletePicture/{album}/{picture}")
     public Response deletePicture(@PathParam("album") String album, @PathParam("picture") String picture) {
+        logger.info("deletePicture" + "(album=" + album+", picture=" + picture+")");
         if (this.dataManager.deletePicture(new SharedAlbum(album), new SharedPicture(picture))) {
             return Response.ok().build();
         }
@@ -85,6 +94,7 @@ public class RestServer {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Path("/getPictureData/{album}/{picture}")
     public Response getPictureData(@PathParam("album") String album, @PathParam("picture") String picture) {
+        logger.info("getPictureData"+"(album=" + album+", picture=" + picture+")");
         byte[] bytes = dataManager.loadPictureData(new SharedAlbum(album), new SharedPicture(picture));
         return Response.ok(bytes).build();
 
@@ -94,6 +104,7 @@ public class RestServer {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/uploadPicture/{album}/{picture}")
     public Response uploadPicture(@PathParam("album") String album,@PathParam("picture") String picture, byte[] data) {
+        logger.info("uploadPicture" + "(album=" + album+", picture=" + picture+")");
         SharedPicture newPicture = dataManager.uploadPicture(new SharedAlbum(album), picture, data);
         if(newPicture != null) {
             return Response.ok().build();

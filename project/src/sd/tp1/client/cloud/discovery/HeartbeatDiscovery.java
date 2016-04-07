@@ -53,7 +53,7 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
             synchronized (this.serverMap){
                 for (HeartbeatServer server: serverMap.values()) {
                     if (server.getCurrentState() == HeartbeatServer.State.ONLINE && server.getTimeSinceLastBeat() > ALLOWED_TIME_SINCE_LAST_BEAT) {
-                        LOGGER.info(String.format("Server lost %s", server.getURL()));
+                        //LOGGER.info(String.format("Server lost %s", server.getURL()));
 
                         server.setCurrentState(HeartbeatServer.State.OFFLINE);
                         handler.serviceLost(this.serviceToDiscover, server.getURL());

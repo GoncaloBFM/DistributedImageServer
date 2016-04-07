@@ -38,7 +38,8 @@ public class RestServerRun {
         try {
             server = new RestServer(serverPath, root);
         } catch (NotDirectoryException e) {
-            e.printStackTrace();
+            System.err.println("Directory not available.\n Terminating.");
+            System.exit(1);
         }
         config.register(server);
         JdkHttpServerFactory.createHttpServer(baseUri, config);

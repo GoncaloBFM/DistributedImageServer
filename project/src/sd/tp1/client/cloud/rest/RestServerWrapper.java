@@ -81,9 +81,9 @@ public class RestServerWrapper implements Server {
 
     @Override
     public Picture uploadPicture(Album album, String name, byte[] data) {
-        Response response = this.target.path("/uploadPicture/" + album.getName() + "/" + name).request().post(Entity.entity(data, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+        Response response = this.target.path("/uploadPicture/" + album.getName() + "/" + name).request().post(Entity.entity(data, MediaType.APPLICATION_JSON));
         if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            return new SharedPicture();
+            return new SharedPicture(name);
         }
         return null;
     }

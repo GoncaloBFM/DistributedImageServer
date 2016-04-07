@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Logger;
 
 /**
  * Created by apontes on 3/25/16.
@@ -33,6 +34,9 @@ public class HashServerManager implements ServerManager {
 
     private ServiceDiscovery soapServiceDiscovery;
     private ServiceDiscovery restServiceDiscovery;
+
+    private static final Logger logger = Logger.getLogger(HashServerManager.class.getSimpleName());
+
 
     private Collection<ServerHandler> serverHandlersCollection = new ConcurrentLinkedQueue<>();
 
@@ -66,6 +70,7 @@ public class HashServerManager implements ServerManager {
     }
 
     private void addServer(String service, URL url){
+        logger.info("Server added: " + url.toString());
         Server server = this.serverMap.get(url);
 
         if(server == null){
@@ -83,6 +88,7 @@ public class HashServerManager implements ServerManager {
     }
 
     private void remServer(String service, URL url){
+        logger.info("Server removed: " + url.toString());
         Server server = this.serverMap.remove(url);
         if(server == null)
             return;

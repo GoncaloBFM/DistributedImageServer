@@ -62,7 +62,7 @@ public abstract class LoggedAbstractServer implements Server {
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
-        logger.info(caller+".uploadPicture(album=" + album.getName()+", picture=" + picture.getPictureName()+")");
+        logger.info(caller+".deletePicture(album=" + album.getName()+", picture=" + picture.getPictureName()+")");
         return false;
     }
 }

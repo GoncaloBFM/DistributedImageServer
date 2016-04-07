@@ -20,12 +20,12 @@ public class SafeInvoker {
                 return producer.call();
             }
             catch(Exception e){
-                LOGGER.warning("Server call failed! Retrying... :" + server.getUrl());
+                LOGGER.warning("Server call failed! Retrying... :" + server.getUrl() + "\n\n" + e.getMessage() + "\n\n");
 
                 try {
                     Thread.sleep(WAIT_ON_FAIL);
                 } catch (InterruptedException e1) {
-                    //Do nothing
+                   //NOTHING IS HERE
                 }
             }
         }

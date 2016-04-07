@@ -42,6 +42,9 @@ public class CachedObject<T> implements Cached<T> {
         this.cachedAt = System.currentTimeMillis();
         this.expiration = this.cachedAt + ttl;
         this.ttl = ttl;
+
+        if(this.content == null)
+            this.makeDirty();
     }
 
     @Override

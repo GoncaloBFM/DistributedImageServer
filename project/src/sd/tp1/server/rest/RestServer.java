@@ -37,7 +37,7 @@ public class RestServer {
     public Response createAlbum(@PathParam("albumName") String albumName) {
         SharedAlbum album = this.dataManager.createAlbum(albumName);
         if (album != null) {
-            return Response.ok(album).build();
+            return Response.ok().build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }

@@ -55,9 +55,10 @@ public class RestServerWrapper implements Server {
 
     @Override
     public List<Picture> getListOfPictures(Album album) {
-        if (this.target.path("/getListOfPictures/" + album.getName()).request().accept(MediaType.APPLICATION_JSON).get().getStatus() == Response.Status.OK.getStatusCode()) {
-            SharedPicture[] list = this.target.path("/getListOfPictures/" + album.getName()).request().accept(MediaType.APPLICATION_JSON).get(SharedPicture[].class);
-            return new LinkedList<>(Arrays.asList(list));
+        Response response = this.target.path("/getListOfPictures/" + album.getName()).request().accept(MediaType.APPLICATION_JSON).buildGet().invoke();
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            LinkedList<Picture> pictureList = new LinkedList<>(Arrays.asList(response.readEntity(SharedPicture[].class)));
+            return pictureList;
         } else {
             return null;
         }

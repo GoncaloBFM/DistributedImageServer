@@ -131,6 +131,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 				if(cloudPicture == null){
 					cloudPicture = new CloudPicture(p.getPictureName(), cloudAlbum);
 					pictureMap.put(p.getPictureName(), cloudPicture);
+					cloudAlbum.getPictures().add(cloudPicture);
 					lst.add(cloudPicture);
 				}
 
@@ -190,7 +191,6 @@ public class CloudClient implements GuiGalleryContentProvider {
 	 */
 	@Override
 	public void deleteAlbum(Album album) {
-		// TODO: contact servers to delete album
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
 
 		for(Server s : cloudAlbum.getServers()){
@@ -204,8 +204,10 @@ public class CloudClient implements GuiGalleryContentProvider {
 	 */
 	@Override
 	public Picture uploadPicture(Album album, String name, byte[] data) {
-		// TODO: contact servers to add picture name with contents data
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
+		if(cloudAlbum.containsPicture(name))
+			return null;
+
 		Collection<Server> availableServers =  HashServerManager.getServerManager().getServerToUploadPicture(cloudAlbum);
 
 		for (Server server : availableServers) {
@@ -213,12 +215,10 @@ public class CloudClient implements GuiGalleryContentProvider {
 			if(p != null){
 				CloudPicture cloudPicture = new CloudPicture(p.getPictureName(), cloudAlbum);
 				cloudPicture.addServer(server);
+				cloudAlbum.getPictures().add(cloudPicture);
 				return cloudPicture;
 			}
 		}
-
-
-
 
 		return null;
 	}
@@ -229,8 +229,10 @@ public class CloudClient implements GuiGalleryContentProvider {
 	 */
 	@Override
 	public boolean deletePicture(Album album, Picture picture) {
-		// TODO: contact servers to delete picture from album
 		boolean del = true;
+
+		CloudAlbum cloudAlbum = (CloudAlbum) album;
+		cloudAlbum.getPictures().remove(picture.getPictureName());
 
 		CloudPicture cloudPicture = (CloudPicture) picture;
 		for(Server s : cloudPicture.getServers())

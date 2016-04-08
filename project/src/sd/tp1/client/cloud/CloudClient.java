@@ -80,6 +80,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 		List<Album> lst = new LinkedList<>();
 		HashMap<String, CloudAlbum> albums = new HashMap<>();
 		Map<Server, List<CloudAlbum>> albumMap = new ConcurrentHashMap<>();
+		albumSet = new HashSet<>();
 
 		Collection<Server> servers = HashServerManager.getServerManager().getServers();
 		servers.size();

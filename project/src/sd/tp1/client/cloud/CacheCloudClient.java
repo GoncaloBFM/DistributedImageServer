@@ -2,6 +2,8 @@ package sd.tp1.client.cloud;
 
 import sd.tp1.Album;
 import sd.tp1.Picture;
+import sd.tp1.client.cloud.cache.CachedServer;
+import sd.tp1.client.cloud.cache.HashCachedServer;
 import sd.tp1.client.cloud.cache.HashPictureCache;
 import sd.tp1.client.cloud.cache.PictureCache;
 
@@ -11,6 +13,29 @@ import sd.tp1.client.cloud.cache.PictureCache;
 public class CacheCloudClient extends CloudClient{
 
     private PictureCache pictureCache = new HashPictureCache();
+
+    CacheCloudClient(){
+        super(false);
+
+        HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
+            @Override
+            public void serverAdded(Server server) {
+                for(Album album : server.getListOfAlbums())
+                    gui.updateAlbum(album);
+            }
+
+            @Override
+            public void serverLost(Server server) {
+                try{
+                    for(Album album: ((CachedServer) server).getCachedListOfAlbums())
+                        gui.updateAlbum(album);
+                }
+                catch (ClassCastException e){
+                    gui.updateAlbums();
+                }
+            }
+        });
+    }
 
     /**
      * Returns the contents of picture in album.

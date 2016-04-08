@@ -1,7 +1,6 @@
 package sd.tp1.client.cloud;
 
-import sd.tp1.Album;
-import sd.tp1.client.cloud.cache.CachedServer;
+import sd.tp1.client.cloud.cache.HashCachedServer;
 import sd.tp1.client.cloud.data.CloudAlbum;
 import sd.tp1.client.cloud.discovery.HeartbeatDiscovery;
 import sd.tp1.client.cloud.discovery.ServiceDiscovery;
@@ -62,8 +61,8 @@ public class HashServerManager implements ServerManager {
 
     private Server create(String service, URL url){
         switch (service){
-            case SOAP_SERVICE: return new CachedServer(new SoapServerWrapper(url));
-            case REST_SERVICE: return new CachedServer(new RestServerWrapper(url));
+            case SOAP_SERVICE: return new HashCachedServer(new SoapServerWrapper(url));
+            case REST_SERVICE: return new HashCachedServer(new RestServerWrapper(url));
         }
 
         return null;

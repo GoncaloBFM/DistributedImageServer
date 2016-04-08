@@ -2,6 +2,7 @@ package sd.tp1.client.cloud;
 
 import sd.tp1.Album;
 import sd.tp1.Picture;
+import sd.tp1.client.cloud.cache.HashCachedServer;
 import sd.tp1.client.cloud.data.CloudAlbum;
 import sd.tp1.client.cloud.data.CloudPicture;
 import sd.tp1.client.gui.Gui;
@@ -17,26 +18,28 @@ import java.util.*;
  * Project 1 implementation should complete this class.
  */
 public class CloudClient implements GuiGalleryContentProvider {
-	Gui gui;
-
-	//TODO caching algorithm
+	protected Gui gui;
 
 
 	CloudClient() {
-		// TODO: code to do when shared gallery starts
-		HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
-			@Override
-			public void serverAdded(Server server) {
-				if(gui != null)
-					gui.updateAlbums();
-			}
+		this(true);
+	}
 
-			@Override
-			public void serverLost(Server server) {
-				if(gui != null)
+	CloudClient(boolean guiHandler){
+		if(guiHandler){
+			HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
+				@Override
+				public void serverAdded(Server server) {
+					for(Album album : server.getListOfAlbums())
+						gui.updateAlbum(album);
+				}
+
+				@Override
+				public void serverLost(Server server) {
 					gui.updateAlbums();
-			}
-		});
+				}
+			});
+		}
 	}
 
 

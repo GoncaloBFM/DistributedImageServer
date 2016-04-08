@@ -68,7 +68,7 @@ public class HashServerManager implements ServerManager {
         return null;
     }
 
-    private void addServer(String service, URL url){
+    private synchronized void addServer(String service, URL url){
         logger.info("Server added: " + url.toString());
         Server server = this.serverMap.get(url);
 
@@ -86,7 +86,7 @@ public class HashServerManager implements ServerManager {
         }
     }
 
-    private void remServer(String service, URL url){
+    private synchronized void remServer(String service, URL url){
         logger.info("Server removed: " + url.toString());
         Server server = this.serverMap.remove(url);
         if(server == null)

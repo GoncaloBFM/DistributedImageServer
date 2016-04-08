@@ -220,6 +220,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 			if(p != null){
 				CloudPicture cloudPicture = new CloudPicture(p.getPictureName(), cloudAlbum);
 				cloudPicture.addServer(server);
+				cloudAlbum.addServer(server);
 				cloudAlbum.getPictures().add(cloudPicture);
 				return cloudPicture;
 			}

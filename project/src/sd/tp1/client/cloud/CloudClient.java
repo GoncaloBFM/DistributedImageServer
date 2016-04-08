@@ -9,6 +9,7 @@ import sd.tp1.client.gui.Gui;
 import sd.tp1.client.gui.GuiGalleryContentProvider;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by apontes on 3/21/16.
@@ -20,6 +21,8 @@ import java.util.*;
 public class CloudClient implements GuiGalleryContentProvider {
 	private static int NUMBER_OF_TRIES = 5;
 	protected Gui gui;
+
+	Map<Server, List<CloudAlbum>> albumMap;
 
 	CloudClient() {
 		this(true);
@@ -39,6 +42,22 @@ public class CloudClient implements GuiGalleryContentProvider {
 				}
 			});
 		}
+
+		HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
+			@Override
+			public void serverAdded(Server server) {
+				//
+			}
+
+			@Override
+			public void serverLost(Server server) {
+				if(albumMap != null){
+					List<CloudAlbum> albums = albumMap.get(server);
+					for(CloudAlbum album : albums)
+						album.remServer(server);
+				}
+			}
+		});
 	}
 
 
@@ -60,6 +79,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 	public List<Album> getListOfAlbums() {
 		List<Album> lst = new LinkedList<>();
 		HashMap<String, CloudAlbum> albums = new HashMap<>();
+		Map<Server, List<CloudAlbum>> albumMap = new ConcurrentHashMap<>();
 
 		Collection<Server> servers = HashServerManager.getServerManager().getServers();
 		servers.size();
@@ -69,6 +89,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 			if(albumList == null)
 				continue;
 
+			List<CloudAlbum> albumServer = new LinkedList<>();
 			for(Album album : albumList){
 				CloudAlbum cloudAlbum = albums.get(album.getName());
 
@@ -78,11 +99,14 @@ public class CloudClient implements GuiGalleryContentProvider {
 					lst.add(cloudAlbum);
 				}
 
+				albumServer.add(cloudAlbum);
 				cloudAlbum.addServer(s);
 			}
 
+			albumMap.put(s, albumServer);
 		}
 
+		this.albumMap = albumMap;
 		return lst;
 	}
 
@@ -92,11 +116,9 @@ public class CloudClient implements GuiGalleryContentProvider {
 	 */
 	@Override
 	public List<Picture> getListOfPictures(Album album) {
-		// TODO: obtain remote information
 		List<Picture> lst = new LinkedList<>();
 		Map<String, CloudPicture> pictureMap = new HashMap<>();
 
-		//TODO improve
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
 		for(Server s : cloudAlbum.getServers()){
 			List<Picture> pictures = s.getListOfPictures(album);
@@ -125,14 +147,9 @@ public class CloudClient implements GuiGalleryContentProvider {
 	 */
 	@Override
 	public byte[] getPictureData(Album album, Picture picture) {
-		// TODO: obtain remote information
 		CloudPicture cloudPicture = (CloudPicture) picture;
 
-		int i = 0;
 		for(Server s : cloudPicture.getServers()){
-			if(i++ > NUMBER_OF_TRIES)
-				return null;
-
 			byte[] data = s.getPictureData(album, picture);
 			if(data != null)
 				return data;

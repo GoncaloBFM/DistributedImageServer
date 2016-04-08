@@ -28,13 +28,7 @@ public class CacheCloudClient extends CloudClient{
             public void serverLost(Server server) {
                 try{
                     for(Album album: ((CachedServer) server).getCachedListOfAlbums())
-                        try{
-                            gui.updateAlbum(album);
-                            ((CloudAlbum) album).remServer(server);
-                        }
-                        catch (ClassCastException e){
-                            //Do nothing
-                        }
+                        gui.updateAlbum(album);
                 }
                 catch (ClassCastException e){
                     gui.updateAlbums();

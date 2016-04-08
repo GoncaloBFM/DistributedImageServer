@@ -26,7 +26,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 	}
 
 	CloudClient(boolean guiHandler){
-		if(guiHandler){
+		if(guiHandler) {
 			HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
 				@Override
 				public void serverAdded(Server server) {
@@ -58,7 +58,6 @@ public class CloudClient implements GuiGalleryContentProvider {
 	 */
 	@Override
 	public List<Album> getListOfAlbums() {
-		// TODO: obtain remote information
 		List<Album> lst = new LinkedList<>();
 		HashMap<String, CloudAlbum> albums = new HashMap<>();
 

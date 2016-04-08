@@ -181,7 +181,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 			if(album != null) {
 				cloudAlbum = new CloudAlbum(album.getName());
 				cloudAlbum.addServer(server);
-				break;
+				albumSet.add(album.getName());
 			}
 		}
 

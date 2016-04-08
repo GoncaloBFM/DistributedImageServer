@@ -6,6 +6,7 @@ import sd.tp1.client.cloud.cache.CachedServer;
 import sd.tp1.client.cloud.cache.HashCachedServer;
 import sd.tp1.client.cloud.cache.HashPictureCache;
 import sd.tp1.client.cloud.cache.PictureCache;
+import sd.tp1.client.cloud.data.CloudAlbum;
 
 /**
  * Created by apontes on 4/5/16.
@@ -27,7 +28,13 @@ public class CacheCloudClient extends CloudClient{
             public void serverLost(Server server) {
                 try{
                     for(Album album: ((CachedServer) server).getCachedListOfAlbums())
-                        gui.updateAlbum(album);
+                        try{
+                            gui.updateAlbum(album);
+                            ((CloudAlbum) album).remServer(server);
+                        }
+                        catch (ClassCastException e){
+                            //Do nothing
+                        }
                 }
                 catch (ClassCastException e){
                     gui.updateAlbums();

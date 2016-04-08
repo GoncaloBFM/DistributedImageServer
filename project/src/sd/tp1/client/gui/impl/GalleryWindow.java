@@ -30,6 +30,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import sd.tp1.Album;
+import sd.tp1.GalleryContentProvider;
 import sd.tp1.Picture;
 import sd.tp1.client.gui.Gui;
 import sd.tp1.client.gui.GuiGalleryContentProvider;
@@ -107,7 +108,6 @@ public class GalleryWindow implements Gui {
 
 		albums = new Scene(root);
 		albums.getStylesheets().add(getClass().getResource("gallery.css").toExternalForm());
-
 
 		contentProvider.getListOfAlbums().forEach(album -> {
 			final AlbumView av = new AlbumView(album);

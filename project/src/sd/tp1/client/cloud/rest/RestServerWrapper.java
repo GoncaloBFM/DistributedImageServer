@@ -58,7 +58,7 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
         SharedAlbum[] list = SafeInvoker.invoke(this, () ->
             this.target.path("/getListOfAlbums").request().accept(MediaType.APPLICATION_JSON).get(SharedAlbum[].class));
 
-        return new LinkedList<>(Arrays.asList(list));
+        return list == null ? null : new LinkedList<>(Arrays.asList(list));
     }
 
     @Override
@@ -67,9 +67,8 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
         Response response = SafeInvoker.invoke(this, () ->
                 this.target.path("/getListOfPictures/" + album.getName()).request().accept(MediaType.APPLICATION_JSON).buildGet().invoke());
 
-        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            LinkedList<Picture> pictureList = new LinkedList<>(Arrays.asList(response.readEntity(SharedPicture[].class)));
-            return pictureList;
+        if (response != null && response.getStatus() == Response.Status.OK.getStatusCode()) {
+            return new LinkedList<>(Arrays.asList(response.readEntity(SharedPicture[].class)));
         } else {
             return null;
         }
@@ -89,7 +88,7 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
         Response response = SafeInvoker.invoke(this, () ->
                 target.path("/createAlbum/" + name).request().post(Entity.entity(name, MediaType.APPLICATION_JSON)));
 
-        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+        if (response != null && response.getStatus() == Response.Status.OK.getStatusCode()) {
             return new SharedAlbum(name);
         }
         return null;
@@ -101,7 +100,7 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
         Response response = SafeInvoker.invoke(this, ()->
                 this.target.path("/uploadPicture/" + album.getName() + "/" + name).request().post(Entity.entity(data, MediaType.APPLICATION_JSON)));
 
-        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+        if (response != null && response.getStatus() == Response.Status.OK.getStatusCode()) {
             return new SharedPicture(name);
         }
         return null;
@@ -125,7 +124,8 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
         Response response = SafeInvoker.invoke(this, () ->
                 this.target.path("/deletePicture/" + album.getName() + "/" + picture.getPictureName()).request().delete());
 
-        return response.getStatus() == Response.Status.OK.getStatusCode();
+        return response != null && response.getStatus() == Response.Status.OK.getStatusCode();
+
     }
 }
 

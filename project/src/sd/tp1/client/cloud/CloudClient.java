@@ -2,7 +2,6 @@ package sd.tp1.client.cloud;
 
 import sd.tp1.Album;
 import sd.tp1.Picture;
-import sd.tp1.client.cloud.cache.HashCachedServer;
 import sd.tp1.client.cloud.data.CloudAlbum;
 import sd.tp1.client.cloud.data.CloudPicture;
 import sd.tp1.client.gui.Gui;
@@ -22,7 +21,8 @@ public class CloudClient implements GuiGalleryContentProvider {
 	private static int NUMBER_OF_TRIES = 5;
 	protected Gui gui;
 
-	Map<Server, List<CloudAlbum>> albumMap;
+	Map<Server, List<CloudAlbum>> serverAlbumMap;
+	Set<String> albumSet;
 
 	CloudClient() {
 		this(true);
@@ -51,8 +51,8 @@ public class CloudClient implements GuiGalleryContentProvider {
 
 			@Override
 			public void serverLost(Server server) {
-				if(albumMap != null){
-					List<CloudAlbum> albums = albumMap.get(server);
+				if(serverAlbumMap != null){
+					List<CloudAlbum> albums = serverAlbumMap.get(server);
 					for(CloudAlbum album : albums)
 						album.remServer(server);
 				}
@@ -96,6 +96,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 				if(cloudAlbum == null){
 					cloudAlbum = new CloudAlbum(album.getName());
 					albums.put(album.getName(), cloudAlbum);
+					this.albumSet.add(album.getName());
 					lst.add(cloudAlbum);
 				}
 
@@ -106,7 +107,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 			albumMap.put(s, albumServer);
 		}
 
-		this.albumMap = albumMap;
+		this.serverAlbumMap = albumMap;
 		return lst;
 	}
 
@@ -165,7 +166,8 @@ public class CloudClient implements GuiGalleryContentProvider {
 	 */
 	@Override
 	public Album createAlbum(String name) {
-		// TODO: contact servers to create album
+		if(this.albumSet.contains(name))
+			return null;
 
 		Iterator<Server>  list = HashServerManager.getServerManager().getServerToCreateAlbum().iterator();
 
@@ -196,6 +198,8 @@ public class CloudClient implements GuiGalleryContentProvider {
 		for(Server s : cloudAlbum.getServers()){
 			s.deleteAlbum(album);
 		}
+
+		this.albumSet.remove(album);
 	}
 
 	/**

@@ -121,7 +121,7 @@ public class HashServerManager implements ServerManager {
 
     @Override
     public Collection<Server> getServerToUploadPicture(CloudAlbum album){
-        LinkedList<Server> list = new LinkedList<>(serverCollection);
+        LinkedList<Server> list = new LinkedList<>(album.getServers());
         Collections.shuffle(list);
         return list;
     }

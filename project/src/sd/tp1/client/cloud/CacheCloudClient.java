@@ -20,8 +20,7 @@ public class CacheCloudClient extends CloudClient{
         HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
             @Override
             public void serverAdded(Server server) {
-                for(Album album : server.getListOfAlbums())
-                    gui.updateAlbum(album);
+                gui.updateAlbums();
             }
 
             @Override

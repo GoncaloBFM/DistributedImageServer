@@ -41,7 +41,7 @@ public class SoapServerWrapper extends LoggedAbstractServer implements Server {
 
         return server.getListOfAlbums()
                 .stream()
-                .<Album>map(a -> new AlbumWrapper(a))
+                .<Album>map(AlbumWrapper::new)
                 .collect(Collectors.toList());
     }
 
@@ -56,7 +56,7 @@ public class SoapServerWrapper extends LoggedAbstractServer implements Server {
 
         return pictures
                 .stream()
-                .<Picture>map(p -> new PictureWrapper(p))
+                .<Picture>map(PictureWrapper::new)
                 .collect(Collectors.toList());
     }
 

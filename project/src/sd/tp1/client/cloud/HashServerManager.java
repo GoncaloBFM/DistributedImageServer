@@ -69,10 +69,10 @@ public class HashServerManager implements ServerManager {
     }
 
     private synchronized void addServer(String service, URL url){
-        logger.info("Server added: " + url.toString());
         Server server = this.serverMap.get(url);
 
         if(server == null){
+            logger.info("Server added: " + url.toString());
             server = create(service, url);
             if(server == null)
                 return;
@@ -87,10 +87,11 @@ public class HashServerManager implements ServerManager {
     }
 
     private synchronized void remServer(String service, URL url){
-        logger.info("Server removed: " + url.toString());
         Server server = this.serverMap.remove(url);
-        if(server == null)
+        if(server == null) {
             return;
+        }
+        logger.info("Server removed: " + url.toString());
 
         this.serverCollection.remove(server);
 
@@ -112,19 +113,17 @@ public class HashServerManager implements ServerManager {
 
 
     @Override
-    public Server getServerToCreateAlbum() {
-        Random metaDados = new Random();
-        int size = serverCollection.size();
-        int i = metaDados.nextInt(size);
-        return serverCollection.toArray(new Server[size])[i];
+    public Collection<Server> getServerToCreateAlbum() {
+        LinkedList<Server> list = new LinkedList<>(serverCollection);
+        Collections.shuffle(list);
+        return list;
     }
 
     @Override
-    public Server getServerToUploadPicture(CloudAlbum album){
-        Random metaDados = new Random();
-        Collection<Server> collection = album.getServers();
-        int i = metaDados.nextInt(collection.size());
-        return collection.toArray(new Server[collection.size()])[i];
+    public Collection<Server> getServerToUploadPicture(CloudAlbum album){
+        LinkedList<Server> list = new LinkedList<>(serverCollection);
+        Collections.shuffle(list);
+        return list;
     }
 
     @Override

@@ -18,8 +18,8 @@ import java.util.*;
  * Project 1 implementation should complete this class.
  */
 public class CloudClient implements GuiGalleryContentProvider {
+	private static int NUMBER_OF_TRIES = 5;
 	protected Gui gui;
-
 
 	CloudClient() {
 		this(true);
@@ -63,6 +63,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 		HashMap<String, CloudAlbum> albums = new HashMap<>();
 
 		Collection<Server> servers = HashServerManager.getServerManager().getServers();
+		servers.size();
 		for(Server s : servers){
 			//Verify if should be a Set
 			List<Album> albumList = s.getListOfAlbums();
@@ -128,7 +129,11 @@ public class CloudClient implements GuiGalleryContentProvider {
 		// TODO: obtain remote information
 		CloudPicture cloudPicture = (CloudPicture) picture;
 
+		int i = 0;
 		for(Server s : cloudPicture.getServers()){
+			if(i++ > NUMBER_OF_TRIES)
+				return null;
+
 			byte[] data = s.getPictureData(album, picture);
 			if(data != null)
 				return data;
@@ -144,13 +149,24 @@ public class CloudClient implements GuiGalleryContentProvider {
 	@Override
 	public Album createAlbum(String name) {
 		// TODO: contact servers to create album
-		Server s = HashServerManager.getServerManager().getServerToCreateAlbum();
 
-		Album album = s.createAlbum(name);
-		CloudAlbum cloudAlbum = new CloudAlbum(album.getName());
-		cloudAlbum.addServer(s);
+		Iterator<Server>  list = HashServerManager.getServerManager().getServerToCreateAlbum().iterator();
+
+		int i = 0;
+		CloudAlbum cloudAlbum = null;
+		while (list.hasNext() &&  i <NUMBER_OF_TRIES) {
+			i++;
+			Server server = list.next();
+			Album album = server.createAlbum(name);
+			if(album != null) {
+				cloudAlbum = new CloudAlbum(album.getName());
+				cloudAlbum.addServer(server);
+				break;
+			}
+		}
 
 		return cloudAlbum;
+
 	}
 
 	/**
@@ -174,14 +190,18 @@ public class CloudClient implements GuiGalleryContentProvider {
 	public Picture uploadPicture(Album album, String name, byte[] data) {
 		// TODO: contact servers to add picture name with contents data
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
-		Server server = HashServerManager.getServerManager().getServerToUploadPicture(cloudAlbum);
+		Collection<Server> availableServers =  HashServerManager.getServerManager().getServerToUploadPicture(cloudAlbum);
 
-		Picture p = server.uploadPicture(album, name, data);
-		if(p != null){
-			CloudPicture cloudPicture = new CloudPicture(p.getPictureName(), cloudAlbum);
-			cloudPicture.addServer(server);
-			return cloudPicture;
+		for (Server server : availableServers) {
+			Picture p = server.uploadPicture(album, name, data);
+			if(p != null){
+				CloudPicture cloudPicture = new CloudPicture(p.getPictureName(), cloudAlbum);
+				cloudPicture.addServer(server);
+				return cloudPicture;
+			}
 		}
+
+
 
 
 		return null;

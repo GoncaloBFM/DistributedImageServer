@@ -17,7 +17,8 @@ public abstract class AbstractCloudObject implements CloudObject{
 
     @Override
     public void addServer(Server server) {
-        this.serverCollection.add(server);
+        if(!this.serverCollection.contains(server))
+            this.serverCollection.add(server);
     }
 
     @Override

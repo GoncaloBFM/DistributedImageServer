@@ -119,13 +119,17 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
                     LOGGER.fine(String.format("Server rediscovered %s", url.toString()));
 
                     server.setNewTimeOfLastBeat();
-                    server.setCurrentState(HeartbeatServer.State.ONLINE);
+                    if (server.getCurrentState().equals(HeartbeatServer.State.OFFLINE)) {
+                        server.setCurrentState(HeartbeatServer.State.ONLINE);
+                        handler.serviceDiscovered(serviceToDiscover, server.getURL());
+                    }
                 }
                 else{
                     synchronized (serverMap){
                         LOGGER.fine(String.format("Server discovered %s", url.toString()));
 
                         server = new HeartbeatServer(url);
+                        server.setCurrentState(HeartbeatServer.State.ONLINE);
                         serverMap.put(url, server);
                         handler.serviceDiscovered(serviceToDiscover, server.getURL());
                     }

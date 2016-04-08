@@ -31,7 +31,7 @@ public class CloudAlbum extends AbstractCloudObject implements Album {
 
     public boolean containsPicture(String picture){
         for(Picture p : this.pictures)
-            if(p.equals(picture))
+            if(p.getPictureName().equals(picture))
                 return true;
 
         return false;

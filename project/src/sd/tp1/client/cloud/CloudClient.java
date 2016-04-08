@@ -232,7 +232,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 		boolean del = true;
 
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
-		cloudAlbum.getPictures().remove(picture.getPictureName());
+		cloudAlbum.getPictures().remove(picture);
 
 		CloudPicture cloudPicture = (CloudPicture) picture;
 		for(Server s : cloudPicture.getServers())

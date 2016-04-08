@@ -73,7 +73,7 @@ public class FileDataManager implements DataManager {
     public SharedPicture uploadPicture(SharedAlbum album, String name, byte[] data) {
         File file = openPicture(album, name);
         if(!file.exists()) {
-            openAlbum(album).mkdir();
+            //openAlbum(album).mkdir();
             try {
                 Files.write(file.toPath(), data);
                 return new SharedPicture(name);

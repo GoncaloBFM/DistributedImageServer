@@ -99,7 +99,11 @@ public class CloudClient implements GuiGalleryContentProvider {
 		//TODO improve
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
 		for(Server s : cloudAlbum.getServers()){
-			for(Picture p : s.getListOfPictures(album)){
+			List<Picture> pictures = s.getListOfPictures(album);
+			if(pictures == null)
+				continue;
+
+			for(Picture p : pictures){
 				CloudPicture cloudPicture = pictureMap.get(p.getPictureName());
 
 				if(cloudPicture == null){

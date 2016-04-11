@@ -1,0 +1,164 @@
+<html>
+<head>
+	<title>SD Report</title>
+	<meta charset="UTF-8">
+
+</head>
+<body>
+	<section>
+		<h1>Introdução</h1>
+		<p>
+			O presente relatório visa complementar a implementação do primeiro trabalho pratico da cadeira de Sistemas Distribuídos. 
+		</p>
+		<p>
+			O projecto em causa tem como objectivo o desenvolvimento de uma aplicação cliente / servidor. O componente Cliente implementa uma interface de utilizaçãoo onde é possível desemprenhar todas as tarefas incluídas na espicificação do projecto tais como operações CRUD sobre albuns e imagens. Este compontente é também responsável por esconder do utilizador a natureza distribuída da solução, tratar erros e mascarar erros bem como distribuir a carga pelos servidores. Questões como segurança e heterogenidade são da inteira responsabilidade dos componentes servidor.
+		</p>
+		<p>
+			A implementação desenvolvida apresenta as seguintes características e funcionalidades:
+
+			<ul>
+				<li>O cliente aceita conexões de servidores implementados sobre os protocolos REST e SOAP</li>
+				<li>O cliente consegue gerir conexões com múltiplos servidores REST e SOAP de forma transparente ao seu utilizador.</li>
+				<li>A camada do cliente que implementa a comunicação com os servidores encontra-se completamente desacoplada do resto das funcionalidades da aplicação podendo estas interagir com uma conexão genérica sem haver necessidade de ser explícito o tipo de servidor envolvido na mesma.</li>
+				<li>A aplicação gere o estado das conexões entre cliente e servidor através de um sistema de notificações "heartbeat".</li>
+				<li>Quando um servidor é descoberto ou perdido pelo cliente a GUI do mesmo realiza de forma automatizada as actualizações necessárias para providenciar informação actualizada e os conteúdos disponíveis ao seu utilizador.</li>
+				<li>O cliente implementa uma cache que, para além de melhorar a experiência de utilização, reduzindo ao máximo o tempo de espera por parte do utilizador, minimiza o número de pedidos feitos aos servidores e permite diminuír drásticamente o volume dados entre cliente/servidor. Esta cache conta com funções como SWAPing da RAM para o disco o que permite manter um volume de imagens considerável sem necessidade de ocupar o espaço de endereçamento do cliente.</li>
+			</ul>
+		</p>
+		<p>
+			O restante documento elabora sobre os pontos supra referidos e providencia informação adicional sobre alguns tópicos que se apresentam basilares à compreensão do projecto.
+		</p>
+	</section>
+
+	<section>
+		<h1>Descoberta de servidores</h1>
+		<p>
+			A aplicação apresenta um método de gestão dos estado das conexões entre cliente e servidor com base no conceito de "heartbeat".
+		</p>
+		<p>
+			O cliente é capaz de perceber sempre que um novo servidor fica disponível ou que algum servidor actual fica incontactável, procedendo à posterior actualização da GUI.
+		</p>
+		<section>
+			<h1>
+				Heartbeat
+			</h1>
+			<p>
+				O Heartbeat, como o proprio nome indica, apresenta um funcionamento semelhante aos batimentos cardíacos. Cada servidor apresenta o seu próprio ritmo cardíaco e deste modo é possível para os clientes saber quando um servidor está "vivo" e quando este "morre".
+			</p>
+			<p>
+				Dado um <var>&delta;</var> previamente definido, cada servidor, a cada <var>&delta;</var> segundos, emite um sinal. Caso decorram <var>n</var>*<var>&delta;</var> segundos sem que um dado cliente receba qualquer sinal de um mesmo servidor, ser-lhe-á legítimo concluir que este servidor se encontra indisponível.
+			</p>
+			<p>
+				Especificamente, um servidor que se encontre activo, a cada <var>&delta;</var> segundos, inunda a rede através de multicast com uma mensagem que contenha informação suficiente a permitir a ligação ao mesmo por parte de um cliente. O cliente por sua vez, ao interceptar uma mensagem, adiciona o servidor a uma lista de servidores activos. A partir desse momento o cliente considera o servidor como activo por <var>n</var>*<var>&delta;</var> segundos, período que recomeça a cada mensagem periódica interceptada. Finalmente, caso esta janela termine sem qualquer mensagem ser recebida o servidor passa a inactivo.
+			</p>
+		</section>
+	</section>
+
+	<section>
+		<h1>Resolução de Falhas</h1>
+		<p>
+			Em sistemas com arquitecturas cliente/servidor, é comum a necessidade da implementação de métodos de resolução de falhas para suprimir incidentes que advenham, por exemplo, da possibilidade de um servidor ficar offline no momento em que o cliente vai realizar um pedido.
+		</p>
+		<p>
+			Neste projecto, foi implementado um wrapper para as chamadas ao servidor que permite detectar falhas de conexão ou de erros internos durante a execução do servidor, nunca permitindo que a sua ocorrência altere a normal execução do cliente.
+		</p>
+		<p>
+			Paralelamente, caso exista a possibilidade de realizar a operação decorente aquando da detecção da falha noutro servidor, a criação de um album, por exemplo, a chamada falhada é automaticamente reencaminhada para um outro possível servidor mascarando a falha.
+		</p>
+			Dado que podemos considerar as operações disponíveis como idempotentes, podemos marcar a falha facilmente, sem a necessidade de perceber se a operação foi realmente executada ou não pelo servidor anterior ou de distingir falhas de conexção de falhas internas de servidores.
+		</p>
+		<p>
+			Este processo é refeito um número predefinido de vezes antes de que o utilizador seja notificado. A limitação da execução deste processo a um determinado número de vezes permite manter a experiência de utilização aceitável, diminuindo a latência entre pedido do utilizador e respectivo feedback por parte do sistema.
+		</p>
+	</section>
+
+	<section>
+		<h1>Escolha de servidores para adição de conteúdos</h1>
+
+		<p>
+			A escolha de servidores para adição de conteúdos (imagens ou álbuns) é feita aleatoriamente de forma a distribuir de forma uniforme a carga de trabalho.
+		</p>
+		<p>
+			Esta abordagem tem como vantagem ser simples de implementar e rápida de computar podendo no entanto apresentar desvantagens num caso em que os servidores não sejam uniformes em termos de recursos disponíveis, podendo acabar subaproveitados ou sobrecarregados.
+		</p>
+	</section>
+
+	<section>
+		<h1>Cache</h1>
+		<p>
+			O cliente recorre a técnicas de caching para melhorar a experiência de utilização e reduzir carga nos servidores e tráfego da rede.
+		</p>
+		<p>
+			Dado que se trata de um projecto com fins de estudo, os tempos de caching dos conteúdos são bastante mais reduzidos do que poderiam ser num cenário real. Deste modo é mais fácil testar processos de cache e recache não sendo necessário esperar tanto tempo para que os conteúdos sejam considerados 'desactualizados' mantendo, contudo, a claramente visíveis as vantagens do sistema de caching.
+		</p>
+		<p>
+			As caches são limitadas a cada execução do cliente, ou seja, cada vez que um cliente é executado a cache encontra-se vazia.
+		</p>
+		<p>
+			A sistema de caches do cliente foi inspirada pelas caches de processadores multicore, fazendo a analogia de servidores a cores. Existem caches privadas a cada servidor e uma cache global a todos os servidores, fazendo a analogia para as caches L1 e L3.
+		</p>
+		<section>
+			<h1>Caches privadas</h1>
+			<p>
+				Caches específicas a cada servidor, inteiramente armazenadas em RAM. Mais voláteis, o conteúdo é considerado válido por menos tempo. Guardam dados como lista de albums de um servidor ou lista de imagens de um dado album. Dada a natureza dos dados, listas de objectos em Java, não é necessário o controle sobre o tamanho destas estruturas.
+			</p>
+		</section>
+		<section>
+			<h1>Cache global</h1>
+			<p>
+				Cache global a todos os servidores, mais complexa, mais lenta, recorre a técnicas mais avançadas como SWAPing para disco. Guarda imagens, sequências de bytes essencialmente. Dado que o par (<var>album</var>, <var>imagem</var>) é considerado único, dada uma imagem <var>X</var> de um album <var>Y</var> a imagem (<var>Y</var>, <var>X</var>) de um servidor <var>A</var> deverá ser a mesma de um servidor <var>B</var>, não existindo a necessidade de associar as imagens a servidores.
+			</p>
+			<p>
+				Dado o tamanho que as imagens podem ocupar, não seria viável manter esta cache inteiramente em RAM, recorre-se, portanto a técnicas de SWAP. Esta cache está previamente limitada a um tamanho <var>X</var>, quando este é ultrapassado, são transferidas imagens da RAM para disco. Quando o cliente é terminado, estas imagens são apagadas.
+			</p>
+			<p>
+				Dada a natureza do projecto e que a cache é limpa a cada execução, não se limita o tamanho da cache em disco.
+			</p>
+		</section>
+	</section>
+
+</body>
+
+<style type="text/css">
+	@media all {
+		body *{
+			font-family: Verdana, Geneva, sans-serif;
+			text-align: justify;
+		}
+
+		section section {
+			margin-left: 36px;
+			margin-right: 0px;
+		}
+	}
+
+	@media screen {
+		body > section {
+			margin-top: 40px;
+		}
+
+		body > * {
+			margin-left: 10%;
+			margin-right: 10%;
+		}
+	}
+
+	@media print{
+
+		* {
+			position: relative;
+		}
+
+		body *{
+			page-break-inside: avoid;
+		}
+
+		@page {
+		    size: 21cm 29.7cm;
+		    margin: 20mm 30mm 20mm 30mm;
+		}
+	}
+
+</style>
+
+</html>

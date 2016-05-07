@@ -1,4 +1,4 @@
-package sd.tp1.server.rest;
+package sd.tp1.server.rest_ssl;
 
 import sd.tp1.SharedAlbum;
 import sd.tp1.SharedPicture;
@@ -16,19 +16,19 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Path("/{serverName}")
-public class RestServer {
+public class RestSSLServer {
 
-    private static final Logger logger = Logger.getLogger(RestServer.class.getSimpleName());
+    private static final Logger logger = Logger.getLogger(RestSSLServer.class.getSimpleName());
 
 
     private String root;
     private DataManager dataManager;
 
-    public RestServer(@PathParam("album") String serverName) throws NotDirectoryException {
+    public RestSSLServer(@PathParam("album") String serverName) throws NotDirectoryException {
         this.dataManager = new FileDataManager();
     }
 
-    public RestServer(@PathParam("album") String serverName, File root) throws NotDirectoryException {
+    public RestSSLServer(@PathParam("album") String serverName, File root) throws NotDirectoryException {
         this.dataManager = new FileDataManager(root);
         this.root = root.toString();
     }

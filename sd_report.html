@@ -11,7 +11,7 @@
 			O presente relatório visa complementar a implementação do primeiro trabalho pratico da cadeira de Sistemas Distribuídos. 
 		</p>
 		<p>
-			O projecto em causa tem como objectivo o desenvolvimento de uma aplicação cliente / servidor. O componente Cliente implementa uma interface de utilizaçãoo onde é possível desemprenhar todas as tarefas incluídas na espicificação do projecto tais como operações CRUD sobre albuns e imagens. Este compontente é também responsável por esconder do utilizador a natureza distribuída da solução, tratar erros e mascarar erros bem como distribuir a carga pelos servidores. Questões como segurança e heterogenidade são da inteira responsabilidade dos componentes servidor.
+			O projecto em causa tem como objectivo o desenvolvimento de uma aplicação cliente/servidor. O componente Cliente implementa uma interface de utilizaçãoo onde é possível desemprenhar todas as tarefas incluídas na espicificação do projecto tais como operações CRUD sobre albuns e imagens. Este compontente é também responsável por esconder do utilizador a natureza distribuída da solução, tratar erros e mascarar erros bem como distribuir a carga pelos servidores. Questões como segurança e heterogenidade são da inteira responsabilidade dos componentes servidor.
 		</p>
 		<p>
 			A implementação desenvolvida apresenta as seguintes características e funcionalidades:
@@ -65,7 +65,7 @@
 		<p>
 			Paralelamente, caso exista a possibilidade de realizar a operação decorente aquando da detecção da falha noutro servidor, a criação de um album, por exemplo, a chamada falhada é automaticamente reencaminhada para um outro possível servidor mascarando a falha.
 		</p>
-			Dado que podemos considerar as operações disponíveis como idempotentes, podemos marcar a falha facilmente, sem a necessidade de perceber se a operação foi realmente executada ou não pelo servidor anterior ou de distingir falhas de conexção de falhas internas de servidores.
+			Dado que podemos considerar as operações disponíveis como idempotentes, podemos mascarar a falha facilmente, sem a necessidade de perceber se a operação foi realmente executada ou não pelo servidor anterior ou de distingir falhas de conexção de falhas internas de servidores.
 		</p>
 		<p>
 			Este processo é refeito um número predefinido de vezes antes de que o utilizador seja notificado. A limitação da execução deste processo a um determinado número de vezes permite manter a experiência de utilização aceitável, diminuindo a latência entre pedido do utilizador e respectivo feedback por parte do sistema.
@@ -76,7 +76,7 @@
 		<h1>Escolha de servidores para adição de conteúdos</h1>
 
 		<p>
-			A escolha de servidores para adição de conteúdos (imagens ou álbuns) é feita aleatoriamente de forma a distribuir de forma uniforme a carga de trabalho.
+			A escolha de servidores para adição de conteúdos (imagens ou álbuns) é feita aleatoriamente de forma a distribuir uniformemente a carga de trabalho.
 		</p>
 		<p>
 			Esta abordagem tem como vantagem ser simples de implementar e rápida de computar podendo no entanto apresentar desvantagens num caso em que os servidores não sejam uniformes em termos de recursos disponíveis, podendo acabar subaproveitados ou sobrecarregados.
@@ -89,7 +89,7 @@
 			O cliente recorre a técnicas de caching para melhorar a experiência de utilização e reduzir carga nos servidores e tráfego da rede.
 		</p>
 		<p>
-			Dado que se trata de um projecto com fins de estudo, os tempos de caching dos conteúdos são bastante mais reduzidos do que poderiam ser num cenário real. Deste modo é mais fácil testar processos de cache e recache não sendo necessário esperar tanto tempo para que os conteúdos sejam considerados 'desactualizados' mantendo, contudo, a claramente visíveis as vantagens do sistema de caching.
+			Dado que se trata de um projecto com fins de estudo, os tempos de caching dos conteúdos são bastante mais reduzidos do que poderiam ser num cenário real. Deste modo é mais fácil testar processos de cache e recache não sendo necessário esperar tanto tempo para que os conteúdos sejam considerados 'desactualizados' mantendo, contudo, claramente visíveis as vantagens do sistema de caching.
 		</p>
 		<p>
 			As caches são limitadas a cada execução do cliente, ou seja, cada vez que um cliente é executado a cache encontra-se vazia.
@@ -117,6 +117,198 @@
 		</section>
 	</section>
 
+	<section>
+		<h1>Conclusão</h1>
+		<p>
+			A solução usada durante o processo de desenvolvimento apresenta um abrangente conjunto de vantagens.
+		</p>
+		<p>
+			O uso da técnica de deteção de servidores activos "heartbeat" permite minimizar problemas de saturação de rede (problemas a que técnicas como "keep alive" poderiam levar no caso de existirem um grande número de clientes a consumir os servidores activos).
+		</p>
+		<p>
+			De forma similiar as limitações de memoria impostas na cache permite uma abordagem mais realista ao problema tendo estas sido criadas sem impedir qualquer funcionalidade de caching (devido ao sistema permitir swaping para disco).
+		</p>
+		<p>
+			Finalmente, construir um sistema escalavel foi um prioridade durante o processo de desenvolvimento, como tal este foi criado de forma a permitir a posterior adição de novos tipos de comunicação entre cliente e servidor de forma simples e limpa.
+		</p>
+		<p>
+			O sistema implemetado apresenta-se portanto versatil e modular conseguindo dar resposta a todos os pre-requisitos propostos.
+		</p>
+	</section>
+
+	<section>
+		<h1>Anexo: SOAP Server</h1>
+		<code>
+			<pre>
+@WebService
+public class SoapServer {
+
+    private static final Logger logger = Logger.getLogger(SoapServer.class.getSimpleName());
+
+    private DataManager dataManager;
+
+    public SoapServer() throws NotDirectoryException {
+        this.dataManager = new FileDataManager();
+    }
+
+    public SoapServer(File root) throws NotDirectoryException {
+        this.dataManager = new FileDataManager(root);
+
+    }
+
+    @WebMethod
+    public List<SharedAlbum> getListOfAlbums() {
+        logger.info("getListOfAlbums");
+        return dataManager.loadListOfAlbums();
+    }
+
+    @WebMethod
+    public List<SharedPicture> getListOfPictures(SharedAlbum album) {
+        logger.info("getListOfPictures" + "(album=" + album.getName()+")");
+        return dataManager.loadListOfPictures(album);
+
+    }
+
+    @WebMethod
+    public byte[] getPictureData(SharedAlbum album, SharedPicture picture){
+        logger.info("getPictureData"+"(album=" + album.getName()+", picture=" + picture.getPictureName()+")");
+        return dataManager.loadPictureData(album, picture);
+    }
+
+    @WebMethod
+    public SharedAlbum createAlbum(String name){
+        logger.info("createAlbum" + "(album=" + name + ")");
+        return dataManager.createAlbum(name);
+    }
+
+    @WebMethod
+    public SharedPicture uploadPicture(SharedAlbum album, String name, byte[] data){
+        logger.info("uploadPicture" + "(album=" + album.getName()+", picture=" + name+")");
+        return dataManager.uploadPicture(album, name, data);
+    }
+
+    @WebMethod
+    public void deleteAlbum(SharedAlbum album){
+        logger.info("deleteAlbum" + "(album=" + album.getName()+")");
+        dataManager.deleteAlbum(album);
+    }
+
+    @WebMethod
+    public boolean deletePicture(SharedAlbum album, SharedPicture picture) {
+        logger.info("deletePicture" + "(album=" + album.getName()+", picture=" + picture.getPictureName()+")");
+        return dataManager.deletePicture(album, picture);
+    }
+}
+
+			</pre>
+		</code>
+	</section>
+
+	<section>
+		<h1>Anexo: REST Server</h1>
+		<code>
+			<pre>
+@Path("/{serverName}")
+public class RestServer {
+
+    private static final Logger logger = Logger.getLogger(RestServer.class.getSimpleName());
+
+
+    private String root;
+    private DataManager dataManager;
+
+    public RestServer(@PathParam("album") String serverName) throws NotDirectoryException {
+        this.dataManager = new FileDataManager();
+    }
+
+    public RestServer(@PathParam("album") String serverName, File root) throws NotDirectoryException {
+        this.dataManager = new FileDataManager(root);
+        this.root = root.toString();
+    }
+
+    @POST
+    @Path("/createAlbum/{albumName}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createAlbum(@PathParam("albumName") String albumName) {
+        logger.info("createAlbum" + "(album=" + albumName + ")");
+        SharedAlbum album = this.dataManager.createAlbum(albumName);
+        if (album != null) {
+            return Response.ok().build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
+    @GET
+    @Path("/getListOfAlbums")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getListOfAlbums() {
+        logger.info("getListOfAlbums");
+        List<SharedAlbum> listOfAlbums = this.dataManager.loadListOfAlbums();
+        SharedAlbum[] array = listOfAlbums.toArray(new SharedAlbum[listOfAlbums.size()]);
+        return Response.ok(array).build();
+    }
+
+    @GET
+    @Path("/getListOfPictures/{album}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getListOfPictures(@PathParam("album") String album) {
+        logger.info("getListOfPictures" + "(album=" + album +")");
+        List<SharedPicture> listOfPictures = this.dataManager.loadListOfPictures(new SharedAlbum(album));
+        if (listOfPictures != null) {
+            SharedPicture[] array = listOfPictures.toArray(new SharedPicture[listOfPictures.size()]);
+            return Response.ok(array).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
+    @DELETE
+    @Path("/deleteAlbum/{album}")
+    public Response deleteAlbum(@PathParam("album") String album) {
+        logger.info("deleteAlbum" + "(album=" + album+")");
+        this.dataManager.deleteAlbum(new SharedAlbum(album));
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/deletePicture/{album}/{picture}")
+    public Response deletePicture(@PathParam("album") String album, @PathParam("picture") String picture) {
+        logger.info("deletePicture" + "(album=" + album+", picture=" + picture+")");
+        if (this.dataManager.deletePicture(new SharedAlbum(album), new SharedPicture(picture))) {
+            return Response.ok().build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Path("/getPictureData/{album}/{picture}")
+    public Response getPictureData(@PathParam("album") String album, @PathParam("picture") String picture) {
+        logger.info("getPictureData"+"(album=" + album+", picture=" + picture+")");
+        byte[] bytes = dataManager.loadPictureData(new SharedAlbum(album), new SharedPicture(picture));
+        return Response.ok(bytes).build();
+
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/uploadPicture/{album}/{picture}")
+    public Response uploadPicture(@PathParam("album") String album,@PathParam("picture") String picture, byte[] data) {
+        logger.info("uploadPicture" + "(album=" + album+", picture=" + picture+")");
+        SharedPicture newPicture = dataManager.uploadPicture(new SharedAlbum(album), picture, data);
+        if(newPicture != null) {
+            return Response.ok().build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
+}
+
+			</pre>
+		</code>
+	</section>
 </body>
 
 <style type="text/css">
@@ -129,6 +321,10 @@
 		section section {
 			margin-left: 36px;
 			margin-right: 0px;
+		}
+
+		table, th, td{
+			border: 1px solid black;
 		}
 	}
 

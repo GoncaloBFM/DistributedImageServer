@@ -20,8 +20,6 @@ public class SoapServer {
 
     private static final Logger logger = Logger.getLogger(SoapServer.class.getSimpleName());
 
-    //TODO Assure location, and make it make sense
-    //public static String SERVICE_TO_ANNOUNCE = "42845_43178_Server";
     private DataManager dataManager;
 
     public SoapServer() throws NotDirectoryException {

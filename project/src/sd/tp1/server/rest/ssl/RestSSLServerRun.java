@@ -1,9 +1,10 @@
-package sd.tp1.server.rest_ssl;
+package sd.tp1.server.rest.ssl;
 
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import sd.tp1.server.HeartbeatAnnouncer;
 import sd.tp1.server.ServiceAnnouncer;
+import sd.tp1.server.rest.RestServer;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -13,7 +14,6 @@ import java.io.*;
 import java.net.URI;
 import java.nio.file.NotDirectoryException;
 import java.security.*;
-import java.security.cert.CertificateException;
 
 /**
  * Created by gbfm on 3/29/16.
@@ -43,9 +43,9 @@ public class RestSSLServerRun {
 
         URI baseUri = UriBuilder.fromUri("https://0.0.0.0/").port(port).build();
         ResourceConfig config = new ResourceConfig();
-        RestSSLServer server = null;
+        RestServer server = null;
         try {
-            server = new RestSSLServer(serverPath, root);
+            server = new RestServer(serverPath, root);
         } catch (NotDirectoryException e) {
             System.err.println("Directory not available.\n Terminating.");
             System.exit(1);

@@ -9,6 +9,7 @@ import sd.tp1.SharedPicture;
 import sd.tp1.client.cloud.LoggedAbstractServer;
 import sd.tp1.client.cloud.Server;
 import sd.tp1.client.cloud.aux.SafeInvoker;
+import sd.tp1.server.rest.RestServer;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -31,6 +32,16 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
 
     private final URL url;
     private WebTarget target;
+
+    protected RestServerWrapper(String loggerTag, URL url, WebTarget target){
+        super(loggerTag);
+        this.url = url;
+        this.target = target;
+    }
+
+    protected RestServerWrapper(URL url, WebTarget target){
+        this(RestServerWrapper.class.getSimpleName(), url, target);
+    }
 
     public RestServerWrapper(URL url){
         super(RestServerWrapper.class.getSimpleName());

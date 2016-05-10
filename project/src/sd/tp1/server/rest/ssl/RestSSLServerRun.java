@@ -20,7 +20,7 @@ import java.security.*;
  */
 public class RestSSLServerRun {
     private static final String SERVICE_TO_ANNOUNCE = "42845_43178_REST_SSL";
-    private static final int ANNOUNCE_ON_PORT = 6968;
+    private static final int ANNOUNCE_ON_PORT = 6967;
 
     private static final int MIN_PORT = 1024; //1024;
     private static final int MAX_PORT = 65535; //65535;
@@ -29,9 +29,9 @@ public class RestSSLServerRun {
     private static final String DEFAULT_ROOT = ".";
     private static final String DEFAULT_SERVICE_PATH = "PictureServer";
 
-    private static final File KEYSTORE = new File("./server.jks");
-    private static final char[] JKS_PASSWORD = "changeit".toCharArray();
-    private static final char[] KEY_PASSWORD = "changeit".toCharArray();
+    private static final File KEYSTORE = new File("keys/keystore.jks");
+    private static final char[] JKS_PASSWORD = "abc123def".toCharArray();
+    private static final char[] KEY_PASSWORD = "abc123def".toCharArray();
 
 
     public static void main(String args[]) {

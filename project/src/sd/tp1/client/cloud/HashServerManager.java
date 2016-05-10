@@ -19,20 +19,10 @@ import java.util.logging.Logger;
  */
 public class HashServerManager implements ServerManager {
 
-    //TODO assure location
-    public static final String SOAP_SERVICE = "42845_43178_SOAP";
-    public static final int SOAP_SERVICE_PORT = 6969;
-
-    public static final String REST_SERVICE = "42845_43178_REST";
-    public static final int REST_SERVICE_PORT = 6968;
-
     private static HashServerManager serverManager;
 
     private Collection<Server> serverCollection = new ConcurrentLinkedQueue<>();
     private Map<URL, Server> serverMap = new ConcurrentHashMap<>();
-
-    private ServiceDiscovery soapServiceDiscovery;
-    private ServiceDiscovery restServiceDiscovery;
 
     private static final Logger logger = Logger.getLogger(HashServerManager.class.getSimpleName());
 
@@ -40,11 +30,7 @@ public class HashServerManager implements ServerManager {
     private Collection<ServerHandler> serverHandlersCollection = new ConcurrentLinkedQueue<>();
 
     private HashServerManager(){
-        this.soapServiceDiscovery = new HeartbeatDiscovery(SOAP_SERVICE, SOAP_SERVICE_PORT);
-        this.restServiceDiscovery = new HeartbeatDiscovery(REST_SERVICE, REST_SERVICE_PORT);
-
-        this.soapServiceDiscovery.discoverService(new SrvHandler());
-        this.restServiceDiscovery.discoverService(new SrvHandler());
+        ClientFactory.startDiscovery(new SrvHandler());
     }
 
     private class SrvHandler implements ServiceHandler {
@@ -59,30 +45,26 @@ public class HashServerManager implements ServerManager {
         }
     }
 
-    private Server create(String service, URL url){
-        switch (service){
-            case SOAP_SERVICE: return new HashCachedServer(new SoapServerWrapper(url));
-            case REST_SERVICE: return new HashCachedServer(new RestServerWrapper(url));
-        }
-
-        return null;
-    }
-
     private synchronized void addServer(String service, URL url){
         Server server = this.serverMap.get(url);
 
         if(server == null){
-            logger.info("Server added: " + url.toString());
-            server = create(service, url);
-            if(server == null)
-                return;
+            try{
+                server = ClientFactory.create(service, url);
+                if(server == null)
+                    return;
 
-            this.serverMap.put(url, server);
-            this.serverCollection.add(server);
+                this.serverMap.put(url, server);
+                this.serverCollection.add(server);
 
-
-            for(ServerHandler handler : this.serverHandlersCollection)
-                handler.serverAdded(server);
+                logger.info("Server added: " + url.toString());
+                for(ServerHandler handler : this.serverHandlersCollection)
+                    handler.serverAdded(server);
+            }
+            catch (ClientFactory.ClientFactoryException e){
+                e.printStackTrace();
+                logger.severe(e.getMessage());
+            }
         }
     }
 

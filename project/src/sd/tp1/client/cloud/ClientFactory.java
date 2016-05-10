@@ -7,6 +7,7 @@ import sd.tp1.client.cloud.rest.RestServerWrapper;
 import sd.tp1.client.cloud.rest.ssl.RestSSLServerWrapper;
 import sd.tp1.client.cloud.soap.SoapServerWrapper;
 
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyManagementException;
@@ -33,7 +34,7 @@ public enum ClientFactory {
         public Server create(URL url) throws ClientFactoryException {
             try {
                 return this.wrap(new RestSSLServerWrapper(url));
-            } catch (NoSuchAlgorithmException | KeyManagementException | URISyntaxException e) {
+            } catch (MalformedURLException | NoSuchAlgorithmException | KeyManagementException | URISyntaxException e) {
                 throw new ClientFactoryException(e);
             }
         }

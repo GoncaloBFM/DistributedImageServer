@@ -6,6 +6,7 @@ import javax.net.ssl.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyManagementException;
@@ -19,11 +20,13 @@ import java.util.Arrays;
  */
 public class RestSSLServerWrapper extends RestServerWrapper {
 
-    public RestSSLServerWrapper(URL url) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
+    public RestSSLServerWrapper(URL url) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, MalformedURLException {
         super(RestSSLServerWrapper.class.getSimpleName(), url, getTarget(url));
     }
 
-    static public WebTarget getTarget(URL url) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
+    static public WebTarget getTarget(URL url) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, MalformedURLException {
+        //TODO improve.. extract protocol logic from ServiceDiscovery
+        url = new URL("https", url.getHost(), url.getPort(), url.getFile());
         SSLContext sc = SSLContext.getInstance("TLSv1");
 
         TrustManager[] trustAllCerts = { new InsecureTrustManager() };

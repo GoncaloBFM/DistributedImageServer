@@ -108,7 +108,6 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
                     return;
                 }
 
-
                 URL url = new URL("http",
                         p.getAddress().getHostAddress(),
                         port,

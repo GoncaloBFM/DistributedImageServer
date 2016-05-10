@@ -30,8 +30,6 @@ public class RestServerRun {
         String serverPath = (args.length >= 2) ? args[1] : DEFAULT_SERVICE_PATH;
         int port = (args.length >= 3) ? Integer.parseInt(args[2]) : DEFAULT_PORT;
 
-        System.out.println(String.format("Server started at port %s, root:%s, path:%s", port, root.getAbsoluteFile(), serverPath));
-
         URI baseUri = UriBuilder.fromUri("http://0.0.0.0/").port(port).build();
         ResourceConfig config = new ResourceConfig();
         RestServer server = null;
@@ -43,6 +41,7 @@ public class RestServerRun {
         }
         config.register(server);
         JdkHttpServerFactory.createHttpServer(baseUri, config);
+        System.out.println(String.format("Server started at port %s, root:%s, path:%s", port, root.getAbsoluteFile(), serverPath));
 
         ServiceAnnouncer serviceAnnouncer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE,ANNOUNCE_ON_PORT, serverPath, port);
         serviceAnnouncer.startAnnounceService();

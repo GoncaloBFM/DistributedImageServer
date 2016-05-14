@@ -1,7 +1,5 @@
-package sd.tp1.client.cloud.discovery;
+package sd.tp1.common.discovery;
 
-
-import sd.tp1.client.cloud.ServerHandler;
 
 /**
  * Created by apontes on 3/15/16.

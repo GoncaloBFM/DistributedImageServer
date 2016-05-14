@@ -8,9 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import sd.tp1.Album;
-import sd.tp1.Picture;
-import sd.tp1.GalleryContentProvider;
+import sd.tp1.common.Album;
+import sd.tp1.common.Picture;
 import sd.tp1.client.gui.Gui;
 import sd.tp1.client.gui.GuiGalleryContentProvider;
 

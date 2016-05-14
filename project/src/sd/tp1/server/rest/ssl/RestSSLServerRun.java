@@ -2,8 +2,8 @@ package sd.tp1.server.rest.ssl;
 
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import sd.tp1.server.HeartbeatAnnouncer;
-import sd.tp1.server.ServiceAnnouncer;
+import sd.tp1.common.discovery.HeartbeatAnnouncer;
+import sd.tp1.common.discovery.ServiceAnnouncer;
 import sd.tp1.server.rest.RestServer;
 
 import javax.net.ssl.KeyManagerFactory;

@@ -1,11 +1,6 @@
 package sd.tp1.client.gui;
 
-import sd.tp1.Album;
-import sd.tp1.GalleryContentProvider;
-import sd.tp1.Picture;
-import sd.tp1.client.gui.Gui;
-
-import java.util.List;
+import sd.tp1.common.GalleryContentProvider;
 
 /*
  * The GUI will request content to display from an object

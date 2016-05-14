@@ -29,9 +29,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import sd.tp1.Album;
-import sd.tp1.GalleryContentProvider;
-import sd.tp1.Picture;
+import sd.tp1.common.Album;
+import sd.tp1.common.Picture;
 import sd.tp1.client.gui.Gui;
 import sd.tp1.client.gui.GuiGalleryContentProvider;
 

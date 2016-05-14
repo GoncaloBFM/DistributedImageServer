@@ -1,13 +1,10 @@
 package sd.tp1.client.cloud.data;
 
-import sd.tp1.Album;
-import sd.tp1.Picture;
-import sd.tp1.client.cloud.Server;
+import sd.tp1.common.Album;
+import sd.tp1.common.Picture;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by apontes on 3/27/16.

@@ -1,12 +1,7 @@
 package sd.tp1.client.cloud;
 
-import sd.tp1.client.cloud.cache.HashCachedServer;
 import sd.tp1.client.cloud.data.CloudAlbum;
-import sd.tp1.client.cloud.discovery.HeartbeatDiscovery;
-import sd.tp1.client.cloud.discovery.ServiceDiscovery;
-import sd.tp1.client.cloud.discovery.ServiceHandler;
-import sd.tp1.client.cloud.rest.RestServerWrapper;
-import sd.tp1.client.cloud.soap.SoapServerWrapper;
+import sd.tp1.common.discovery.ServiceHandler;
 
 import java.net.URL;
 import java.util.*;

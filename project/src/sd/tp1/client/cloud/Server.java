@@ -1,6 +1,6 @@
 package sd.tp1.client.cloud;
 
-import sd.tp1.GalleryContentProvider;
+import sd.tp1.common.GalleryContentProvider;
 
 import java.net.URL;
 

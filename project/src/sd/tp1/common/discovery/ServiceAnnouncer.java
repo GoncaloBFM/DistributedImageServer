@@ -1,4 +1,4 @@
-package sd.tp1.server;
+package sd.tp1.common.discovery;
 
 import java.net.URL;
 

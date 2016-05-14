@@ -1,13 +1,12 @@
 package sd.tp1.client.mock;
 
-import sd.tp1.Album;
-import sd.tp1.Picture;
-import sd.tp1.SharedAlbum;
-import sd.tp1.SharedPicture;
+import sd.tp1.common.Album;
+import sd.tp1.common.Picture;
+import sd.tp1.common.SharedAlbum;
+import sd.tp1.common.SharedPicture;
 import sd.tp1.client.cloud.HashServerManager;
 import sd.tp1.client.cloud.Server;
 import sd.tp1.client.cloud.ServerHandler;
-import sd.tp1.client.cloud.ServerManager;
 import sd.tp1.client.gui.Gui;
 import sd.tp1.client.gui.GuiGalleryContentProvider;
 

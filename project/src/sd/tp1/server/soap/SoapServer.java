@@ -1,7 +1,7 @@
 package sd.tp1.server.soap;
 
-import sd.tp1.SharedAlbum;
-import sd.tp1.SharedPicture;
+import sd.tp1.common.SharedAlbum;
+import sd.tp1.common.SharedPicture;
 import sd.tp1.server.DataManager;
 import sd.tp1.server.FileDataManager;
 
@@ -28,7 +28,10 @@ public class SoapServer {
 
     public SoapServer(File root) throws NotDirectoryException {
         this.dataManager = new FileDataManager(root);
+    }
 
+    public SoapServer(DataManager dataManager){
+        this.dataManager = dataManager;
     }
 
     @WebMethod

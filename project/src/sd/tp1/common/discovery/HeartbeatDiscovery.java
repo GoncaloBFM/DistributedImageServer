@@ -1,15 +1,9 @@
-package sd.tp1.client.cloud.discovery;
-
-import sd.tp1.client.cloud.Server;
-import sd.tp1.client.cloud.HashServerManager;
-import sd.tp1.client.cloud.ServerHandler;
+package sd.tp1.common.discovery;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.HashMap;
-import java.util.InputMismatchException;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;

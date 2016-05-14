@@ -1,4 +1,4 @@
-package sd.tp1.client.cloud.discovery;
+package sd.tp1.common.discovery;
 
 import java.net.URL;
 

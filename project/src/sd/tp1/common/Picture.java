@@ -1,4 +1,4 @@
-package sd.tp1;
+package sd.tp1.common;
 
 /**
  * Created by apontes on 3/15/16.

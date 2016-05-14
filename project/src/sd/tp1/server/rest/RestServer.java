@@ -1,7 +1,7 @@
 package sd.tp1.server.rest;
 
-import sd.tp1.SharedAlbum;
-import sd.tp1.SharedPicture;
+import sd.tp1.common.SharedAlbum;
+import sd.tp1.common.SharedPicture;
 import sd.tp1.server.DataManager;
 import sd.tp1.server.FileDataManager;
 
@@ -24,11 +24,15 @@ public class RestServer {
     private String root;
     private DataManager dataManager;
 
-    public RestServer(@PathParam("album") String serverName) throws NotDirectoryException {
+    public RestServer(@PathParam("serverName") String serverName) throws NotDirectoryException {
         this.dataManager = new FileDataManager();
     }
 
-    public RestServer(@PathParam("album") String serverName, File root) throws NotDirectoryException {
+    public RestServer(@PathParam("serverName") String serverName, DataManager dataManager ) {
+        this.dataManager = dataManager;
+    }
+
+    public RestServer(@PathParam("serverName") String serverName, File root) throws NotDirectoryException {
         this.dataManager = new FileDataManager(root);
         this.root = root.toString();
     }

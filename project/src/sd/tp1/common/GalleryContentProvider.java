@@ -1,4 +1,4 @@
-package sd.tp1;
+package sd.tp1.common;
 
 import java.util.List;
 

@@ -1,13 +1,6 @@
 package sd.tp1.client.cloud.data;
 
-import sd.tp1.Album;
-import sd.tp1.Picture;
-import sd.tp1.client.cloud.Server;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import sd.tp1.common.Picture;
 
 /**
  * Created by apontes on 3/27/16.

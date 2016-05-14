@@ -2,8 +2,8 @@ package sd.tp1.server.rest;
 
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import sd.tp1.server.HeartbeatAnnouncer;
-import sd.tp1.server.ServiceAnnouncer;
+import sd.tp1.common.discovery.HeartbeatAnnouncer;
+import sd.tp1.common.discovery.ServiceAnnouncer;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.File;

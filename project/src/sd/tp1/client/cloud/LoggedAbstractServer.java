@@ -1,12 +1,8 @@
 package sd.tp1.client.cloud;
 
-import org.glassfish.jersey.internal.util.Producer;
-import sd.tp1.Album;
-import sd.tp1.Picture;
-import sd.tp1.client.cloud.Server;
+import sd.tp1.common.Album;
+import sd.tp1.common.Picture;
 
-import javax.xml.ws.soap.SOAPFaultException;
-import java.net.URL;
 import java.util.List;
 import java.util.logging.Logger;
 

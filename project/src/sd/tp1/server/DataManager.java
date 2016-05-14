@@ -1,12 +1,8 @@
 package sd.tp1.server;
 
-import sd.tp1.SharedAlbum;
-import sd.tp1.SharedPicture;
+import sd.tp1.common.SharedAlbum;
+import sd.tp1.common.SharedPicture;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -26,4 +22,6 @@ public interface DataManager {
     void deleteAlbum(SharedAlbum album);
 
     boolean deletePicture(SharedAlbum album, SharedPicture picture);
+
+    void addDataOperationHandler(DataOperationHandler handler);
 }

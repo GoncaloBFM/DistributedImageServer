@@ -1,6 +1,6 @@
 package sd.tp1.client.cloud.soap;
 
-import sd.tp1.Picture;
+import sd.tp1.common.Picture;
 import sd.tp1.client.cloud.soap.stubs.SharedPicture;
 
 /**

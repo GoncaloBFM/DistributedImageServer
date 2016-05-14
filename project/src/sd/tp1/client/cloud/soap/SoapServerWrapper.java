@@ -1,17 +1,14 @@
 package sd.tp1.client.cloud.soap;
 
-import org.glassfish.jersey.internal.util.Producer;
-import sd.tp1.Album;
-import sd.tp1.Picture;
+import sd.tp1.common.Album;
+import sd.tp1.common.Picture;
 import sd.tp1.client.cloud.LoggedAbstractServer;
 import sd.tp1.client.cloud.Server;
 import sd.tp1.client.cloud.aux.SafeInvoker;
 import sd.tp1.client.cloud.soap.stubs.*;
 
-import javax.xml.ws.soap.SOAPFaultException;
 import java.net.URL;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**

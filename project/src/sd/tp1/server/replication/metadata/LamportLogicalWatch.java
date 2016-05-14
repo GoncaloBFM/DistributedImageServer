@@ -1,12 +1,12 @@
-package sd.tp1.server.replication.version;
+package sd.tp1.server.replication.metadata;
 
 /**
  * Created by apontes on 5/10/16.
  */
 public class LamportLogicalWatch implements Version{
 
-    private int version;
-    private String id;
+    protected int version;
+    protected String id;
 
     LamportLogicalWatch(String id){
         this(id, 0);

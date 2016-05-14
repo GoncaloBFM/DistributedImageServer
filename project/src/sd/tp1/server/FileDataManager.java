@@ -1,7 +1,7 @@
 package sd.tp1.server;
 
-import sd.tp1.SharedAlbum;
-import sd.tp1.SharedPicture;
+import sd.tp1.common.SharedAlbum;
+import sd.tp1.common.SharedPicture;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by gbfm on 4/1/16.
  */
-public class FileDataManager implements DataManager {
+public class FileDataManager extends AbstractDataManager {
 
     private File root;
 
@@ -64,7 +64,9 @@ public class FileDataManager implements DataManager {
     public SharedAlbum createAlbum(String name) {
         File folder = new File(root, name);
         if(!folder.exists() && folder.mkdir()) {
-            return new SharedAlbum(folder.getName());
+            SharedAlbum album = new SharedAlbum(folder.getName());
+            notifyAlbumCreate(album);
+            return album;
         }
         return null;
     }
@@ -76,7 +78,9 @@ public class FileDataManager implements DataManager {
             //openAlbum(album).mkdir();
             try {
                 Files.write(file.toPath(), data);
-                return new SharedPicture(name);
+                SharedPicture picture = new SharedPicture(name);
+                notifyPictureUpload(album, picture);
+                return picture;
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -84,19 +88,22 @@ public class FileDataManager implements DataManager {
         }
 
         return null;
-
     }
 
     @Override
     public void deleteAlbum(SharedAlbum album) {
         File folder = openAlbum(album);
         folder.renameTo(new File(folder.getAbsolutePath() + ".delete"));
+
+        super.notifyAlbumDelete(album);
     }
 
     @Override
     public boolean deletePicture(SharedAlbum album, SharedPicture picture) {
         File file = openPicture(album, picture);
         file.renameTo(new File(file.getAbsolutePath() + ".delete"));
+
+        super.notifyPictureDelete(album, picture);
         return true;
     }
 

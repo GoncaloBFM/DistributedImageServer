@@ -1,7 +1,7 @@
 package sd.tp1.server.soap;
 
-import sd.tp1.server.HeartbeatAnnouncer;
-import sd.tp1.server.ServiceAnnouncer;
+import sd.tp1.common.discovery.HeartbeatAnnouncer;
+import sd.tp1.common.discovery.ServiceAnnouncer;
 
 import javax.xml.ws.Endpoint;
 import java.io.File;

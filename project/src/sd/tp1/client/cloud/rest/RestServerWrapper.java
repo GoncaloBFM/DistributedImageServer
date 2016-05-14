@@ -1,15 +1,13 @@
 package sd.tp1.client.cloud.rest;
 
 import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.internal.util.Producer;
-import sd.tp1.Album;
-import sd.tp1.Picture;
-import sd.tp1.SharedAlbum;
-import sd.tp1.SharedPicture;
+import sd.tp1.common.Album;
+import sd.tp1.common.Picture;
+import sd.tp1.common.SharedAlbum;
+import sd.tp1.common.SharedPicture;
 import sd.tp1.client.cloud.LoggedAbstractServer;
 import sd.tp1.client.cloud.Server;
 import sd.tp1.client.cloud.aux.SafeInvoker;
-import sd.tp1.server.rest.RestServer;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -17,13 +15,11 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.ws.soap.SOAPFaultException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Created by gbfm on 4/4/16.

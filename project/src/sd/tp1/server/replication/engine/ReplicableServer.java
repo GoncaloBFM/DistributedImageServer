@@ -1,6 +1,5 @@
-package sd.tp1.server.replication.server;
+package sd.tp1.server.replication.engine;
 
-import sd.tp1.server.DataManager;
 import sd.tp1.server.replication.metadata.Metadata;
 import sd.tp1.server.replication.metadata.ServerMetadata;
 

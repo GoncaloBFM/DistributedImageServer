@@ -12,4 +12,6 @@ public interface MetadataManager {
 
     void setMetadata(Album album, Metadata metadata);
     void setMetadata(Album album, Picture picture, Metadata metadata);
+
+    ServerMetadata getServerMetadata();
 }

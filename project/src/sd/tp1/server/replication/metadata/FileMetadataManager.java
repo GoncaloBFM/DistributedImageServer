@@ -2,9 +2,13 @@ package sd.tp1.server.replication.metadata;
 
 import sd.tp1.common.Album;
 import sd.tp1.common.Picture;
+import sd.tp1.common.SharedAlbum;
+import sd.tp1.common.SharedPicture;
 import sd.tp1.server.DataManager;
 import sd.tp1.server.DataOperationHandler;
+import sun.security.provider.SHA;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.util.UUID;
 
@@ -26,13 +30,18 @@ public class FileMetadataManager implements MetadataManager {
     private DataManager dataManager;
     private ServerMetadata serverMetadata;
 
+    public FileMetadataManager(DataManager dataManager){
+        this(dataManager, METADATA_ROOT);
+    }
+
     public FileMetadataManager(DataManager dataManager, File root){
         this.root = root;
         this.dataManager = dataManager;
+        this.setServerMetadata(serverMetadata);
 
         dataManager.addDataOperationHandler(new DataOperationHandler() {
             @Override
-            public void onPictureUpload(Album album, Picture picture){
+            public void onPictureUpload(SharedAlbum album, SharedPicture picture){
                 Metadata meta = getOrDefault(getMetadata(album, picture), buildMetadata(album, picture));
                 meta.setDeleted(false);
 
@@ -40,7 +49,7 @@ public class FileMetadataManager implements MetadataManager {
             }
 
             @Override
-            public void onPictureDelete(Album album, Picture picture) {
+            public void onPictureDelete(SharedAlbum album, SharedPicture picture) {
                 Metadata meta = getMetadata(album, picture);
                 meta.setDeleted(true);
 
@@ -48,7 +57,7 @@ public class FileMetadataManager implements MetadataManager {
             }
 
             @Override
-            public void onAlbumCreate(Album album) {
+            public void onAlbumCreate(SharedAlbum album) {
                 Metadata meta = getOrDefault(getMetadata(album), buildMetadata(album));
                 meta.setDeleted(false);
 
@@ -56,7 +65,7 @@ public class FileMetadataManager implements MetadataManager {
             }
 
             @Override
-            public void onAlbumDelete(Album album) {
+            public void onAlbumDelete(SharedAlbum album) {
                 Metadata meta = getMetadata(album);
                 meta.setDeleted(true);
 
@@ -78,12 +87,12 @@ public class FileMetadataManager implements MetadataManager {
         return String.format(ALBUM_METADATA, album);
     }
 
-    private Metadata buildMetadata(Album album, Picture picture){
-        return new Metadata(buildIdentifier(album, picture), this.serverMetadata);
+    private Metadata buildMetadata(SharedAlbum album, SharedPicture picture){
+        return new Metadata(album, picture, getServerMetadata());
     }
 
-    private Metadata buildMetadata(Album album){
-        return new Metadata(buildIdentifier(album), this.serverMetadata);
+    private Metadata buildMetadata(SharedAlbum album){
+        return new Metadata(album, getServerMetadata());
     }
 
     private File serverFile(){
@@ -100,7 +109,8 @@ public class FileMetadataManager implements MetadataManager {
                 buildIdentifier(album, picture) + METADATA_EXT);
     }
 
-    private ServerMetadata getServerMetadata(){
+    @Override
+    public ServerMetadata getServerMetadata(){
         if(this.serverMetadata != null)
             return this.serverMetadata;
 
@@ -118,16 +128,7 @@ public class FileMetadataManager implements MetadataManager {
 
                 return meta;
             }
-        } catch (FileNotFoundException e) {
-            //Already checked
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            //No res possible
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            //No res possible
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
@@ -183,13 +184,10 @@ public class FileMetadataManager implements MetadataManager {
         } catch (FileNotFoundException e) {
             return null;
 
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
         }
     }
 }

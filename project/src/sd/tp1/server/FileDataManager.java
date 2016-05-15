@@ -61,25 +61,34 @@ public class FileDataManager extends AbstractDataManager {
     }
 
     @Override
-    public SharedAlbum createAlbum(String name) {
+    public SharedAlbum createAlbumNoNotify(String name) {
         File folder = new File(root, name);
         if(!folder.exists() && folder.mkdir()) {
             SharedAlbum album = new SharedAlbum(folder.getName());
-            notifyAlbumCreate(album);
             return album;
         }
+
         return null;
     }
 
     @Override
-    public SharedPicture uploadPicture(SharedAlbum album, String name, byte[] data) {
+    public SharedAlbum createAlbum(String name) {
+        SharedAlbum album = createAlbumNoNotify(name);
+
+        if(album != null)
+            notifyAlbumCreate(album);
+
+        return album;
+    }
+
+    @Override
+    public SharedPicture uploadPictureNoNotify(SharedAlbum album, String name, byte[] data) {
         File file = openPicture(album, name);
         if(!file.exists()) {
             //openAlbum(album).mkdir();
             try {
                 Files.write(file.toPath(), data);
                 SharedPicture picture = new SharedPicture(name);
-                notifyPictureUpload(album, picture);
                 return picture;
 
             } catch (IOException e) {
@@ -91,20 +100,43 @@ public class FileDataManager extends AbstractDataManager {
     }
 
     @Override
-    public void deleteAlbum(SharedAlbum album) {
+    public SharedPicture uploadPicture(SharedAlbum album, String name, byte[] data) {
+        SharedPicture picture = this.uploadPictureNoNotify(album, name, data);
+
+        if(picture != null)
+            this.notifyPictureUpload(album, picture);
+
+        return picture;
+    }
+
+    @Override
+    public void deleteAlbumNoNotify(SharedAlbum album) {
         File folder = openAlbum(album);
         folder.renameTo(new File(folder.getAbsolutePath() + ".delete"));
+    }
 
+    @Override
+    public void deleteAlbum(SharedAlbum album) {
+        this.deleteAlbumNoNotify(album);
         super.notifyAlbumDelete(album);
     }
 
     @Override
-    public boolean deletePicture(SharedAlbum album, SharedPicture picture) {
+    public boolean deletePictureNoNotify(SharedAlbum album, SharedPicture picture) {
         File file = openPicture(album, picture);
         file.renameTo(new File(file.getAbsolutePath() + ".delete"));
 
-        super.notifyPictureDelete(album, picture);
         return true;
+    }
+
+    @Override
+    public boolean deletePicture(SharedAlbum album, SharedPicture picture) {
+        boolean deleted = this.deletePictureNoNotify(album, picture);
+
+        if(deleted)
+            super.notifyPictureDelete(album, picture);
+
+        return deleted;
     }
 
     private File openAlbum(SharedAlbum album){

@@ -1,6 +1,4 @@
-package sd.tp1.server.replication.metadata;
-
-import java.io.File;
+package sd.tp1.server.replication.metadata.old;
 
 /**
  * Created by apontes on 5/11/16.

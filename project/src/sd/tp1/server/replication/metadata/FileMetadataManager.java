@@ -5,129 +5,191 @@ import sd.tp1.common.Picture;
 import sd.tp1.server.DataManager;
 import sd.tp1.server.DataOperationHandler;
 
-import javax.xml.crypto.Data;
-import java.io.File;
-import java.net.URL;
+import java.io.*;
+import java.util.UUID;
 
 /**
- * Created by apontes on 5/13/16.
+ * Created by apontes on 5/15/16.
  */
 public class FileMetadataManager implements MetadataManager {
 
-    private static final File ROOT = new File(".metadata");
+    private final static File METADATA_ROOT = new File(".metadata");
 
-    private File root;
+    private final static String METADATA_EXT = ".meta";
+    private final static String SERVER_METADATA_FILE = "server";
+
+    private final static String ALBUM_METADATA = "album-%s";
+    private final static String PICTURE_METADATA = "picture-%s\\%s";
+
+    private File root = METADATA_ROOT;
+
     private DataManager dataManager;
-    private ResourceSource source;
+    private ServerMetadata serverMetadata;
 
-    public FileMetadataManager(ResourceSource source, DataManager dataManager){
-        this(source, dataManager, ROOT);
-    }
-
-    public FileMetadataManager(ResourceSource source, DataManager dataManager, File root){
-        this.source = source;
-        this.dataManager = dataManager;
+    public FileMetadataManager(DataManager dataManager, File root){
         this.root = root;
+        this.dataManager = dataManager;
 
-        this.dataManager.addDataOperationHandler(new DataOperationHandler() {
+        dataManager.addDataOperationHandler(new DataOperationHandler() {
             @Override
-            public void onPictureUpload(Album album, Picture picture) {
-                PersistenceMetadata metadata = getMetadata(album, picture);
-                metadata.setDeleted(false);
-                metadata.store();
+            public void onPictureUpload(Album album, Picture picture){
+                Metadata meta = getOrDefault(getMetadata(album, picture), buildMetadata(album, picture));
+                meta.setDeleted(false);
+
+                setMetadata(album, picture, meta);
             }
 
             @Override
             public void onPictureDelete(Album album, Picture picture) {
-                PersistenceMetadata metadata = getMetadata(album, picture);
-                metadata.setDeleted(true);
-                metadata.store();
+                Metadata meta = getMetadata(album, picture);
+                meta.setDeleted(true);
+
+                setMetadata(album, picture, meta);
             }
 
             @Override
             public void onAlbumCreate(Album album) {
-                PersistenceMetadata metadata = getMetadata(album);
-                metadata.setDeleted(false);
-                metadata.store();
+                Metadata meta = getOrDefault(getMetadata(album), buildMetadata(album));
+                meta.setDeleted(false);
+
+                setMetadata(album, meta);
             }
 
             @Override
             public void onAlbumDelete(Album album) {
-                PersistenceMetadata metadata = getMetadata(album);
-                metadata.setDeleted(true);
-                metadata.store();
+                Metadata meta = getMetadata(album);
+                meta.setDeleted(true);
+
+                setMetadata(album, meta);
+
             }
         });
-
     }
 
-    private String albumIdentifier(Album album){
-        return String.format("album: %s", album.getName());
+    private static <T> T getOrDefault(T elem, T ifNull){
+        return elem == null ? ifNull : elem;
     }
 
-    private String pictureIdentifier(Album album, Picture picture){
-        return String.format("picture: %s \\ %s", album.getName(), picture.getPictureName());
+    private static String buildIdentifier(Album album, Picture picture){
+        return String.format(PICTURE_METADATA, album.getName(), picture.getPictureName());
+    }
+
+    private static String buildIdentifier(Album album){
+        return String.format(ALBUM_METADATA, album);
+    }
+
+    private Metadata buildMetadata(Album album, Picture picture){
+        return new Metadata(buildIdentifier(album, picture), this.serverMetadata);
+    }
+
+    private Metadata buildMetadata(Album album){
+        return new Metadata(buildIdentifier(album), this.serverMetadata);
+    }
+
+    private File serverFile(){
+        return new File(this.root, SERVER_METADATA_FILE);
+    }
+
+    private File albumFile(Album album){
+        return new File(this.root,
+                buildIdentifier(album) + METADATA_EXT);
+    }
+
+    private File pictureFile(Album album, Picture picture){
+        return new File(this.root,
+                buildIdentifier(album, picture) + METADATA_EXT);
+    }
+
+    private ServerMetadata getServerMetadata(){
+        if(this.serverMetadata != null)
+            return this.serverMetadata;
+
+        try {
+            File file = serverFile();
+            if(!file.exists()){
+                ServerMetadata meta = new ServerMetadata(UUID.randomUUID().toString());
+                this.setServerMetadata(meta);
+                return meta;
+            }
+            else{
+                ObjectInput in = new ObjectInputStream(new FileInputStream(file));
+                ServerMetadata meta = (ServerMetadata) in.readObject();
+                in.close();
+
+                return meta;
+            }
+        } catch (FileNotFoundException e) {
+            //Already checked
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            //No res possible
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            //No res possible
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setServerMetadata(ServerMetadata meta){
+        File file = serverFile();
+        writeMetadata(file, meta);
     }
 
     @Override
-    public PersistenceMetadata buildMetadata(Album album) {
-        PersistenceMetadata metadata = new FileMetadata(this.root, albumIdentifier(album), source);
-        metadata.getSources().add(this.source);
-        metadata.setVersion(new LamportLogicalWatch(this.source.getServerId()));
-
-        return metadata;
+    public Metadata getMetadata(Album album) {
+        return readMetadata(albumFile(album));
     }
 
     @Override
-    public PersistenceMetadata buildMetadata(Album album, Picture picture) {
-        PersistenceMetadata metadata = new FileMetadata(this.root, pictureIdentifier(album, picture), source);
-        metadata.getSources().add(this.source);
-        metadata.setVersion(new LamportLogicalWatch(this.source.getServerId()));
-
-        return metadata;
+    public Metadata getMetadata(Album album, Picture picture) {
+        return readMetadata(pictureFile(album, picture));
     }
 
     @Override
-    public PersistenceMetadata buildAndStoreMetadata(Album album) {
-        PersistenceMetadata metadata = this.buildMetadata(album);
-        storeMetadata(metadata);
-
-        return metadata;
+    public void setMetadata(Album album, Metadata metadata) {
+        writeMetadata(albumFile(album), metadata);
     }
 
     @Override
-    public PersistenceMetadata buildAndStoreMetadata(Album album, Picture picture) {
-        PersistenceMetadata metadata = this.buildMetadata(album, picture);
-        storeMetadata(metadata);
-
-        return metadata;
+    public void setMetadata(Album album, Picture picture, Metadata metadata) {
+        writeMetadata(pictureFile(album, picture), metadata);
     }
 
-    @Override
-    public PersistenceMetadata getMetadata(Album album) {
-        PersistenceMetadata metadata = new FileMetadata(root, albumIdentifier(album), source);
-        metadata.load();
+    private void writeMetadata(File file, Object meta){
+        try {
+            ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
+            out.writeObject(meta);
+            out.flush();
+            out.close();
 
-        return metadata;
+        } catch (IOException e) {
+            //No res possible
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
-    @Override
-    public PersistenceMetadata getMetadata(Album album, Picture picture) {
-        PersistenceMetadata metadata = new FileMetadata(root, pictureIdentifier(album, picture), source);
-        metadata.load();
+    private Metadata readMetadata(File file){
+        if(!file.exists())
+            return null;
 
-        return metadata;
-    }
+        try{
+            ObjectInput in = new ObjectInputStream(new FileInputStream(file));
+            return (Metadata) in.readObject();
 
-    @Override
-    public void storeMetadata(PersistenceMetadata metadata) {
-        metadata.store();
-    }
+        } catch (FileNotFoundException e) {
+            return null;
 
-    @Override
-    public boolean needUpdate(Metadata metadata) {
-        return new FileMetadata(this.root, metadata.getIdentifier(), source)
-                .getVersion()
-                .compareTo(metadata.getVersion()) < 0;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 }

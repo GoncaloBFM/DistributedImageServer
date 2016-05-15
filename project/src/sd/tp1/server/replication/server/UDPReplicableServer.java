@@ -1,16 +1,13 @@
 package sd.tp1.server.replication.server;
 
-import sd.tp1.common.Album;
-import sd.tp1.common.Picture;
+import sd.tp1.common.discovery.HeartbeatAnnouncer;
 import sd.tp1.common.discovery.ServiceAnnouncer;
+import sd.tp1.common.discovery.ServiceDiscovery;
 import sd.tp1.server.DataManager;
-import sd.tp1.server.DataOperationHandler;
-import sd.tp1.server.replication.metadata.FileMetadataManager;
-import sd.tp1.server.replication.metadata.Metadata;
-import sd.tp1.server.replication.metadata.MetadataManager;
-import sd.tp1.server.replication.metadata.ResourceSource;
+import sd.tp1.server.replication.metadata.old.FileMetadataManager;
+import sd.tp1.server.replication.metadata.old.MetadataManager;
+import sd.tp1.server.replication.metadata.ServerMetadata;
 
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.util.UUID;
 
@@ -19,12 +16,15 @@ import java.util.UUID;
  */
 public class UDPReplicableServer {
 
+    private static String SERVICE_DISCOVERY = "42845_43178_ServerReplication";
+    private static int SERVICE_DISCOVERY_PORT = 6966;
+
     private static File ROOT = new File(".metadata");
-    private static ResourceSource getResourceSource() throws IOException {
+    private static ServerMetadata getResourceSource() throws IOException {
         try {
             DataInput input = new DataInputStream(new FileInputStream(new File(ROOT, ".server-id")));
 
-            return new ResourceSource(input.readLine());
+            return new ServerMetadata(input.readLine());
         } catch (FileNotFoundException e) {
             PrintStream output = new PrintStream(new FileOutputStream(new File(ROOT, ".server-id")));
             String serverId = UUID.randomUUID().toString();
@@ -32,25 +32,28 @@ public class UDPReplicableServer {
             output.flush();
             output.close();
 
-            return new ResourceSource(serverId);
+            return new ServerMetadata(serverId);
         }
     }
 
-    private ResourceSource source;
+    private ServerMetadata source;
     private File root;
 
     private DataManager dataManager;
     private MetadataManager metadataManager;
 
-    UDPReplicableServer(DataManager dataManager) throws IOException {
-        this(ROOT, getResourceSource(), dataManager);
+    private ServiceAnnouncer serviceAnnouncer;
+    private ServiceDiscovery serviceDiscovery;
+
+    UDPReplicableServer(DataManager dataManager, String serverPath, int serverPort) throws IOException {
+        this(ROOT, getResourceSource(), dataManager, serverPath, serverPort);
     }
 
-    UDPReplicableServer(File root, ResourceSource source, DataManager dataManager){
+    UDPReplicableServer(File root, ServerMetadata source, DataManager dataManager, String serverPath, int serverPort){
         this.source = source;
         this.dataManager = dataManager;
         this.metadataManager = new FileMetadataManager(source, dataManager, root);
 
-
+        this.serviceAnnouncer = new HeartbeatAnnouncer(SERVICE_DISCOVERY, SERVICE_DISCOVERY_PORT, serverPath, serverPort);
     }
 }

@@ -1,4 +1,6 @@
-package sd.tp1.server.replication.metadata;
+package sd.tp1.server.replication.metadata.old;
+
+import sd.tp1.server.replication.metadata.ServerMetadata;
 
 import java.io.*;
 import java.util.*;
@@ -16,13 +18,13 @@ public class FileMetadata implements PersistenceMetadata {
     private File file;
 
     private boolean isDeleted = false;
-    private Set<ResourceSource> sources = new LinkedHashSet<>();
+    private Set<ServerMetadata> sources = new LinkedHashSet<>();
 
-    public FileMetadata(String identifier, ResourceSource source){
+    public FileMetadata(String identifier, ServerMetadata source){
         this(ROOT, identifier, source);
     }
 
-    public FileMetadata(File root, String identifier, ResourceSource source){
+    public FileMetadata(File root, String identifier, ServerMetadata source){
         this.identifier = identifier;
         this.file = new File(root, this.identifier);
         this.version = new LamportLogicalWatch(source.getServerId(), 0);
@@ -100,7 +102,7 @@ public class FileMetadata implements PersistenceMetadata {
     }
 
     @Override
-    public Set<ResourceSource> getSources() {
+    public Set<ServerMetadata> getSources() {
         return this.sources;
     }
 }

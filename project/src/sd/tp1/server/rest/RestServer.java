@@ -32,11 +32,6 @@ public class RestServer {
         this.dataManager = dataManager;
     }
 
-    public RestServer(@PathParam("serverName") String serverName, File root) throws NotDirectoryException {
-        this.dataManager = new FileDataManager(root);
-        this.root = root.toString();
-    }
-
     private Response accessControllAllowOrigin(Response response){
         response.getHeaders().add("Access-Control-Allow-Origin", "*");
         return response;

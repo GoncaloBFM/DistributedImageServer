@@ -4,6 +4,10 @@ import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import sd.tp1.common.discovery.HeartbeatAnnouncer;
 import sd.tp1.common.discovery.ServiceAnnouncer;
+import sd.tp1.server.DataManager;
+import sd.tp1.server.FileDataManager;
+import sd.tp1.server.replication.engine.ReplicableServer;
+import sd.tp1.server.replication.engine.TotalReplicableServer;
 import sd.tp1.server.rest.RestServer;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -43,40 +47,48 @@ public class RestSSLServerRun {
         ResourceConfig config = new ResourceConfig();
         RestServer server = null;
         try {
-            server = new RestServer(serverPath, root);
+            DataManager dataManager = new FileDataManager(root);
+
+            server = new RestServer(serverPath, dataManager);
+            config.register(server);
+
+
+            try{
+                SSLContext sslContext = SSLContext.getInstance("TLSv1");
+                KeyStore keyStore = KeyStore.getInstance("JKS");
+
+                InputStream is = new FileInputStream(KEYSTORE);
+                keyStore.load(is, JKS_PASSWORD);
+
+                KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                kmf.init(keyStore, KEY_PASSWORD);
+
+                TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                tmf.init(keyStore);
+
+                sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new SecureRandom());
+
+                JdkHttpServerFactory.createHttpServer(baseUri, config, sslContext);
+                System.out.println(String.format("Server started at port %s, root:%s, path:%s", port, root.getAbsoluteFile(), serverPath));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.exit(-1);
+            }
+
+            //Start announcer
+            ServiceAnnouncer serviceAnnouncer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE,ANNOUNCE_ON_PORT, serverPath, port);
+            serviceAnnouncer.startAnnounceService();
+            System.out.println("Service announcer started! ;)");
+
+            //Start replicable engine
+            ReplicableServer replicableServer = new TotalReplicableServer(dataManager, root);
+            replicableServer.startReplication();
+
         } catch (NotDirectoryException e) {
             System.err.println("Directory not available.\n Terminating.");
             System.exit(1);
         }
-        config.register(server);
-
-        try{
-            SSLContext sslContext = SSLContext.getInstance("TLSv1");
-            KeyStore keyStore = KeyStore.getInstance("JKS");
-
-            InputStream is = new FileInputStream(KEYSTORE);
-            keyStore.load(is, JKS_PASSWORD);
-
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            kmf.init(keyStore, KEY_PASSWORD);
-
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            tmf.init(keyStore);
-
-            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new SecureRandom());
-
-            JdkHttpServerFactory.createHttpServer(baseUri, config, sslContext);
-            System.out.println(String.format("Server started at port %s, root:%s, path:%s", port, root.getAbsoluteFile(), serverPath));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
-
-        ServiceAnnouncer serviceAnnouncer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE,ANNOUNCE_ON_PORT, serverPath, port);
-        serviceAnnouncer.startAnnounceService();
-
-        System.out.println("Service announcer started! ;)");
     }
 
     static int generateRandomPort(){

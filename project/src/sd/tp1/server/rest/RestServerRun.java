@@ -4,6 +4,10 @@ import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import sd.tp1.common.discovery.HeartbeatAnnouncer;
 import sd.tp1.common.discovery.ServiceAnnouncer;
+import sd.tp1.server.DataManager;
+import sd.tp1.server.FileDataManager;
+import sd.tp1.server.replication.engine.ReplicableServer;
+import sd.tp1.server.replication.engine.TotalReplicableServer;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.File;
@@ -32,21 +36,31 @@ public class RestServerRun {
 
         URI baseUri = UriBuilder.fromUri("http://0.0.0.0/").port(port).build();
         ResourceConfig config = new ResourceConfig();
-        RestServer server = null;
+
         try {
-            server = new RestServer(serverPath, root);
+            DataManager dataManager = new FileDataManager(root);
+
+            RestServer server = new RestServer(serverPath, dataManager);
+
+            config.register(server);
+            JdkHttpServerFactory.createHttpServer(baseUri, config);
+            System.out.println(String.format("Server started at port %s, root:%s, path:%s", port, root.getAbsoluteFile(), serverPath));
+
+            //Start announcer
+            ServiceAnnouncer serviceAnnouncer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE,ANNOUNCE_ON_PORT, serverPath, port);
+            serviceAnnouncer.startAnnounceService();
+            System.out.println("Service announcer started! ;)");
+
+
+            //Start replication system
+            ReplicableServer replicableServer = new TotalReplicableServer(dataManager, root);
+            replicableServer.startReplication();
+
         } catch (NotDirectoryException e) {
             System.err.println("Directory not available.\n Terminating.");
             System.exit(1);
         }
-        config.register(server);
-        JdkHttpServerFactory.createHttpServer(baseUri, config);
-        System.out.println(String.format("Server started at port %s, root:%s, path:%s", port, root.getAbsoluteFile(), serverPath));
 
-        ServiceAnnouncer serviceAnnouncer = new HeartbeatAnnouncer(SERVICE_TO_ANNOUNCE,ANNOUNCE_ON_PORT, serverPath, port);
-        serviceAnnouncer.startAnnounceService();
-
-        System.out.println("Service announcer started! ;)");
     }
 
     static int generateRandomPort(){

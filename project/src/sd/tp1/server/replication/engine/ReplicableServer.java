@@ -10,7 +10,4 @@ import java.util.Collection;
  */
 public interface ReplicableServer {
     void startReplication();
-
-    ServerMetadata getServerMetadata();
-    Collection<Metadata> getMetadataCollection();
 }

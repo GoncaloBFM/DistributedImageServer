@@ -6,6 +6,7 @@ import sd.tp1.server.DataManager;
 import sd.tp1.server.replication.metadata.Metadata;
 import sd.tp1.server.replication.metadata.MetadataManager;
 import sd.tp1.server.replication.metadata.ServerMetadata;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import sun.security.provider.SHA;
 
 import javax.jws.WebMethod;
@@ -15,15 +16,21 @@ import java.util.Collection;
 /**
  * Created by apontes on 5/15/16.
  */
+@WebService
 public class SOAPReplicationServerBackdoor implements ReblicationServerBackdoor{
 
     private MetadataManager metadataManager;
     private DataManager dataManager;
     private BackdoorFactory backdoorFactory;
 
+    public SOAPReplicationServerBackdoor(){
+        throw new NotImplementedException();
+    }
+
     public SOAPReplicationServerBackdoor(MetadataManager metadataManager, DataManager dataManager, BackdoorFactory backdoorFactory){
         this.metadataManager = metadataManager;
         this.dataManager = dataManager;
+        this.backdoorFactory = backdoorFactory;
     }
 
     @Override

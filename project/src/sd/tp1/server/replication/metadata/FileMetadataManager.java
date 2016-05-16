@@ -6,9 +6,7 @@ import sd.tp1.common.SharedAlbum;
 import sd.tp1.common.SharedPicture;
 import sd.tp1.server.DataManager;
 import sd.tp1.server.DataOperationHandler;
-import sun.security.provider.SHA;
 
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.util.UUID;
 
@@ -17,27 +15,27 @@ import java.util.UUID;
  */
 public class FileMetadataManager implements MetadataManager {
 
-    private final static File METADATA_ROOT = new File(".metadata");
+    private final static String METADATA_DIR = ".metadata";
 
     private final static String METADATA_EXT = ".meta";
-    private final static String SERVER_METADATA_FILE = "server";
+    private final static String SERVER_METADATA_FILE = "server.meta";
 
     private final static String ALBUM_METADATA = "album-%s";
     private final static String PICTURE_METADATA = "picture-%s\\%s";
 
-    private File root = METADATA_ROOT;
+    private File metadataDir;
 
     private DataManager dataManager;
     private ServerMetadata serverMetadata;
 
-    public FileMetadataManager(DataManager dataManager){
-        this(dataManager, METADATA_ROOT);
-    }
 
     public FileMetadataManager(DataManager dataManager, File root){
-        this.root = root;
+        this.metadataDir = new File(root, METADATA_DIR);
+        if(!metadataDir.exists())
+            metadataDir.mkdir();
+
+
         this.dataManager = dataManager;
-        this.setServerMetadata(serverMetadata);
 
         dataManager.addDataOperationHandler(new DataOperationHandler() {
             @Override
@@ -96,16 +94,16 @@ public class FileMetadataManager implements MetadataManager {
     }
 
     private File serverFile(){
-        return new File(this.root, SERVER_METADATA_FILE);
+        return new File(this.metadataDir, SERVER_METADATA_FILE);
     }
 
     private File albumFile(Album album){
-        return new File(this.root,
+        return new File(this.metadataDir,
                 buildIdentifier(album) + METADATA_EXT);
     }
 
     private File pictureFile(Album album, Picture picture){
-        return new File(this.root,
+        return new File(this.metadataDir,
                 buildIdentifier(album, picture) + METADATA_EXT);
     }
 
@@ -161,6 +159,9 @@ public class FileMetadataManager implements MetadataManager {
 
     private void writeMetadata(File file, Object meta){
         try {
+            if(!file.exists())
+                file.createNewFile();
+
             ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
             out.writeObject(meta);
             out.flush();

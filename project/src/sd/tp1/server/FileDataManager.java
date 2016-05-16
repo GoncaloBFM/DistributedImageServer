@@ -30,7 +30,7 @@ public class FileDataManager extends AbstractDataManager {
     @Override
     public List<SharedAlbum> loadListOfAlbums() {
         List<SharedAlbum> list = new LinkedList<>();
-        for(File iFile : root.listFiles(x -> x.isDirectory() && !x.getName().contains(".delete")))
+        for(File iFile : root.listFiles(x -> x.isDirectory() && !x.getName().contains(".delete") && !x.getName().startsWith(".")))
             list.add(new SharedAlbum(iFile.getName()));
 
         return list;
@@ -43,7 +43,7 @@ public class FileDataManager extends AbstractDataManager {
         if (!dir.isDirectory()) {
             return null;
         }
-        for(File iFile : dir.listFiles(x -> !x.isDirectory() && !x.getName().contains(".delete")))
+        for(File iFile : dir.listFiles(x -> !x.isDirectory() && !x.getName().contains(".delete") && !x.getName().startsWith(".")))
             list.add(new SharedPicture(iFile.getName()));
 
         return list;

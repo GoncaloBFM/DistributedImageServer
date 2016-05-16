@@ -5,15 +5,16 @@ import sd.tp1.common.Picture;
 import sd.tp1.common.SharedAlbum;
 import sd.tp1.common.SharedPicture;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by apontes on 5/15/16.
  */
-public class Metadata implements Comparable<Metadata> {
+public class Metadata implements Comparable<Metadata>, Serializable {
 
-    private boolean isDeleted = false;
+    public boolean isDeleted = false;
     private LamportLogicClock logicClock;
     private Set<ServerMetadata> sourceSet;
 
@@ -55,9 +56,41 @@ public class Metadata implements Comparable<Metadata> {
         return this.isDeleted;
     }
 
-    public void setDeleted(boolean isDeleted){
+    public SharedAlbum getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(SharedAlbum album) {
+        this.album = album;
+    }
+
+    public void setIsDeleted(boolean isDeleted){
         this.isDeleted = isDeleted;
         this.setNextVersion();
+    }
+
+    public Set<ServerMetadata> getSourceSet() {
+        return sourceSet;
+    }
+
+    public void setSourceSet(Set<ServerMetadata> sourceSet) {
+        this.sourceSet = sourceSet;
+    }
+
+    public ServerMetadata getLocal() {
+        return local;
+    }
+
+    public void setLocal(ServerMetadata local) {
+        this.local = local;
+    }
+
+    public void setPicture(SharedPicture picture) {
+        this.picture = picture;
+    }
+
+    public SharedPicture getPicture(){
+        return this.picture;
     }
 
     public LamportLogicClock getLogicClock(){
@@ -76,14 +109,6 @@ public class Metadata implements Comparable<Metadata> {
     @Override
     public int compareTo(Metadata o) {
         return this.logicClock.compareTo(o.logicClock);
-    }
-
-    public SharedAlbum getAlbum(){
-        return this.album;
-    }
-
-    public SharedPicture getPicture(){
-        return this.picture;
     }
 }
 

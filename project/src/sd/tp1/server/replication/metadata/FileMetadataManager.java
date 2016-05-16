@@ -41,7 +41,7 @@ public class FileMetadataManager implements MetadataManager {
             @Override
             public void onPictureUpload(SharedAlbum album, SharedPicture picture){
                 Metadata meta = getOrDefault(getMetadata(album, picture), buildMetadata(album, picture));
-                meta.setDeleted(false);
+                meta.setIsDeleted(false);
 
                 setMetadata(album, picture, meta);
             }
@@ -49,7 +49,7 @@ public class FileMetadataManager implements MetadataManager {
             @Override
             public void onPictureDelete(SharedAlbum album, SharedPicture picture) {
                 Metadata meta = getMetadata(album, picture);
-                meta.setDeleted(true);
+                meta.setIsDeleted(true);
 
                 setMetadata(album, picture, meta);
             }
@@ -57,7 +57,7 @@ public class FileMetadataManager implements MetadataManager {
             @Override
             public void onAlbumCreate(SharedAlbum album) {
                 Metadata meta = getOrDefault(getMetadata(album), buildMetadata(album));
-                meta.setDeleted(false);
+                meta.setIsDeleted(false);
 
                 setMetadata(album, meta);
             }
@@ -65,7 +65,7 @@ public class FileMetadataManager implements MetadataManager {
             @Override
             public void onAlbumDelete(SharedAlbum album) {
                 Metadata meta = getMetadata(album);
-                meta.setDeleted(true);
+                meta.setIsDeleted(true);
 
                 setMetadata(album, meta);
 
@@ -138,22 +138,22 @@ public class FileMetadataManager implements MetadataManager {
     }
 
     @Override
-    public Metadata getMetadata(Album album) {
-        return readMetadata(albumFile(album));
+    public Metadata getMetadata(SharedAlbum album) {
+        return getOrDefault(readMetadata(albumFile(album)), buildMetadata(album));
     }
 
     @Override
-    public Metadata getMetadata(Album album, Picture picture) {
-        return readMetadata(pictureFile(album, picture));
+    public Metadata getMetadata(SharedAlbum album, SharedPicture picture) {
+        return getOrDefault(readMetadata(pictureFile(album, picture)), buildMetadata(album, picture));
     }
 
     @Override
-    public void setMetadata(Album album, Metadata metadata) {
+    public void setMetadata(SharedAlbum album, Metadata metadata) {
         writeMetadata(albumFile(album), metadata);
     }
 
     @Override
-    public void setMetadata(Album album, Picture picture, Metadata metadata) {
+    public void setMetadata(SharedAlbum album, SharedPicture picture, Metadata metadata) {
         writeMetadata(pictureFile(album, picture), metadata);
     }
 

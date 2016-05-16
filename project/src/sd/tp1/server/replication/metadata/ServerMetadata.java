@@ -1,9 +1,11 @@
 package sd.tp1.server.replication.metadata;
 
+import java.io.Serializable;
+
 /**
  * Created by apontes on 5/13/16.
  */
-public class ServerMetadata {
+public class ServerMetadata implements Serializable {
     private String serverId;
 
     public ServerMetadata(){}
@@ -15,6 +17,8 @@ public class ServerMetadata {
     public String getServerId() {
         return serverId;
     }
+
+    public void setServerId(String serverId) { this.serverId = serverId; }
 
     @Override
     public int hashCode() {

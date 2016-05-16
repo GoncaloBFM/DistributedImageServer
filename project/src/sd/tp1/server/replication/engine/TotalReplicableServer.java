@@ -1,29 +1,30 @@
 package sd.tp1.server.replication.engine;
 
+import sd.tp1.common.SharedAlbum;
+import sd.tp1.common.SharedPicture;
 import sd.tp1.common.discovery.*;
 import sd.tp1.server.DataManager;
 
 import sd.tp1.server.replication.backdoor.SOAPReplicationServerBackdoor;
+import sd.tp1.server.replication.backdoor.client.SOAPBackdoorWrapper;
 import sd.tp1.server.replication.metadata.FileMetadataManager;
 import sd.tp1.server.replication.metadata.Metadata;
 import sd.tp1.server.replication.metadata.MetadataManager;
 import sd.tp1.server.replication.backdoor.ReblicationServerBackdoor;
 import sd.tp1.server.replication.metadata.ServerMetadata;
-import sd.tp1.server.soap.SoapServer;
 
 import javax.xml.ws.Endpoint;
 import java.io.File;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Created by apontes on 5/13/16.
  */
 public class TotalReplicableServer implements ReplicableServer {
+
+    private final static long MILLIS_BETWEEN_SYNC = 5000;
 
     private final static String SERVICE_NAME = "42845_43178_ServerReplication";
     private final static int SERVICE_PORT = 6966;
@@ -42,8 +43,6 @@ public class TotalReplicableServer implements ReplicableServer {
 
     private Map<URL, ReblicationServerBackdoor> urlMap = new ConcurrentHashMap<>();
     private Map<ServerMetadata, ReblicationServerBackdoor> metaMap = new ConcurrentHashMap<>();
-
-    private Set<URL> alreadySync = new ConcurrentSkipListSet<>();
 
     private ReblicationServerBackdoor serverBackdoor;
 
@@ -76,7 +75,16 @@ public class TotalReplicableServer implements ReplicableServer {
                 if(! service.equals(SERVICE_NAME))
                     return;
 
-                //urlMap.put(url, null);
+                SOAPBackdoorWrapper server = new SOAPBackdoorWrapper(url);
+                ServerMetadata meta = server.getServerMetadata();
+
+                if(meta != null){
+                    urlMap.put(url, server);
+                    metaMap.put(meta, server);
+                }
+                else {
+                    System.err.println("Cant get meta from server");
+                }
             }
 
             @Override
@@ -85,6 +93,7 @@ public class TotalReplicableServer implements ReplicableServer {
                     return;
 
                 urlMap.remove(url);
+                //todo remove from meta
             }
         });
 
@@ -94,7 +103,56 @@ public class TotalReplicableServer implements ReplicableServer {
         String endpointUrl = String.format("http://%s:%d/%s", "0.0.0.0", serverPort, serverPath);
         Endpoint.publish(endpointUrl, serverBackdoor);
 
+        new Thread(){
+            @Override
+            public void run(){
+               for(;;){
+                   LinkedList<ReblicationServerBackdoor> toSync = new LinkedList<>();
+                   urlMap.values().forEach(toSync::add);
+                   Collections.shuffle(toSync);
+
+                   while(!toSync.isEmpty()){
+                       ReblicationServerBackdoor server = toSync.poll();
+
+                       ServerMetadata localMeta = metadataManager.getServerMetadata();
+                       ServerMetadata remoteMeta = server.getServerMetadata();
+                       if(localMeta.getServerId().equals(remoteMeta.getServerId()))
+                           continue;
+
+                       server.sendMetadata(localMeta, getAllMetadata());
+
+                       try {
+                           Thread.sleep(MILLIS_BETWEEN_SYNC);
+                       } catch (InterruptedException e) {
+                           //do nothing
+                           //todo remove
+                           e.printStackTrace();
+                       }
+                   }
+
+                   try {
+                       Thread.sleep(MILLIS_BETWEEN_SYNC);
+                   } catch (InterruptedException e) {
+                       //do nothing
+                       //todo remove
+                       e.printStackTrace();
+                   }
+               }
+            }
+        }.start();
+
         System.out.println("Server backdoor started at: " + endpointUrl);
         this.isRunning = true;
+    }
+
+    private List<Metadata> getAllMetadata(){
+        List<Metadata> meta = new LinkedList<>();
+
+        dataManager.loadListOfAlbums().forEach(a -> {
+            meta.add(metadataManager.getMetadata(a));
+            dataManager.loadListOfPictures(a).forEach(p -> meta.add(metadataManager.getMetadata(a, p)));
+        });
+
+        return meta;
     }
 }

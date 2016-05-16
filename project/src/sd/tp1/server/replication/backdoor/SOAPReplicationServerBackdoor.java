@@ -34,6 +34,7 @@ public class SOAPReplicationServerBackdoor implements ReblicationServerBackdoor{
     }
 
     @Override
+    @WebMethod
     public void sendMetadata(ServerMetadata serverMetadata, Collection<Metadata> metadata) {
         ReblicationServerBackdoor backdoor = this.backdoorFactory.getBackdoor(serverMetadata);
         //No backdoor available
@@ -86,11 +87,13 @@ public class SOAPReplicationServerBackdoor implements ReblicationServerBackdoor{
     }
 
     @Override
+    @WebMethod
     public byte[] getPictureData(SharedAlbum album, SharedPicture picture) {
         return dataManager.loadPictureData(album, picture);
     }
 
     @Override
+    @WebMethod
     public ServerMetadata getServerMetadata() {
         return metadataManager.getServerMetadata();
     }

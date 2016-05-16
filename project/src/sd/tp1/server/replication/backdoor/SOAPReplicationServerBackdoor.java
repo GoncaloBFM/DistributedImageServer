@@ -7,17 +7,19 @@ import sd.tp1.server.replication.metadata.Metadata;
 import sd.tp1.server.replication.metadata.MetadataManager;
 import sd.tp1.server.replication.metadata.ServerMetadata;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import sun.security.provider.SHA;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 /**
  * Created by apontes on 5/15/16.
  */
 @WebService
-public class SOAPReplicationServerBackdoor implements ReblicationServerBackdoor{
+public class SOAPReplicationServerBackdoor implements ReplicationServerBackdoor {
+
+    private Logger logger = Logger.getLogger(SOAPReplicationServerBackdoor.class.getSimpleName());
 
     private MetadataManager metadataManager;
     private DataManager dataManager;
@@ -36,10 +38,13 @@ public class SOAPReplicationServerBackdoor implements ReblicationServerBackdoor{
     @Override
     @WebMethod
     public void sendMetadata(ServerMetadata serverMetadata, Collection<Metadata> metadata) {
-        ReblicationServerBackdoor backdoor = this.backdoorFactory.getBackdoor(serverMetadata);
+        this.logger.info(String.format("Metadata received [serverId: %s]", serverMetadata.getServerId()));
+        ReplicationServerBackdoor backdoor = this.backdoorFactory.getBackdoor(serverMetadata);
         //No backdoor available
         if(backdoor == null)
             return;
+
+
 
         for(Metadata iMeta : metadata){
             if(iMeta.isPicture()){
@@ -51,14 +56,19 @@ public class SOAPReplicationServerBackdoor implements ReblicationServerBackdoor{
                     continue;
 
                 //need update
+                this.logger.info(String.format("Picture need update (%s\\%s)", album.getName(), picture.getPictureName()));
                 if(iMeta.isDeleted()){
                     this.dataManager.deletePicture(album, picture);
                 }
                 else{
                     byte[] data = backdoor.getPictureData(album, picture);
+                    if(data == null)
+                        continue;
+
                     this.dataManager.uploadPicture(album, picture.getPictureName(), data);
                 }
 
+                this.logger.info(String.format("Picture updated (%s\\%s)", album.getName(), picture.getPictureName()));
                 this.metadataManager.setMetadata(album, picture, iMeta);
             }
             else if(iMeta.isAlbum()){
@@ -69,6 +79,7 @@ public class SOAPReplicationServerBackdoor implements ReblicationServerBackdoor{
                     continue;
 
                 //need update
+                this.logger.info(String.format("Album need update (%s)", album.getName()));
                 if(iMeta.isDeleted()){
                     this.dataManager.deleteAlbum(album);
                 }
@@ -76,6 +87,7 @@ public class SOAPReplicationServerBackdoor implements ReblicationServerBackdoor{
                     this.dataManager.createAlbum(album.name);
                 }
 
+                this.logger.info(String.format("Album updated (%s)", album.getName()));
                 this.metadataManager.setMetadata(album, iMeta);
             }
             else{
@@ -89,12 +101,14 @@ public class SOAPReplicationServerBackdoor implements ReblicationServerBackdoor{
     @Override
     @WebMethod
     public byte[] getPictureData(SharedAlbum album, SharedPicture picture) {
+        this.logger.info(String.format("Sending picture (%s\\%s)", album.getName(), picture.getPictureName()));
         return dataManager.loadPictureData(album, picture);
     }
 
     @Override
     @WebMethod
     public ServerMetadata getServerMetadata() {
+        this.logger.info("Sending metadata");
         return metadataManager.getServerMetadata();
     }
 }

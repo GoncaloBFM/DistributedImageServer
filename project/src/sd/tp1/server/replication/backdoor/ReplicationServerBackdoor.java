@@ -13,7 +13,7 @@ import java.util.Collection;
  * Created by apontes on 5/15/16.
  */
 @WebService
-public interface ReblicationServerBackdoor {
+public interface ReplicationServerBackdoor {
 
     @WebMethod
     void sendMetadata(ServerMetadata serverMetadata, Collection<Metadata> metadata);

@@ -2,7 +2,7 @@ package sd.tp1.server.replication.backdoor.client;
 
 import sd.tp1.common.SharedAlbum;
 import sd.tp1.common.SharedPicture;
-import sd.tp1.server.replication.backdoor.ReblicationServerBackdoor;
+import sd.tp1.server.replication.backdoor.ReplicationServerBackdoor;
 import sd.tp1.server.replication.backdoor.client.stubs.SOAPReplicationServerBackdoor;
 import sd.tp1.server.replication.backdoor.client.stubs.SOAPReplicationServerBackdoorService;
 import sd.tp1.server.replication.metadata.Metadata;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * Created by apontes on 5/16/16.
  */
-public class SOAPBackdoorWrapper implements ReblicationServerBackdoor{
+public class SOAPBackdoorWrapper implements ReplicationServerBackdoor {
 
     SOAPReplicationServerBackdoor server;
 

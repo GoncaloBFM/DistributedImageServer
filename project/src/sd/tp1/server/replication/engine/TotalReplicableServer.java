@@ -1,7 +1,5 @@
 package sd.tp1.server.replication.engine;
 
-import sd.tp1.common.SharedAlbum;
-import sd.tp1.common.SharedPicture;
 import sd.tp1.common.discovery.*;
 import sd.tp1.server.DataManager;
 
@@ -10,7 +8,7 @@ import sd.tp1.server.replication.backdoor.client.SOAPBackdoorWrapper;
 import sd.tp1.server.replication.metadata.FileMetadataManager;
 import sd.tp1.server.replication.metadata.Metadata;
 import sd.tp1.server.replication.metadata.MetadataManager;
-import sd.tp1.server.replication.backdoor.ReblicationServerBackdoor;
+import sd.tp1.server.replication.backdoor.ReplicationServerBackdoor;
 import sd.tp1.server.replication.metadata.ServerMetadata;
 
 import javax.xml.ws.Endpoint;
@@ -41,10 +39,10 @@ public class TotalReplicableServer implements ReplicableServer {
     private String serverPath;
     private int serverPort;
 
-    private Map<URL, ReblicationServerBackdoor> urlMap = new ConcurrentHashMap<>();
-    private Map<ServerMetadata, ReblicationServerBackdoor> metaMap = new ConcurrentHashMap<>();
+    private Map<URL, ReplicationServerBackdoor> urlMap = new ConcurrentHashMap<>();
+    private Map<ServerMetadata, ReplicationServerBackdoor> metaMap = new ConcurrentHashMap<>();
 
-    private ReblicationServerBackdoor serverBackdoor;
+    private ReplicationServerBackdoor serverBackdoor;
 
     private boolean isRunning = false;
 
@@ -107,12 +105,12 @@ public class TotalReplicableServer implements ReplicableServer {
             @Override
             public void run(){
                for(;;){
-                   LinkedList<ReblicationServerBackdoor> toSync = new LinkedList<>();
+                   LinkedList<ReplicationServerBackdoor> toSync = new LinkedList<>();
                    urlMap.values().forEach(toSync::add);
                    Collections.shuffle(toSync);
 
                    while(!toSync.isEmpty()){
-                       ReblicationServerBackdoor server = toSync.poll();
+                       ReplicationServerBackdoor server = toSync.poll();
 
                        ServerMetadata localMeta = metadataManager.getServerMetadata();
                        ServerMetadata remoteMeta = server.getServerMetadata();

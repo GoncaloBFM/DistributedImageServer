@@ -53,7 +53,7 @@ public class RestServerRun {
 
 
             //Start replication system
-            ReplicableServer replicableServer = new TotalReplicableServer(dataManager, root);
+            ReplicableServer replicableServer = new TotalReplicableServer(dataManager, root, "replication", port+1);
             replicableServer.startReplication();
 
         } catch (NotDirectoryException e) {

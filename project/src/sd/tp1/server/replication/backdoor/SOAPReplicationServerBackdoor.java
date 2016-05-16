@@ -47,7 +47,7 @@ public class SOAPReplicationServerBackdoor implements ReplicationServerBackdoor 
 
 
         for(Metadata iMeta : metadata){
-            if(iMeta.isPicture()){
+            if(iMeta.getAlbum() != null && iMeta.getPicture() != null){ //iMeta.isPicture()){
                 SharedAlbum album = iMeta.getAlbum();
                 SharedPicture picture = iMeta.getPicture();
 
@@ -57,7 +57,7 @@ public class SOAPReplicationServerBackdoor implements ReplicationServerBackdoor 
 
                 //need update
                 this.logger.info(String.format("Picture need update (%s\\%s)", album.getName(), picture.getPictureName()));
-                if(iMeta.isDeleted()){
+                if(iMeta.getDeleted()){
                     this.dataManager.deletePicture(album, picture);
                 }
                 else{
@@ -71,7 +71,7 @@ public class SOAPReplicationServerBackdoor implements ReplicationServerBackdoor 
                 this.logger.info(String.format("Picture updated (%s\\%s)", album.getName(), picture.getPictureName()));
                 this.metadataManager.setMetadata(album, picture, iMeta);
             }
-            else if(iMeta.isAlbum()){
+            else if(iMeta.getAlbum() != null){ //iMeta.isAlbum()){
                 SharedAlbum album = iMeta.getAlbum();
 
                 //updated or newer
@@ -80,7 +80,7 @@ public class SOAPReplicationServerBackdoor implements ReplicationServerBackdoor 
 
                 //need update
                 this.logger.info(String.format("Album need update (%s)", album.getName()));
-                if(iMeta.isDeleted()){
+                if(iMeta.getDeleted()){
                     this.dataManager.deleteAlbum(album);
                 }
                 else{

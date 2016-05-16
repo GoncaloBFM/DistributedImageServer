@@ -129,7 +129,7 @@ public class TotalReplicableServer implements ReplicableServer {
                    }
 
                    try {
-                       Thread.sleep(MILLIS_BETWEEN_SYNC);
+                       Thread.sleep(MILLIS_BETWEEN_SYNC *5);
                    } catch (InterruptedException e) {
                        //do nothing
                        //todo remove

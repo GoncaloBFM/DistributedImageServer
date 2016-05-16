@@ -41,7 +41,7 @@ public class FileMetadataManager implements MetadataManager {
             @Override
             public void onPictureUpload(SharedAlbum album, SharedPicture picture){
                 Metadata meta = getOrDefault(getMetadata(album, picture), buildMetadata(album, picture));
-                meta.setIsDeleted(false);
+                meta.setDeleted(false);
 
                 setMetadata(album, picture, meta);
             }
@@ -49,7 +49,7 @@ public class FileMetadataManager implements MetadataManager {
             @Override
             public void onPictureDelete(SharedAlbum album, SharedPicture picture) {
                 Metadata meta = getMetadata(album, picture);
-                meta.setIsDeleted(true);
+                meta.setDeleted(true);
 
                 setMetadata(album, picture, meta);
             }
@@ -57,7 +57,7 @@ public class FileMetadataManager implements MetadataManager {
             @Override
             public void onAlbumCreate(SharedAlbum album) {
                 Metadata meta = getOrDefault(getMetadata(album), buildMetadata(album));
-                meta.setIsDeleted(false);
+                meta.setDeleted(false);
 
                 setMetadata(album, meta);
             }
@@ -65,7 +65,7 @@ public class FileMetadataManager implements MetadataManager {
             @Override
             public void onAlbumDelete(SharedAlbum album) {
                 Metadata meta = getMetadata(album);
-                meta.setIsDeleted(true);
+                meta.setDeleted(true);
 
                 setMetadata(album, meta);
 

@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class Metadata implements Comparable<Metadata>, Serializable {
 
-    public boolean isDeleted = false;
+    private boolean deleted = false;
     private LamportLogicClock logicClock;
     private Set<ServerMetadata> sourceSet;
 
@@ -32,7 +32,7 @@ public class Metadata implements Comparable<Metadata>, Serializable {
     }
 
     public Metadata(SharedAlbum album, SharedPicture picture, ServerMetadata serverMetadata){
-        this.isDeleted = false;
+        this.deleted = false;
         this.logicClock = new LamportLogicClock(serverMetadata.getServerId());
 
         this.sourceSet = new HashSet<>();
@@ -44,16 +44,16 @@ public class Metadata implements Comparable<Metadata>, Serializable {
         this.local = serverMetadata;
     }
 
-    public boolean isPicture(){
+    /*public boolean isPicture(){
         return this.picture != null;
     }
 
     public boolean isAlbum(){
         return this.picture == null;
-    }
+    }*/
 
-    public boolean isDeleted(){
-        return this.isDeleted;
+    public boolean getDeleted(){
+        return this.deleted;
     }
 
     public SharedAlbum getAlbum() {
@@ -64,9 +64,8 @@ public class Metadata implements Comparable<Metadata>, Serializable {
         this.album = album;
     }
 
-    public void setIsDeleted(boolean isDeleted){
-        this.isDeleted = isDeleted;
-        this.setNextVersion();
+    public void setDeleted(boolean isDeleted){
+        this.deleted = isDeleted;
     }
 
     public Set<ServerMetadata> getSourceSet() {

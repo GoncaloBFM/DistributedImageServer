@@ -11,7 +11,7 @@ public class MetadataWrapper extends Metadata {
 
     public MetadataWrapper(sd.tp1.server.replication.metadata.Metadata meta){
 
-        this.deleted = meta.isDeleted();
+        this.deleted = meta.getDeleted();
         this.local = new ServerMetadataWrapper(meta.getLocal());
 
         this.logicClock = new LamportLogicClockWrapper(meta.getLogicClock());
@@ -28,7 +28,7 @@ public class MetadataWrapper extends Metadata {
     public sd.tp1.server.replication.metadata.Metadata getMetadata(){
         sd.tp1.server.replication.metadata.Metadata meta = new sd.tp1.server.replication.metadata.Metadata();
 
-        meta.isDeleted = this.deleted;
+        meta.setDeleted(this.deleted);
         meta.setLocal(((ServerMetadataWrapper) this.local).getServerMetada());
         meta.setLogicClock(((LamportLogicClockWrapper) this.logicClock).getLamportLogicClock());
         meta.setPicture(((PictureWrapper) picture).getSharedPicture());

@@ -22,33 +22,31 @@ public abstract class LoggedAbstractServer implements Server {
     }
 
     @Override
-    public List<Album> getListOfAlbums() {
+    public List<Album> loadListOfAlbums() {
         logger.info(caller+".getListOfAlbums");
         return null;
     }
 
     @Override
-    public List<Picture> getListOfPictures(Album album) {
-        logger.info(caller+".getListOfPictures(album="+album.getName()+")");
+    public List<Picture> loadListOfPictures(String album) {
+        logger.info(caller+".getListOfPictures(album="+album+")");
         return null;
     }
 
     @Override
-    public byte[] getPictureData(Album album, Picture picture) {
-        logger.info(caller+".getPictureData(album=" + album.getName() +", picture=" + picture.getPictureName()+")");
+    public byte[] loadPictureData(String album, String picture) {
+        logger.info(caller+".getPictureData(album=" + album +", picture=" + picture+")");
         return null;
     }
 
     @Override
-    public Album createAlbum(String name) {
-        logger.info(caller+".createAlbum(album=" + name+")");
-        return null;
+    public void createAlbum(Album name) {
+        logger.info(caller+".createAlbum(album=" + name.getName()+")");
     }
 
     @Override
-    public Picture uploadPicture(Album album, SharedPicture picture, byte[] data) {
+    public void uploadPicture(Album album, Picture picture, byte[] data) {
         logger.info(caller+".uploadPicture(album=" + album.getName() +", picture=" + picture.getPictureName()+")");
-        return null;
     }
 
     @Override

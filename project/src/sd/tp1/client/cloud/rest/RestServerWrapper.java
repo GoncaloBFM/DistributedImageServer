@@ -62,8 +62,8 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
     }
 
     @Override
-    public List<Album> getListOfAlbums() {
-        super.getListOfAlbums();
+    public List<Album> loadListOfAlbums() {
+        super.loadListOfAlbums();
         SharedAlbum[] list = SafeInvoker.invoke(this, () ->
             this.target.path("/getListOfAlbums").request().accept(MediaType.APPLICATION_JSON).get(SharedAlbum[].class));
 
@@ -71,10 +71,10 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
     }
 
     @Override
-    public List<Picture> getListOfPictures(Album album) {
-        super.getListOfPictures(album);
+    public List<Picture> loadListOfPictures(String album) {
+        super.loadListOfPictures(album);
         Response response = SafeInvoker.invoke(this, () ->
-                this.target.path("/getListOfPictures/" + album.getName()).request().accept(MediaType.APPLICATION_JSON).buildGet().invoke());
+                this.target.path("/getListOfPictures/" + album).request().accept(MediaType.APPLICATION_JSON).buildGet().invoke());
 
         if (response != null && response.getStatus() == Response.Status.OK.getStatusCode()) {
             return new LinkedList<>(Arrays.asList(response.readEntity(SharedPicture[].class)));
@@ -84,32 +84,32 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
     }
 
     @Override
-    public byte[] getPictureData(Album album, Picture picture) {
-        super.getPictureData(album, picture);
+    public byte[] loadPictureData(String album, String picture) {
+        super.loadPictureData(album, picture);
         byte[] bytes = SafeInvoker.invoke(this, () ->
-                this.target.path("/getPictureData/" + album.getName() + "/" + picture.getPictureName()).request().accept(MediaType.APPLICATION_OCTET_STREAM).get(byte[].class));
+                this.target.path("/getPictureData/" + album + "/" + picture).request().accept(MediaType.APPLICATION_OCTET_STREAM).get(byte[].class));
         return bytes;
     }
 
     @Override
-    public void createAlbum(SharedAlbum sharedAlbum) {
-        super.createAlbum(sharedAlbum.getName());
+    public void createAlbum(Album sharedAlbum) {
+        super.createAlbum(sharedAlbum);
         SafeInvoker.invoke(this, () ->
                 target.path("/createAlbum/" + sharedAlbum.getName()).request().post(Entity.entity(sharedAlbum, MediaType.APPLICATION_JSON)));
 
     }
 
     @Override
-    public void uploadPicture(SharedAlbum album, SharedPicture sharedPicture, byte[] data) {
-        super.uploadPicture(album, sharedPicture, data);
-        UploadPictureEnvelop message = new UploadPictureEnvelop(album, sharedPicture, data);
+    public void uploadPicture(Album album, Picture picture, byte[] data) {
+        super.uploadPicture(album, picture, data);
+        UploadPictureEnvelop message = new UploadPictureEnvelop(album, picture, data);
         SafeInvoker.invoke(this, ()->
                 this.target.path("/uploadPicture").request().post(Entity.entity(message, MediaType.APPLICATION_JSON)));
 
     }
 
     @Override
-    public void deleteAlbum(SharedAlbum album) {
+    public void deleteAlbum(Album album) {
         super.deleteAlbum(album);
 
         SafeInvoker.invoke(this, () -> {
@@ -120,7 +120,7 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
     }
 
     @Override
-    public boolean deletePicture(SharedAlbum album, SharedPicture picture) {
+    public boolean deletePicture(Album album, Picture picture) {
         super.deletePicture(album, picture);
 
         DeletePictureEnvelop message = new DeletePictureEnvelop(album, picture);

@@ -86,7 +86,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 		servers.size();
 		for(Server s : servers){
 			//Verify if should be a Set
-			List<Album> albumList = s.getListOfAlbums();
+			List<Album> albumList = s.loadListOfAlbums();
 			if(albumList == null)
 				continue;
 
@@ -123,7 +123,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
 		for(Server s : cloudAlbum.getServers()){
-			List<Picture> pictures = s.getListOfPictures(album);
+			List<Picture> pictures = s.loadListOfPictures(album.getName());
 			if(pictures == null)
 				continue;
 
@@ -153,7 +153,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 		CloudPicture cloudPicture = (CloudPicture) picture;
 
 		for(Server s : cloudPicture.getServers()){
-			byte[] data = s.getPictureData(album, picture);
+			byte[] data = s.loadPictureData(album.getName(), picture.getPictureName());
 			if(data != null)
 				return data;
 		}

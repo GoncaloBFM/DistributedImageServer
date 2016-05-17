@@ -71,35 +71,43 @@ public class HashCachedServer implements CachedServer{
     }
 
     @Override
-    public void createAlbum(Album album) {
-        if(album != null) {
-            this.server.createAlbum(album);
+    public boolean createAlbum(Album album) {
+        if(album != null && this.server.createAlbum(album)) {
             this.listOfAlbums.makeDirty();
+            return true;
         }
+
+        return false;
     }
 
     @Override
-    public void uploadPicture(Album album, Picture picture, byte[] data) {
-        if(picture != null) {
-            this.server.uploadPicture(album, picture, data);
+    public boolean uploadPicture(Album album, Picture picture, byte[] data) {
+        if(picture != null && this.server.uploadPicture(album, picture, data)) {
             this.picturesMap.get(album.getName()).makeDirty();
+            return true;
         }
+
+        return false;
     }
 
     @Override
-    public void deleteAlbum(Album album) {
-        this.server.deleteAlbum(album);
-        this.listOfAlbums.makeDirty();
+    public boolean deleteAlbum(Album album) {
+        if(album != null && this.server.deleteAlbum(album)) {
+            this.listOfAlbums.makeDirty();
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
-        boolean deleted = this.server.deletePicture(album, picture);
-
-        if(deleted)
+        if(album != null && picture != null && this.server.deletePicture(album, picture)) {
             this.picturesMap.get(album.getName()).makeDirty();
+            return true;
+        }
 
-        return deleted;
+        return false;
     }
 
     @Override

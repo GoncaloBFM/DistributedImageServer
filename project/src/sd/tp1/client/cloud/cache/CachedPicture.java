@@ -166,6 +166,11 @@ public class CachedPicture extends CachedObject<byte[]> implements Picture, Cach
     }
 
     @Override
+    public int getVersion() {
+        return version;
+    }
+
+    @Override
     public String getAuthorId() {
         return this.authorId;
     }

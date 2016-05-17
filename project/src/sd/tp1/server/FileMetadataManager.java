@@ -30,6 +30,12 @@ public class FileMetadataManager implements MetadataManager {
     }
 
     protected boolean isNewer(Metadata m1, Metadata m2){
+        if(m1 == null)
+            return false;
+
+        if(m2 == null)
+            return true;
+
         return m1.compareTo(m2) > 0;
     }
 

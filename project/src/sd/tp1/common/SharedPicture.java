@@ -1,9 +1,11 @@
 package sd.tp1.common;
 
+import java.io.Serializable;
+
 /**
  * Represents a shared picture.
  */
-public class SharedPicture extends LogicClockMetadata implements Picture {
+public class SharedPicture extends LogicClockMetadata implements Picture, Serializable {
 
 	private String pictureName;
 
@@ -13,6 +15,14 @@ public class SharedPicture extends LogicClockMetadata implements Picture {
 	{
 		super(serverId);
 		this.pictureName = pictureName;
+	}
+
+	public SharedPicture(Picture picture){
+		super(picture.getAuthorId());
+
+		pictureName = picture.getPictureName();
+		setVersion(picture.getVersion());
+		setDeleted(picture.isDeleted());
 	}
 
 	public String getPictureName() {

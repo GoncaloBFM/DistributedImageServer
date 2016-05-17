@@ -1,9 +1,14 @@
 package sd.tp1.common;
 
+import sun.plugin2.message.Serializer;
+import sun.security.provider.SHA;
+
+import java.io.Serializable;
+
 /**
  * Represents a shared album.
  */
-public class SharedAlbum extends LogicClockMetadata implements Album {
+public class SharedAlbum extends LogicClockMetadata implements Album, Serializable {
 	private String name;
 
 	public SharedAlbum(){}
@@ -11,6 +16,13 @@ public class SharedAlbum extends LogicClockMetadata implements Album {
 	public SharedAlbum(String name, String serverId) {
 		super(serverId);
 		this.name = name;
+	}
+
+	public SharedAlbum(Album album){
+		super(album.getAuthorId());
+		this.name = album.getName();
+		this.setVersion(album.getVersion());
+		this.setDeleted(album.isDeleted());
 	}
 
 	@Override

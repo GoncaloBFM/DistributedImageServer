@@ -104,11 +104,12 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
     }
 
     @Override
-    public boolean createAlbum(Album sharedAlbum) {
-        super.createAlbum(sharedAlbum);
+    public boolean createAlbum(Album album) {
+        super.createAlbum(album);
 
+        SharedAlbum sharedAlbum = new SharedAlbum(album);
         Response response = SafeInvoker.invoke(this, () ->
-                target.path("/createAlbum/" + sharedAlbum.getName()).request().post(Entity.entity(sharedAlbum, MediaType.APPLICATION_JSON)));
+                target.path("/createAlbum").request().post(Entity.entity(sharedAlbum, MediaType.APPLICATION_JSON)));
 
         return response != null && response.getStatus() == Response.Status.OK.getStatusCode();
 
@@ -129,8 +130,9 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
     public boolean deleteAlbum(Album album) {
         super.deleteAlbum(album);
 
+        SharedAlbum sharedAlbum = new SharedAlbum(album);
         Response response = SafeInvoker.invoke(this, () ->
-            this.target.path("/deleteAlbum").request().post(Entity.entity(album, MediaType.APPLICATION_JSON)));
+            this.target.path("/deleteAlbum").request().post(Entity.entity(sharedAlbum, MediaType.APPLICATION_JSON)));
 
         return response != null && response.getStatus() == Response.Status.OK.getStatusCode();
     }

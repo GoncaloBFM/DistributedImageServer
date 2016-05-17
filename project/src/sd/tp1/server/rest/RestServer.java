@@ -1,5 +1,6 @@
 package sd.tp1.server.rest;
 
+import sd.tp1.common.Album;
 import sd.tp1.common.SharedAlbum;
 import sd.tp1.common.SharedPicture;
 import sd.tp1.common.rest_envelops.DeletePictureEnvelop;
@@ -38,10 +39,10 @@ public class RestServer {
     @POST
     @Path("/createAlbum")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createAlbum(SharedAlbum sharedAlbum) {
-        logger.info("createAlbum" + "(album=" + sharedAlbum.getName() + ")");
+    public Response createAlbum(SharedAlbum album) {
+        logger.info("createAlbum" + "(album=" + album.getName() + ")");
 
-        return this.dataManager.createAlbum(sharedAlbum) ?
+        return this.dataManager.createAlbum(album) ?
             Response.ok().build() :
                 Response.status(Response.Status.BAD_REQUEST).build();
     }

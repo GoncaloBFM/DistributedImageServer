@@ -87,7 +87,7 @@ public class FileDataManager extends FileMetadataManager implements DataManager 
             return false;
 
         File folder = new File(root, album.getName());
-        return !folder.exists() && folder.mkdir();
+        return folder.exists() || folder.mkdir();
     }
 
     @Override

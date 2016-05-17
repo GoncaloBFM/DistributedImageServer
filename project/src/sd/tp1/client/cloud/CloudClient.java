@@ -23,7 +23,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 	protected Gui gui;
 
 	Map<Server, List<CloudAlbum>> serverAlbumMap;
-	Map<String, CloudAlbum> albumMap;
+	Map<String, CloudAlbum> albumsMap;
 
 	CloudClient() {
 		this(true);
@@ -80,7 +80,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 	public List<Album> getListOfAlbums() {
 		HashMap<String, CloudAlbum> albums = new HashMap<>();
 		Map<Server, List<CloudAlbum>> albumMap = new ConcurrentHashMap<>();
-		albumMap = new HashMap<>();
+		albumsMap = new ConcurrentHashMap<>();
 
 		Collection<Server> servers = HashServerManager.getServerManager().getServers();
 		servers.size();
@@ -100,7 +100,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 					cloudAlbum.setDeleted(album.isDeleted());
 
 					albums.put(album.getName(), cloudAlbum);
-					this.albumMap.put(album.getName(), cloudAlbum);
+					this.albumsMap.put(album.getName(), cloudAlbum);
 				}
 				else if(cloudAlbum.compareTo(album) <0){
 					cloudAlbum.setVersion(album.getVersion());
@@ -181,7 +181,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 	 */
 	@Override
 	public Album createAlbum(String name) {
-		CloudAlbum album = this.albumMap.get(name);
+		CloudAlbum album = this.albumsMap.get(name);
 		if(album != null && !album.isDeleted())
 			return null;
 
@@ -203,7 +203,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 			cloudAlbum.setVersion(album.getVersion());
 
 			cloudAlbum.addServer(server);
-			albumMap.put(album.getName(), album);
+			albumsMap.put(album.getName(), album);
 		}
 
 		return cloudAlbum;
@@ -218,7 +218,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
 
 		if(album.isDeleted()) {
-			this.albumMap.remove(album);
+			this.albumsMap.remove(album);
 			return;
 		}
 
@@ -234,7 +234,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 			s.deleteAlbum(album);
 		}
 
-		this.albumMap.remove(album);
+		this.albumsMap.remove(album);
 	}
 
 	/**

@@ -16,7 +16,7 @@ public interface DataManager {
 
     List<SharedPicture> loadListOfPictures(String album);
 
-    byte[] loadPictureData(Album album, Picture picture);
+    byte[] loadPictureData(String album, String picture);
 
     void createAlbum(Album album);
 

@@ -119,10 +119,10 @@ public class FileDataManager implements DataManager {
     }
 
     @Override
-    public byte[] loadPictureData(Album album, Picture picture) {
+    public byte[] loadPictureData(String album, String picture) {
         try {
-            if(!readPictureMeta(album.getName(), picture.getPictureName()).isDeleted())
-                return Files.readAllBytes(openPicture(album, picture.getPictureName()).toPath());
+            if(!readPictureMeta(album, picture).isDeleted())
+                return Files.readAllBytes(openPicture(album, picture).toPath());
 
             return null;
         } catch (IOException e) {

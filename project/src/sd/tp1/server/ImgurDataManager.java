@@ -93,7 +93,7 @@ public class ImgurDataManager implements DataManager{
     }
 
     @Override
-    public byte[] loadPictureData(Album album, Picture picture) {
+    public byte[] loadPictureData(String album, String picture) {
         return new byte[0];
     }
 

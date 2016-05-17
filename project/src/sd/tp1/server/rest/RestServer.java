@@ -93,11 +93,10 @@ public class RestServer {
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Path("/getPictureData/{album}/{picture}")
-    public Response getPictureData(SharedAlbum album, SharedPicture picture) {
+    public Response getPictureData(@PathParam("album") String album, @PathParam("picture") String picture) {
         logger.info("getPictureData"+"(album=" + album+", picture=" + picture+")");
         byte[] bytes = dataManager.loadPictureData(album, picture);
         return Response.ok(bytes).build();
-
     }
 
     @POST

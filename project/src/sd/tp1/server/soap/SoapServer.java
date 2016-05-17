@@ -50,8 +50,8 @@ public class SoapServer {
     }
 
     @WebMethod
-    public byte[] getPictureData(SharedAlbum album, SharedPicture picture){
-        logger.info("getPictureData"+"(album=" + album.getName()+", picture=" + picture.getPictureName()+")");
+    public byte[] getPictureData(String album, String picture){
+        logger.info("getPictureData"+"(album=" + album+", picture=" + picture + ")");
         return dataManager.loadPictureData(album, picture);
     }
 

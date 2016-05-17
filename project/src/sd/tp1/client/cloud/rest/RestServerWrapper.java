@@ -104,31 +104,35 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
     }
 
     @Override
-    public void createAlbum(Album sharedAlbum) {
+    public boolean createAlbum(Album sharedAlbum) {
         super.createAlbum(sharedAlbum);
-        SafeInvoker.invoke(this, () ->
+
+        Response response = SafeInvoker.invoke(this, () ->
                 target.path("/createAlbum/" + sharedAlbum.getName()).request().post(Entity.entity(sharedAlbum, MediaType.APPLICATION_JSON)));
 
+        return response != null && response.getStatus() == Response.Status.OK.getStatusCode();
+
     }
 
     @Override
-    public void uploadPicture(Album album, Picture picture, byte[] data) {
+    public boolean uploadPicture(Album album, Picture picture, byte[] data) {
         super.uploadPicture(album, picture, data);
         UploadPictureEnvelop message = new UploadPictureEnvelop(album, picture, data);
-        SafeInvoker.invoke(this, ()->
+
+        Response response = SafeInvoker.invoke(this, ()->
                 this.target.path("/uploadPicture").request().post(Entity.entity(message, MediaType.APPLICATION_JSON)));
 
+        return response != null && response.getStatus() == Response.Status.OK.getStatusCode();
     }
 
     @Override
-    public void deleteAlbum(Album album) {
+    public boolean deleteAlbum(Album album) {
         super.deleteAlbum(album);
 
-        SafeInvoker.invoke(this, () -> {
-            this.target.path("/deleteAlbum").request().post(Entity.entity(album, MediaType.APPLICATION_JSON));
-            return null;
-        });
+        Response response = SafeInvoker.invoke(this, () ->
+            this.target.path("/deleteAlbum").request().post(Entity.entity(album, MediaType.APPLICATION_JSON)));
 
+        return response != null && response.getStatus() == Response.Status.OK.getStatusCode();
     }
 
     @Override

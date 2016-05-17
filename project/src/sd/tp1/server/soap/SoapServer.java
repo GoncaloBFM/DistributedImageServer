@@ -56,21 +56,21 @@ public class SoapServer {
     }
 
     @WebMethod
-    public void createAlbum(SharedAlbum album){
+    public boolean createAlbum(SharedAlbum album){
         logger.info("createAlbum" + "(album=" + album.getName() + ")");
-        dataManager.createAlbum(album);
+        return dataManager.createAlbum(album);
     }
 
     @WebMethod
-    public void uploadPicture(SharedAlbum album, SharedPicture picture, byte[] data){
+    public boolean uploadPicture(SharedAlbum album, SharedPicture picture, byte[] data){
         logger.info("uploadPicture" + "(album=" + album.getName()+", picture=" + picture.getPictureName()+")");
-        dataManager.uploadPicture(album, picture, data);
+        return dataManager.uploadPicture(album, picture, data);
     }
 
     @WebMethod
-    public void deleteAlbum(SharedAlbum album){
+    public boolean deleteAlbum(SharedAlbum album){
         logger.info("deleteAlbum" + "(album=" + album.getName()+")");
-        dataManager.deleteAlbum(album);
+        return dataManager.deleteAlbum(album);
     }
 
     @WebMethod

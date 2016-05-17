@@ -40,8 +40,8 @@ public class ObjectFactory {
     private final static QName _CreateAlbum_QNAME = new QName("http://soap.server.tp1.sd/", "createAlbum");
     private final static QName _GetServerId_QNAME = new QName("http://soap.server.tp1.sd/", "getServerId");
     private final static QName _LoadListOfPicturesResponse_QNAME = new QName("http://soap.server.tp1.sd/", "loadListOfPicturesResponse");
-    private final static QName _UploadPictureArg2_QNAME = new QName("", "arg2");
     private final static QName _LoadPictureDataResponseReturn_QNAME = new QName("", "return");
+    private final static QName _UploadPictureArg2_QNAME = new QName("", "arg2");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: sd.tp1.client.cloud.soap.stubs
@@ -350,18 +350,18 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "arg2", scope = UploadPicture.class)
-    public JAXBElement<byte[]> createUploadPictureArg2(byte[] value) {
-        return new JAXBElement<byte[]>(_UploadPictureArg2_QNAME, byte[].class, UploadPicture.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "return", scope = LoadPictureDataResponse.class)
+    public JAXBElement<byte[]> createLoadPictureDataResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_LoadPictureDataResponseReturn_QNAME, byte[].class, LoadPictureDataResponse.class, ((byte[]) value));
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "return", scope = LoadPictureDataResponse.class)
-    public JAXBElement<byte[]> createLoadPictureDataResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_LoadPictureDataResponseReturn_QNAME, byte[].class, LoadPictureDataResponse.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "arg2", scope = UploadPicture.class)
+    public JAXBElement<byte[]> createUploadPictureArg2(byte[] value) {
+        return new JAXBElement<byte[]>(_UploadPictureArg2_QNAME, byte[].class, UploadPicture.class, ((byte[]) value));
     }
 
 }

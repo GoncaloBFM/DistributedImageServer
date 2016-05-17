@@ -1,6 +1,5 @@
 package sd.tp1.server.rest;
 
-import com.sun.org.apache.regexp.internal.RE;
 import sd.tp1.common.SharedAlbum;
 import sd.tp1.common.SharedPicture;
 import sd.tp1.common.rest_envelops.DeletePictureEnvelop;
@@ -11,12 +10,9 @@ import sd.tp1.server.FileDataManager;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
 import java.nio.file.NotDirectoryException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @Path("/{serverName}")
 public class RestServer {
@@ -24,7 +20,6 @@ public class RestServer {
     private static final Logger logger = Logger.getLogger(RestServer.class.getSimpleName());
 
 
-    private String root;
     private DataManager dataManager;
 
     public RestServer(@PathParam("serverName") String serverName) throws NotDirectoryException {
@@ -45,8 +40,10 @@ public class RestServer {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createAlbum(SharedAlbum sharedAlbum) {
         logger.info("createAlbum" + "(album=" + sharedAlbum.getName() + ")");
-        this.dataManager.createAlbum(sharedAlbum);
-        return Response.ok().build();
+
+        return this.dataManager.createAlbum(sharedAlbum) ?
+            Response.ok().build() :
+                Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @GET
@@ -55,6 +52,9 @@ public class RestServer {
     public Response getListOfAlbums() {
         logger.info("getListOfAlbums");
         List<SharedAlbum> listOfAlbums = this.dataManager.loadListOfAlbums();
+        if(listOfAlbums == null)
+            return Response.serverError().build();
+
         SharedAlbum[] array = listOfAlbums.toArray(new SharedAlbum[listOfAlbums.size()]);
         return Response.ok(array).build();
     }
@@ -68,9 +68,9 @@ public class RestServer {
         if (listOfPictures != null) {
             SharedPicture[] array = listOfPictures.toArray(new SharedPicture[listOfPictures.size()]);
             return Response.ok(array).build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).build();
         }
+
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @POST
@@ -78,8 +78,9 @@ public class RestServer {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteAlbum(SharedAlbum album) {
         logger.info("deleteAlbum" + "(album=" + album+")");
-        this.dataManager.deleteAlbum(album);
-        return Response.ok().build();
+
+        return this.dataManager.deleteAlbum(album) ?
+            Response.ok().build() : Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @POST
@@ -87,10 +88,9 @@ public class RestServer {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deletePicture(DeletePictureEnvelop env) {
         logger.info("deletePicture" + "(album=" + env.album+", picture=" + env.picture+")");
-        if (this.dataManager.deletePicture(env.album, env.picture)) {
-            return Response.ok().build();
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
+
+        return this.dataManager.deletePicture(env.album, env.picture) ?
+            Response.ok().build() : Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @GET
@@ -107,14 +107,21 @@ public class RestServer {
     @Path("/uploadPicture")
     public Response uploadPicture(UploadPictureEnvelop env) {
         logger.info("uploadPicture" + "(album=" + env.album+", picture=" + env.picture+")");
-        dataManager.uploadPicture(env.album, env.picture, env.data);
-        return Response.ok().build();
+
+        return dataManager.uploadPicture(env.album, env.picture, env.data) ?
+            Response.ok().build()
+                : Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @GET
     @Path("/getServerId")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getServerId(){
-        return Response.ok(dataManager.getServerId()).build();
+
+        String serverId = dataManager.getServerId();
+
+        return serverId != null ?
+                Response.ok(serverId).build()
+                : Response.serverError().build();
     }
 }

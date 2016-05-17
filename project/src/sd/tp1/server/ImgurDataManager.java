@@ -19,17 +19,15 @@ import sd.tp1.common.SharedAlbum;
 import sd.tp1.common.SharedPicture;
 import org.apache.commons.codec.binary.Base64;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
+import java.nio.file.NotDirectoryException;
 import java.util.*;
 
 /**
  * Created by gbfm on 5/17/16.
  */
-public class ImgurDataManager implements DataManager{
+public class ImgurDataManager extends FileMetadataManager implements DataManager{
 
     final String apiKey = "01c07ff99455d21";
     final String apiSecret = "82dbdf420a192a4f7c65ba2b116a473f3b19b518";
@@ -43,6 +41,13 @@ public class ImgurDataManager implements DataManager{
             .build(ImgurApi.instance());
 
     final OAuth2AccessToken accessToken = new OAuth2AccessToken(pin);
+
+    public ImgurDataManager() throws NotDirectoryException {
+    }
+
+    public ImgurDataManager(File root) throws NotDirectoryException {
+        super(root);
+    }
 
     private class Param {
         private final String paramName;
@@ -90,8 +95,12 @@ public class ImgurDataManager implements DataManager{
     }
 
     @Override
-    public void deleteAlbum(Album album) {
+    public boolean deleteAlbum(Album album) {
+        if(!super.deleteAlbum(album))
+            return false;
+
         sendRequest("/albums/" + albumNameIdMap.get(album.getName()), Verb.DELETE);
+        return true; //todo improve
     }
 
     @Override
@@ -132,28 +141,40 @@ public class ImgurDataManager implements DataManager{
     }
 
     @Override
-    public void createAlbum(Album album) {
+    public boolean createAlbum(Album album) {
+        if(!super.createAlbum(album))
+            return false;
+
         JSONObject newAlbum = (JSONObject) sendRequest("/album",Verb.POST, new Param("title", album.getName())).get("data");
         String id = (String) newAlbum.get("id");
         String name = album.getName();
         addUnique(name, id, albumNameIdMap);
 
+        return true; //todo improve
     }
 
     @Override
-    public void uploadPicture(Album album, Picture picture, byte[] data) {
+    public boolean uploadPicture(Album album, Picture picture, byte[] data) {
+        if(!super.uploadPicture(album, picture, data))
+            return false;
+
         JSONObject newPicture = (JSONObject) sendRequest("/image", Verb.POST, new Param("name", picture.getPictureName()), new Param("image", Base64.encodeBase64String(data))).get("data");
         String id = (String) newPicture.get("id");
         String name = picture.getPictureName();
         addUnique(name, id, pictureNameIdMap);
+
+        return true; //todo improve
     }
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
+        if(!super.deletePicture(album, picture))
+            return false;
+
         sendRequest("/image/"+pictureNameIdMap.get(picture.getPictureName()),Verb.DELETE);
         pictureNameIdMap.remove(picture.getPictureName());
         //TODO: CHECK IF NEEDED
-        return true;
+        return true; //todo improve
     }
 
 
@@ -163,10 +184,5 @@ public class ImgurDataManager implements DataManager{
             name += id;
         }
         map.put(name, id);
-    }
-
-    @Override
-    public String getServerId() {
-        return "abc-def-ghi-imgur";
     }
 }

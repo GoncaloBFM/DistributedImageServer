@@ -22,11 +22,11 @@ public interface Server {
 
     byte[] loadPictureData(String album, String picture);
 
-    void createAlbum(Album album);
+    boolean createAlbum(Album album);
 
-    void uploadPicture(Album album, Picture picture, byte[] data);
+    boolean uploadPicture(Album album, Picture picture, byte[] data);
 
-    void deleteAlbum(Album album);
+    boolean deleteAlbum(Album album);
 
     boolean deletePicture(Album album, Picture picture);
 }

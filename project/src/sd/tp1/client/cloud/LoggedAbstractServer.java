@@ -40,19 +40,21 @@ public abstract class LoggedAbstractServer implements Server {
     }
 
     @Override
-    public void createAlbum(Album name) {
+    public boolean createAlbum(Album name) {
         logger.info(caller+".createAlbum(album=" + name.getName()+")");
+        return false;
     }
 
     @Override
-    public void uploadPicture(Album album, Picture picture, byte[] data) {
+    public boolean uploadPicture(Album album, Picture picture, byte[] data) {
         logger.info(caller+".uploadPicture(album=" + album.getName() +", picture=" + picture.getPictureName()+")");
+        return false;
     }
 
     @Override
-    public void deleteAlbum(Album album) {
+    public boolean deleteAlbum(Album album) {
         logger.info(caller+".deleteAlbum(album=" + album.getName()+")");
-
+        return false;
     }
 
     @Override

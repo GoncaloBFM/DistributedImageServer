@@ -66,29 +66,29 @@ public class SoapServerWrapper extends LoggedAbstractServer implements Server {
     }
 
     @Override
-    public void createAlbum(Album album) {
-        SafeInvoker.invoke(this, () -> {server.createAlbum(new AlbumWrapper(album)); return null;});
+    public boolean createAlbum(Album album) {
+        Boolean bool = SafeInvoker.invoke(this, () -> server.createAlbum(new AlbumWrapper(album)));
+        return bool != null && bool;
     }
 
     @Override
-    public void uploadPicture(Album album, Picture picture, byte[] data) {
+    public boolean uploadPicture(Album album, Picture picture, byte[] data) {
         super.uploadPicture(album, picture, data);
-        SafeInvoker.invoke(this, () -> {
-            server.uploadPicture(
+        Boolean bool = SafeInvoker.invoke(this, () -> server.uploadPicture(
                     new AlbumWrapper(album),
                     new PictureWrapper(picture),
-                    data);
-            return null;
-        });
+                    data));
+
+        return bool != null && bool;
     }
 
     @Override
-    public void deleteAlbum(Album album) {
+    public boolean deleteAlbum(Album album) {
         super.deleteAlbum(album);
-        SafeInvoker.invoke(this, () -> {
-            server.deleteAlbum(new AlbumWrapper(album));
-            return null;
-        });
+        Boolean bool = SafeInvoker.invoke(this, () ->
+            server.deleteAlbum(new AlbumWrapper(album)));
+
+        return bool != null && bool;
     }
 
     @Override
@@ -96,10 +96,8 @@ public class SoapServerWrapper extends LoggedAbstractServer implements Server {
         super.deletePicture(album, picture);
         Boolean bool = SafeInvoker.invoke(this, () ->
                 server.deletePicture(new AlbumWrapper(album), new PictureWrapper(picture)));
-        if(bool == null)
-            return false;
 
-        return bool;
+        return bool != null && bool;
     }
 
     @Override

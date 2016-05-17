@@ -8,109 +8,54 @@ import sd.tp1.common.SharedPicture;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.NotDirectoryException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by gbfm on 4/1/16.
  */
-public class FileDataManager implements DataManager {
+public class FileDataManager extends FileMetadataManager implements DataManager {
 
-    private final static String META_EXT = ".meta";
-
-    private File root;
-    private String serverId = "abc-def-ghi";
 
     public FileDataManager() throws NotDirectoryException {
-        this(new File("."));
     }
 
     public FileDataManager(File root) throws NotDirectoryException {
-        if(!root.isDirectory())
-            throw new NotDirectoryException(root.getAbsolutePath());
-        this.root = root;
-    }
-
-    private SharedAlbum readAlbumMeta(String album){
-        try {
-            File file = new File(root, album + META_EXT);
-            if(!file.exists())
-                return null;
-
-            ObjectInput in = new ObjectInputStream(new FileInputStream(file));
-            SharedAlbum sharedAlbum = (SharedAlbum) in.readObject();
-            in.close();
-
-            return sharedAlbum;
-        } catch (ClassNotFoundException| IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private SharedPicture readPictureMeta(String album, String picture){
-        try {
-            File file = new File(openAlbum(album), picture + META_EXT);
-            if(!file.exists())
-                return null;
-
-            ObjectInput in = new ObjectInputStream(new FileInputStream(file));
-            SharedPicture sharedPicture = (SharedPicture) in.readObject();
-            in.close();
-
-            return sharedPicture;
-
-        } catch (ClassNotFoundException| IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void writeAlbumMeta(Album album){
-        try{
-            File file = new File(root, album.getName() + META_EXT);
-            ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
-            out.writeObject(album);
-            out.flush();
-            out.close();
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void writePictureMeta(Album album, Picture picture){
-        writeAlbumMeta(album);
-        try{
-            File file = new File(openAlbum(album), picture.getPictureName() + META_EXT);
-            ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
-            out.writeObject(picture);
-            out.flush();
-            out.close();
-
-        } catch (IOException e){
-            throw new RuntimeException(e);
-        }
+        super(root);
     }
 
     @Override
     public List<SharedAlbum> loadListOfAlbums() {
         List<SharedAlbum> list = new LinkedList<>();
-        for(File iFile : root.listFiles(x -> x.isDirectory() && !x.getName().contains(".delete") && !x.getName().startsWith("."))){
-            list.add(readAlbumMeta(iFile.getName()));
+        for(File iFile : root.listFiles(x -> x.isDirectory()
+                        && !x.getName().endsWith(".delete")
+                        && !x.getName().startsWith("."))){
+
+            SharedAlbum album = readAlbumMeta(iFile.getName());
+            if(album != null)
+                list.add(album);
         }
 
         return list;
     }
 
     @Override
-    public List<SharedPicture> loadListOfPictures(String album) {
+    public List<SharedPicture> loadListOfPictures(String albumName) {
+        Album album = readAlbumMeta(albumName);
+        if(album == null)
+            return null;
+
         List<SharedPicture> list = new LinkedList<>();
         File dir = openAlbum(album);
         if (!dir.isDirectory()) {
             return null;
         }
-        for(File iFile : dir.listFiles(x -> !x.isDirectory() && !x.getName().contains(".delete") && !x.getName().startsWith("."))){
-            SharedPicture picture = readPictureMeta(album, iFile.getName());
-            if(!picture.isDeleted())
+
+        for(File iFile : dir.listFiles(x -> !x.isDirectory()
+                && !x.getName().endsWith(".delete")
+                && !x.getName().startsWith("."))){
+
+            SharedPicture picture = readPictureMeta(albumName, iFile.getName());
+            if(picture != null)
                 list.add(picture);
         }
 
@@ -119,10 +64,15 @@ public class FileDataManager implements DataManager {
     }
 
     @Override
-    public byte[] loadPictureData(String album, String picture) {
+    public byte[] loadPictureData(String albumName, String pictureName) {
+
+        Picture picture = readPictureMeta(albumName, pictureName);
+        if(picture == null)
+            return null;
+
         try {
-            if(!readPictureMeta(album, picture).isDeleted())
-                return Files.readAllBytes(openPicture(album, picture).toPath());
+            if(!picture.isDeleted())
+                return Files.readAllBytes(openPicture(albumName, pictureName).toPath());
 
             return null;
         } catch (IOException e) {
@@ -132,56 +82,45 @@ public class FileDataManager implements DataManager {
     }
 
     @Override
-    public void createAlbum(Album album) {
+    public boolean createAlbum(Album album) {
+        if(!super.createAlbum(album))
+            return false;
+
         File folder = new File(root, album.getName());
-
-        if(!folder.exists() && folder.mkdir()) {
-            //SharedAlbum album = new SharedAlbum(folder.getName());
-            writeAlbumMeta(album);
-        }
+        return !folder.exists() && folder.mkdir();
     }
 
     @Override
-    public void uploadPicture(Album album, Picture picture, byte[] data) {
+    public boolean uploadPicture(Album album, Picture picture, byte[] data) {
+        if(!super.uploadPicture(album, picture, data))
+            return false;
+
         File file = openPicture(album, picture.getPictureName());
-        if(!file.exists()) {
-            //openAlbum(album).mkdir();
-            try {
-                Files.write(file.toPath(), data);
+        try {
+            Files.write(file.toPath(), data);
+            return true;
 
-                writeAlbumMeta(album);
-                writePictureMeta(album, picture);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
     @Override
-    public void deleteAlbum(Album album) {
+    public boolean deleteAlbum(Album album) {
+        if(!super.deleteAlbum(album))
+            return false;
+
         File folder = openAlbum(album);
-        folder.renameTo(new File(folder.getAbsolutePath() + ".delete"));
-        writeAlbumMeta(album);
+        return folder.renameTo(new File(folder.getAbsolutePath() + ".delete"));
     }
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
+        if(!super.deletePicture(album, picture));
+
         File file = openPicture(album, picture);
-        file.renameTo(new File(file.getAbsolutePath() + ".delete"));
-
-        writeAlbumMeta(album);
-        writePictureMeta(album, picture);
-
-        return true;
-    }
-
-    private File openAlbum(Album album){
-        return this.openAlbum(album.getName());
-    }
-
-    private File openAlbum(String albumName){
-        return new File(root, albumName);
+        return file.renameTo(new File(file.getAbsolutePath() + ".delete"));
     }
 
     private File openPicture(String albumName, String pictureName){
@@ -194,11 +133,6 @@ public class FileDataManager implements DataManager {
 
     private File openPicture(Album album, Picture picture){
         return openPicture(album.getName(), picture.getPictureName());
-    }
-
-    @Override
-    public String getServerId() {
-        return "abc.def.ghi"; //todo modify
     }
 }
 

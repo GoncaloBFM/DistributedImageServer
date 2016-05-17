@@ -73,12 +73,15 @@ public interface SoapServer {
     /**
      * 
      * @param arg0
+     * @return
+     *     returns boolean
      */
     @WebMethod
+    @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "createAlbum", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.CreateAlbum")
     @ResponseWrapper(localName = "createAlbumResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.CreateAlbumResponse")
     @Action(input = "http://soap.server.tp1.sd/SoapServer/createAlbumRequest", output = "http://soap.server.tp1.sd/SoapServer/createAlbumResponse")
-    public void createAlbum(
+    public boolean createAlbum(
         @WebParam(name = "arg0", targetNamespace = "")
         SharedAlbum arg0);
 
@@ -87,12 +90,15 @@ public interface SoapServer {
      * @param arg2
      * @param arg1
      * @param arg0
+     * @return
+     *     returns boolean
      */
     @WebMethod
+    @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "uploadPicture", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.UploadPicture")
     @ResponseWrapper(localName = "uploadPictureResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.UploadPictureResponse")
     @Action(input = "http://soap.server.tp1.sd/SoapServer/uploadPictureRequest", output = "http://soap.server.tp1.sd/SoapServer/uploadPictureResponse")
-    public void uploadPicture(
+    public boolean uploadPicture(
         @WebParam(name = "arg0", targetNamespace = "")
         SharedAlbum arg0,
         @WebParam(name = "arg1", targetNamespace = "")
@@ -103,12 +109,15 @@ public interface SoapServer {
     /**
      * 
      * @param arg0
+     * @return
+     *     returns boolean
      */
     @WebMethod
+    @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "deleteAlbum", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.DeleteAlbum")
     @ResponseWrapper(localName = "deleteAlbumResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.DeleteAlbumResponse")
     @Action(input = "http://soap.server.tp1.sd/SoapServer/deleteAlbumRequest", output = "http://soap.server.tp1.sd/SoapServer/deleteAlbumResponse")
-    public void deleteAlbum(
+    public boolean deleteAlbum(
         @WebParam(name = "arg0", targetNamespace = "")
         SharedAlbum arg0);
 

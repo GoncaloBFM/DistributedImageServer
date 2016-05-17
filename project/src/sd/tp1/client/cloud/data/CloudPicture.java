@@ -1,5 +1,6 @@
 package sd.tp1.client.cloud.data;
 
+import sd.tp1.common.Metadata;
 import sd.tp1.common.Picture;
 
 /**
@@ -21,4 +22,5 @@ public class CloudPicture extends AbstractCloudObject implements Picture {
     public CloudAlbum getAlbum(){
         return this.album;
     }
+
 }

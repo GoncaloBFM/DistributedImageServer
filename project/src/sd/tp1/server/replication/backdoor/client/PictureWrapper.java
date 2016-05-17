@@ -9,7 +9,7 @@ public class PictureWrapper extends sd.tp1.server.replication.backdoor.client.st
     public PictureWrapper(SharedPicture picture) {
         super();
 
-        this.pictureName = picture.pictureName;
+        this.pictureName = picture.getPictureName();
     }
 
     public SharedPicture getSharedPicture(){

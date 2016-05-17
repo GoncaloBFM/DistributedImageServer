@@ -1,6 +1,8 @@
 package sd.tp1.client.cloud.data;
 
 import sd.tp1.client.cloud.Server;
+import sd.tp1.client.cloud.soap.stubs.Metadata;
+import sd.tp1.common.LogicClockMetadata;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -11,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Created by apontes on 4/5/16.
  */
-public abstract class AbstractCloudObject implements CloudObject{
+public abstract class AbstractCloudObject extends LogicClockMetadata implements CloudObject{
 
     private Collection<Server> serverCollection = new ConcurrentLinkedQueue<>();
 

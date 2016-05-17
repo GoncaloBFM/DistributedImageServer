@@ -161,6 +161,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Metadata }
+     * 
+     */
+    public Metadata createMetadata() {
+        return new Metadata();
+    }
+
+    /**
+     * Create an instance of {@link LamportLogicClock }
+     * 
+     */
+    public LamportLogicClock createLamportLogicClock() {
+        return new LamportLogicClock();
+    }
+
+    /**
      * Create an instance of {@link SharedAlbum }
      * 
      */

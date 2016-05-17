@@ -34,17 +34,19 @@ public class SoapServer {
         this.dataManager = dataManager;
     }
 
-    @WebMethod
-    public List<SharedAlbum> getListOfAlbums() {
-        logger.info("getListOfAlbums");
-        return dataManager.loadListOfAlbums();
-    }
+
 
     @WebMethod
     public List<SharedPicture> getListOfPictures(SharedAlbum album) {
         logger.info("getListOfPictures" + "(album=" + album.getName()+")");
-        return dataManager.loadListOfPictures(album);
+        return dataManager.loadListOfPictures(album.getName());
 
+    }
+
+    @WebMethod
+    public List<SharedAlbum> listOfAlbums() {
+        logger.info("getListOfAlbums");
+        return dataManager.loadListOfAlbums();
     }
 
     @WebMethod
@@ -54,15 +56,15 @@ public class SoapServer {
     }
 
     @WebMethod
-    public SharedAlbum createAlbum(String name){
-        logger.info("createAlbum" + "(album=" + name + ")");
-        return dataManager.createAlbum(name);
+    public void createAlbum(SharedAlbum album){
+        logger.info("createAlbum" + "(album=" + album.getName() + ")");
+        dataManager.createAlbum(album);
     }
 
     @WebMethod
-    public SharedPicture uploadPicture(SharedAlbum album, String name, byte[] data){
-        logger.info("uploadPicture" + "(album=" + album.getName()+", picture=" + name+")");
-        return dataManager.uploadPicture(album, name, data);
+    public void uploadPicture(SharedAlbum album, SharedPicture picture, byte[] data){
+        logger.info("uploadPicture" + "(album=" + album.getName()+", picture=" + picture.getPictureName()+")");
+        dataManager.uploadPicture(album, picture, data);
     }
 
     @WebMethod

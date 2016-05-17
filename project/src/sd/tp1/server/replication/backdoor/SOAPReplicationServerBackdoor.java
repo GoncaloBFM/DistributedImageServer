@@ -84,7 +84,7 @@ public class SOAPReplicationServerBackdoor implements ReplicationServerBackdoor 
                     this.dataManager.deleteAlbum(album);
                 }
                 else{
-                    this.dataManager.createAlbum(album.name);
+                    this.dataManager.createAlbum(album.getName());
                 }
 
                 this.logger.info(String.format("Album updated (%s)", album.getName()));

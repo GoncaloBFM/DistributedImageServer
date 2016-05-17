@@ -1,5 +1,6 @@
 package sd.tp1.client.cloud.soap;
 
+import sd.tp1.client.cloud.soap.stubs.Metadata;
 import sd.tp1.common.Album;
 import sd.tp1.client.cloud.soap.stubs.SharedAlbum;
 

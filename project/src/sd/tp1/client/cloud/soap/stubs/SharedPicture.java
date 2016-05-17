@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="metadata" type="{http://soap.server.tp1.sd/}metadata" minOccurs="0"/>
  *         &lt;element name="pictureName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -27,11 +28,37 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "sharedPicture", propOrder = {
+    "metadata",
     "pictureName"
 })
 public class SharedPicture {
 
+    protected Metadata metadata;
     protected String pictureName;
+
+    /**
+     * Gets the value of the metadata property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Metadata }
+     *     
+     */
+    public Metadata getMetadata() {
+        return metadata;
+    }
+
+    /**
+     * Sets the value of the metadata property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Metadata }
+     *     
+     */
+    public void setMetadata(Metadata value) {
+        this.metadata = value;
+    }
 
     /**
      * Gets the value of the pictureName property.

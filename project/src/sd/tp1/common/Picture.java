@@ -9,6 +9,6 @@ package sd.tp1.common;
  * find useful to associate with a picture, for instance its bitmap data or
  * where to get it from.
  */
-public interface Picture {
+public interface Picture extends Metadata{
     String getPictureName();
 }

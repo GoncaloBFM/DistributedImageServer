@@ -9,6 +9,6 @@ package sd.tp1.common;
  * find useful to associate with an album, such as the list of pictures that
  * it contains.
  */
-public interface Album {
+public interface Album extends Metadata{
     String getName();
 }

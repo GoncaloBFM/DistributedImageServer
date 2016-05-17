@@ -1,7 +1,10 @@
 package sd.tp1.client.cloud.cache;
 
 import sd.tp1.common.Album;
+import sd.tp1.common.LogicClockMetadata;
+import sd.tp1.common.Metadata;
 import sd.tp1.common.Picture;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -146,5 +149,43 @@ public class CachedPicture extends CachedObject<byte[]> implements Picture, Cach
 
     public String getAlbumName(){
         return this.albumName;
+    }
+
+    private boolean delete;
+    private int version;
+    private String authorId;
+
+    @Override
+    public boolean isDeleted() {
+        return this.delete;
+    }
+
+    @Override
+    public void setDeleted(boolean delete) {
+        this.delete = delete;
+    }
+
+    @Override
+    public String getAuthorId() {
+        return this.authorId;
+    }
+
+    @Override
+    public void updateVersion(String authorId) {
+        this.version ++;
+        this.authorId = authorId;
+    }
+
+    @Override
+    public int compareTo(sd.tp1.common.Metadata o) {
+        if(o instanceof LogicClockMetadata){
+            LogicClockMetadata x = (LogicClockMetadata) o;
+            if(this.version != x.getVersion())
+                return this.version - x.getVersion();
+
+            return this.authorId.compareTo(x.getAuthorId());
+        }
+
+        throw new NotImplementedException();
     }
 }

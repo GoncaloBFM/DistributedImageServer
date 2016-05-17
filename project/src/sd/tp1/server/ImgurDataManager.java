@@ -11,6 +11,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import sd.tp1.common.Album;
+import sd.tp1.common.Picture;
 import sd.tp1.common.SharedAlbum;
 import sd.tp1.common.SharedPicture;
 
@@ -19,7 +21,7 @@ import java.util.*;
 /**
  * Created by gbfm on 5/17/16.
  */
-public class ImgurDataManager extends AbstractDataManager {
+public class ImgurDataManager implements DataManager{
 
     final String apiKey = "01c07ff99455d21";
     final String apiSecret = "82dbdf420a192a4f7c65ba2b116a473f3b19b518";
@@ -61,7 +63,7 @@ public class ImgurDataManager extends AbstractDataManager {
             JSONObject album = (JSONObject) iterator.next();
             String pictureName = album.get("title").toString();
             String pictureId = album.get("id").toString();
-            result.add(new SharedAlbum(pictureId));
+            //result.add(new SharedAlbum(pictureId));
             albumNameIdMap.put(pictureName, pictureId);
             System.out.println("id : " + ((JSONObject)iterator.next()).get("title"));
         }
@@ -69,37 +71,7 @@ public class ImgurDataManager extends AbstractDataManager {
     }
 
     @Override
-    public List<SharedPicture> loadListOfPictures(SharedAlbum album) {
-        return null;
-    }
-
-    @Override
-    public byte[] loadPictureData(SharedAlbum album, SharedPicture picture) {
-        return new byte[0];
-    }
-
-    @Override
-    public SharedAlbum createAlbum(String name) {
-        return null;
-    }
-
-    @Override
-    public SharedAlbum createAlbumNoNotify(String name) {
-        return null;
-    }
-
-    @Override
-    public SharedPicture uploadPicture(SharedAlbum album, String name, byte[] data) {
-        return null;
-    }
-
-    @Override
-    public SharedPicture uploadPictureNoNotify(SharedAlbum album, String name, byte[] data) {
-        return null;
-    }
-
-    @Override
-    public void deleteAlbum(SharedAlbum album) {
+    public void deleteAlbum(Album album) {
         OAuthRequest albumsReq = new OAuthRequest(Verb.DELETE, link+albumNameIdMap.get(album.getName()), service);
         service.signRequest(accessToken, albumsReq);
         Response albumsRes = albumsReq.send();
@@ -116,17 +88,27 @@ public class ImgurDataManager extends AbstractDataManager {
     }
 
     @Override
-    public void deleteAlbumNoNotify(SharedAlbum album) {
+    public List<SharedPicture> loadListOfPictures(String album) {
+        return null;
+    }
+
+    @Override
+    public byte[] loadPictureData(Album album, Picture picture) {
+        return new byte[0];
+    }
+
+    @Override
+    public void createAlbum(Album album) {
 
     }
 
     @Override
-    public boolean deletePicture(SharedAlbum album, SharedPicture picture) {
-        return false;
+    public void uploadPicture(Album album, Picture picture, byte[] data) {
+
     }
 
     @Override
-    public boolean deletePictureNoNotify(SharedAlbum album, SharedPicture picture) {
+    public boolean deletePicture(Album album, Picture picture) {
         return false;
     }
 }

@@ -27,18 +27,6 @@ public interface SoapServer {
 
     /**
      * 
-     * @return
-     *     returns java.util.List<sd.tp1.client.cloud.soap.stubs.SharedAlbum>
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getListOfAlbums", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.GetListOfAlbums")
-    @ResponseWrapper(localName = "getListOfAlbumsResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.GetListOfAlbumsResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/getListOfAlbumsRequest", output = "http://soap.server.tp1.sd/SoapServer/getListOfAlbumsResponse")
-    public List<SharedAlbum> getListOfAlbums();
-
-    /**
-     * 
      * @param arg0
      * @return
      *     returns java.util.List<sd.tp1.client.cloud.soap.stubs.SharedPicture>
@@ -51,6 +39,18 @@ public interface SoapServer {
     public List<SharedPicture> getListOfPictures(
         @WebParam(name = "arg0", targetNamespace = "")
         SharedAlbum arg0);
+
+    /**
+     * 
+     * @return
+     *     returns java.util.List<sd.tp1.client.cloud.soap.stubs.SharedAlbum>
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "listOfAlbums", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.ListOfAlbums")
+    @ResponseWrapper(localName = "listOfAlbumsResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.ListOfAlbumsResponse")
+    @Action(input = "http://soap.server.tp1.sd/SoapServer/listOfAlbumsRequest", output = "http://soap.server.tp1.sd/SoapServer/listOfAlbumsResponse")
+    public List<SharedAlbum> listOfAlbums();
 
     /**
      * 
@@ -73,36 +73,30 @@ public interface SoapServer {
     /**
      * 
      * @param arg0
-     * @return
-     *     returns sd.tp1.client.cloud.soap.stubs.SharedAlbum
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "createAlbum", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.CreateAlbum")
     @ResponseWrapper(localName = "createAlbumResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.CreateAlbumResponse")
     @Action(input = "http://soap.server.tp1.sd/SoapServer/createAlbumRequest", output = "http://soap.server.tp1.sd/SoapServer/createAlbumResponse")
-    public SharedAlbum createAlbum(
+    public void createAlbum(
         @WebParam(name = "arg0", targetNamespace = "")
-        String arg0);
+        SharedAlbum arg0);
 
     /**
      * 
      * @param arg2
      * @param arg1
      * @param arg0
-     * @return
-     *     returns sd.tp1.client.cloud.soap.stubs.SharedPicture
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "uploadPicture", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.UploadPicture")
     @ResponseWrapper(localName = "uploadPictureResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.UploadPictureResponse")
     @Action(input = "http://soap.server.tp1.sd/SoapServer/uploadPictureRequest", output = "http://soap.server.tp1.sd/SoapServer/uploadPictureResponse")
-    public SharedPicture uploadPicture(
+    public void uploadPicture(
         @WebParam(name = "arg0", targetNamespace = "")
         SharedAlbum arg0,
         @WebParam(name = "arg1", targetNamespace = "")
-        String arg1,
+        SharedPicture arg1,
         @WebParam(name = "arg2", targetNamespace = "")
         byte[] arg2);
 

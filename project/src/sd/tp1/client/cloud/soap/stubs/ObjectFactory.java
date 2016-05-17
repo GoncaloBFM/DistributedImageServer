@@ -26,18 +26,18 @@ public class ObjectFactory {
 
     private final static QName _GetPictureData_QNAME = new QName("http://soap.server.tp1.sd/", "getPictureData");
     private final static QName _GetPictureDataResponse_QNAME = new QName("http://soap.server.tp1.sd/", "getPictureDataResponse");
-    private final static QName _GetListOfAlbumsResponse_QNAME = new QName("http://soap.server.tp1.sd/", "getListOfAlbumsResponse");
     private final static QName _UploadPicture_QNAME = new QName("http://soap.server.tp1.sd/", "uploadPicture");
     private final static QName _DeleteAlbumResponse_QNAME = new QName("http://soap.server.tp1.sd/", "deleteAlbumResponse");
     private final static QName _CreateAlbumResponse_QNAME = new QName("http://soap.server.tp1.sd/", "createAlbumResponse");
     private final static QName _DeletePicture_QNAME = new QName("http://soap.server.tp1.sd/", "deletePicture");
     private final static QName _UploadPictureResponse_QNAME = new QName("http://soap.server.tp1.sd/", "uploadPictureResponse");
+    private final static QName _ListOfAlbumsResponse_QNAME = new QName("http://soap.server.tp1.sd/", "listOfAlbumsResponse");
     private final static QName _DeleteAlbum_QNAME = new QName("http://soap.server.tp1.sd/", "deleteAlbum");
     private final static QName _DeletePictureResponse_QNAME = new QName("http://soap.server.tp1.sd/", "deletePictureResponse");
     private final static QName _GetListOfPictures_QNAME = new QName("http://soap.server.tp1.sd/", "getListOfPictures");
     private final static QName _GetListOfPicturesResponse_QNAME = new QName("http://soap.server.tp1.sd/", "getListOfPicturesResponse");
     private final static QName _CreateAlbum_QNAME = new QName("http://soap.server.tp1.sd/", "createAlbum");
-    private final static QName _GetListOfAlbums_QNAME = new QName("http://soap.server.tp1.sd/", "getListOfAlbums");
+    private final static QName _ListOfAlbums_QNAME = new QName("http://soap.server.tp1.sd/", "listOfAlbums");
     private final static QName _GetPictureDataResponseReturn_QNAME = new QName("", "return");
     private final static QName _UploadPictureArg2_QNAME = new QName("", "arg2");
 
@@ -73,14 +73,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetListOfAlbumsResponse }
-     * 
-     */
-    public GetListOfAlbumsResponse createGetListOfAlbumsResponse() {
-        return new GetListOfAlbumsResponse();
-    }
-
-    /**
      * Create an instance of {@link UploadPicture }
      * 
      */
@@ -110,6 +102,14 @@ public class ObjectFactory {
      */
     public UploadPictureResponse createUploadPictureResponse() {
         return new UploadPictureResponse();
+    }
+
+    /**
+     * Create an instance of {@link ListOfAlbumsResponse }
+     * 
+     */
+    public ListOfAlbumsResponse createListOfAlbumsResponse() {
+        return new ListOfAlbumsResponse();
     }
 
     /**
@@ -153,27 +153,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetListOfAlbums }
+     * Create an instance of {@link ListOfAlbums }
      * 
      */
-    public GetListOfAlbums createGetListOfAlbums() {
-        return new GetListOfAlbums();
+    public ListOfAlbums createListOfAlbums() {
+        return new ListOfAlbums();
     }
 
     /**
-     * Create an instance of {@link Metadata }
+     * Create an instance of {@link LogicClockMetadata }
      * 
      */
-    public Metadata createMetadata() {
-        return new Metadata();
-    }
-
-    /**
-     * Create an instance of {@link LamportLogicClock }
-     * 
-     */
-    public LamportLogicClock createLamportLogicClock() {
-        return new LamportLogicClock();
+    public LogicClockMetadata createLogicClockMetadata() {
+        return new LogicClockMetadata();
     }
 
     /**
@@ -208,15 +200,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "getPictureDataResponse")
     public JAXBElement<GetPictureDataResponse> createGetPictureDataResponse(GetPictureDataResponse value) {
         return new JAXBElement<GetPictureDataResponse>(_GetPictureDataResponse_QNAME, GetPictureDataResponse.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetListOfAlbumsResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "getListOfAlbumsResponse")
-    public JAXBElement<GetListOfAlbumsResponse> createGetListOfAlbumsResponse(GetListOfAlbumsResponse value) {
-        return new JAXBElement<GetListOfAlbumsResponse>(_GetListOfAlbumsResponse_QNAME, GetListOfAlbumsResponse.class, null, value);
     }
 
     /**
@@ -265,6 +248,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ListOfAlbumsResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "listOfAlbumsResponse")
+    public JAXBElement<ListOfAlbumsResponse> createListOfAlbumsResponse(ListOfAlbumsResponse value) {
+        return new JAXBElement<ListOfAlbumsResponse>(_ListOfAlbumsResponse_QNAME, ListOfAlbumsResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteAlbum }{@code >}}
      * 
      */
@@ -310,12 +302,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetListOfAlbums }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link ListOfAlbums }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "getListOfAlbums")
-    public JAXBElement<GetListOfAlbums> createGetListOfAlbums(GetListOfAlbums value) {
-        return new JAXBElement<GetListOfAlbums>(_GetListOfAlbums_QNAME, GetListOfAlbums.class, null, value);
+    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "listOfAlbums")
+    public JAXBElement<ListOfAlbums> createListOfAlbums(ListOfAlbums value) {
+        return new JAXBElement<ListOfAlbums>(_ListOfAlbums_QNAME, ListOfAlbums.class, null, value);
     }
 
     /**

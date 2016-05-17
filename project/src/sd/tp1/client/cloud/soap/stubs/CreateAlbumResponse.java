@@ -3,7 +3,6 @@ package sd.tp1.client.cloud.soap.stubs;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -17,7 +16,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://soap.server.tp1.sd/}sharedAlbum" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -27,36 +25,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "createAlbumResponse", propOrder = {
-    "_return"
-})
+@XmlType(name = "createAlbumResponse")
 public class CreateAlbumResponse {
 
-    @XmlElement(name = "return")
-    protected SharedAlbum _return;
-
-    /**
-     * Gets the value of the return property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SharedAlbum }
-     *     
-     */
-    public SharedAlbum getReturn() {
-        return _return;
-    }
-
-    /**
-     * Sets the value of the return property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SharedAlbum }
-     *     
-     */
-    public void setReturn(SharedAlbum value) {
-        this._return = value;
-    }
 
 }

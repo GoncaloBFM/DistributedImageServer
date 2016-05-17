@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="arg0" type="{http://soap.server.tp1.sd/}sharedAlbum" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="arg1" type="{http://soap.server.tp1.sd/}sharedPicture" minOccurs="0"/>
  *         &lt;element name="arg2" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 public class UploadPicture {
 
     protected SharedAlbum arg0;
-    protected String arg1;
+    protected SharedPicture arg1;
     @XmlElementRef(name = "arg2", type = JAXBElement.class, required = false)
     protected JAXBElement<byte[]> arg2;
 
@@ -71,10 +71,10 @@ public class UploadPicture {
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link SharedPicture }
      *     
      */
-    public String getArg1() {
+    public SharedPicture getArg1() {
         return arg1;
     }
 
@@ -83,10 +83,10 @@ public class UploadPicture {
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link SharedPicture }
      *     
      */
-    public void setArg1(String value) {
+    public void setArg1(SharedPicture value) {
         this.arg1 = value;
     }
 

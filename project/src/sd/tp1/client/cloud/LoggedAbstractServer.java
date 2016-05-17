@@ -2,6 +2,7 @@ package sd.tp1.client.cloud;
 
 import sd.tp1.common.Album;
 import sd.tp1.common.Picture;
+import sd.tp1.common.SharedPicture;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -45,8 +46,8 @@ public abstract class LoggedAbstractServer implements Server {
     }
 
     @Override
-    public Picture uploadPicture(Album album, String name, byte[] data) {
-        logger.info(caller+".uploadPicture(album=" + album.getName() +", picture=" + name+")");
+    public Picture uploadPicture(Album album, SharedPicture picture, byte[] data) {
+        logger.info(caller+".uploadPicture(album=" + album.getName() +", picture=" + picture.getPictureName()+")");
         return null;
     }
 

@@ -66,9 +66,9 @@ public interface SoapServer {
     @Action(input = "http://soap.server.tp1.sd/SoapServer/getPictureDataRequest", output = "http://soap.server.tp1.sd/SoapServer/getPictureDataResponse")
     public byte[] getPictureData(
         @WebParam(name = "arg0", targetNamespace = "")
-        SharedAlbum arg0,
+        String arg0,
         @WebParam(name = "arg1", targetNamespace = "")
-        SharedPicture arg1);
+        String arg1);
 
     /**
      * 

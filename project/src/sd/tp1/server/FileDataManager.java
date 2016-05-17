@@ -27,7 +27,7 @@ public class FileDataManager extends FileMetadataManager implements DataManager 
     public List<SharedAlbum> loadListOfAlbums() {
         List<SharedAlbum> list = new LinkedList<>();
         for(File iFile : root.listFiles(x -> x.isDirectory()
-                        && !x.getName().endsWith(".delete")
+                        //&& !x.getName().endsWith(".delete")
                         && !x.getName().startsWith("."))){
 
             SharedAlbum album = readAlbumMeta(iFile.getName());
@@ -51,7 +51,7 @@ public class FileDataManager extends FileMetadataManager implements DataManager 
         }
 
         for(File iFile : dir.listFiles(x -> !x.isDirectory()
-                && !x.getName().endsWith(".delete")
+                //&& !x.getName().endsWith(".delete")
                 && !x.getName().startsWith("."))){
 
             SharedPicture picture = readPictureMeta(albumName, iFile.getName());
@@ -108,19 +108,18 @@ public class FileDataManager extends FileMetadataManager implements DataManager 
 
     @Override
     public boolean deleteAlbum(Album album) {
-        if(!super.deleteAlbum(album))
-            return false;
+        return super.deleteAlbum(album);
 
-        File folder = openAlbum(album);
-        return folder.renameTo(new File(folder.getAbsolutePath() + ".delete"));
+        ///File folder = openAlbum(album);
+        //return folder.renameTo(new File(folder.getAbsolutePath() + ".delete"));
     }
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
-        if(!super.deletePicture(album, picture));
+        return super.deletePicture(album, picture);
 
-        File file = openPicture(album, picture);
-        return file.renameTo(new File(file.getAbsolutePath() + ".delete"));
+        //File file = openPicture(album, picture);
+        //return file.renameTo(new File(file.getAbsolutePath() + ".delete"));
     }
 
     private File openPicture(String albumName, String pictureName){

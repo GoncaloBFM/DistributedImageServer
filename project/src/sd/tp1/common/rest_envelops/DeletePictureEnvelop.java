@@ -13,6 +13,9 @@ public class DeletePictureEnvelop {
     public SharedAlbum album;
     public SharedPicture picture;
 
+    public DeletePictureEnvelop(){
+    }
+
     public DeletePictureEnvelop(Album album, Picture picture) {
         this.album = new SharedAlbum(album);
         this.picture = new SharedPicture(picture);

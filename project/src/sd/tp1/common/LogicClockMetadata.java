@@ -2,10 +2,12 @@ package sd.tp1.common;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.Serializable;
+
 /**
  * Created by apontes on 5/17/16.
  */
-public class LogicClockMetadata implements Metadata {
+public class LogicClockMetadata implements Metadata, Serializable {
 
     private boolean deleted;
     private int version;

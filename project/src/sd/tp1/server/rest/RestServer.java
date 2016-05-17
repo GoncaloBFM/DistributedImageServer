@@ -70,7 +70,7 @@ public class RestServer {
         }
     }
 
-    @DELETE
+    @POST
     @Path("/deleteAlbum")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteAlbum(SharedAlbum album) {
@@ -79,7 +79,7 @@ public class RestServer {
         return Response.ok().build();
     }
 
-    @DELETE
+    @POST
     @Path("/deletePicture")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deletePicture(SharedAlbum album, SharedPicture picture) {

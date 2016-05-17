@@ -2,6 +2,8 @@ package sd.tp1.server.rest;
 
 import sd.tp1.common.SharedAlbum;
 import sd.tp1.common.SharedPicture;
+import sd.tp1.common.rest_envelops.DeletePictureEnvelop;
+import sd.tp1.common.rest_envelops.UploadPictureEnvelop;
 import sd.tp1.server.DataManager;
 import sd.tp1.server.FileDataManager;
 
@@ -82,9 +84,9 @@ public class RestServer {
     @POST
     @Path("/deletePicture")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deletePicture(SharedAlbum album, SharedPicture picture) {
-        logger.info("deletePicture" + "(album=" + album+", picture=" + picture+")");
-        if (this.dataManager.deletePicture(album, picture)) {
+    public Response deletePicture(DeletePictureEnvelop env) {
+        logger.info("deletePicture" + "(album=" + env.album+", picture=" + env.picture+")");
+        if (this.dataManager.deletePicture(env.album, env.picture)) {
             return Response.ok().build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -102,9 +104,9 @@ public class RestServer {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/uploadPicture")
-    public Response uploadPicture(SharedAlbum album, SharedPicture picture, byte[] data) {
-        logger.info("uploadPicture" + "(album=" + album+", picture=" + picture+")");
-        dataManager.uploadPicture(album, picture, data);
+    public Response uploadPicture(UploadPictureEnvelop env) {
+        logger.info("uploadPicture" + "(album=" + env.album+", picture=" + env.picture+")");
+        dataManager.uploadPicture(env.album, env.picture, env.data);
         return Response.ok().build();
     }
 }

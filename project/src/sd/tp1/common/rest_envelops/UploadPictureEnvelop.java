@@ -14,7 +14,7 @@ public class UploadPictureEnvelop {
     public Picture picture;
     public byte[] data;
 
-    public UploadPictureEnvelop(SharedAlbum album, SharedPicture picture, byte[] data) {
+    public UploadPictureEnvelop(Album album, Picture picture, byte[] data) {
         this.album = album;
         this.picture = picture;
         this.data = data;

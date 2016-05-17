@@ -8,6 +8,8 @@ import sd.tp1.common.SharedPicture;
 import sd.tp1.client.cloud.LoggedAbstractServer;
 import sd.tp1.client.cloud.Server;
 import sd.tp1.client.cloud.aux.SafeInvoker;
+import sd.tp1.common.rest_envelops.DeletePictureEnvelop;
+import sd.tp1.common.rest_envelops.UploadPictureEnvelop;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -90,46 +92,40 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
     }
 
     @Override
-    public Album createAlbum(String name) {
-        super.createAlbum(name);
-        Response response = SafeInvoker.invoke(this, () ->
-                target.path("/createAlbum/" + name).request().post(Entity.entity(name, MediaType.APPLICATION_JSON)));
+    public void createAlbum(SharedAlbum sharedAlbum) {
+        super.createAlbum(sharedAlbum.getName());
+        SafeInvoker.invoke(this, () ->
+                target.path("/createAlbum/" + sharedAlbum.getName()).request().post(Entity.entity(sharedAlbum, MediaType.APPLICATION_JSON)));
 
-        if (response != null && response.getStatus() == Response.Status.OK.getStatusCode()) {
-            return new SharedAlbum(name);
-        }
-        return null;
     }
 
     @Override
-    public Picture uploadPicture(Album album, String name, byte[] data) {
-        super.uploadPicture(album, name, data);
-        Response response = SafeInvoker.invoke(this, ()->
-                this.target.path("/uploadPicture/" + album.getName() + "/" + name).request().post(Entity.entity(data, MediaType.APPLICATION_JSON)));
+    public void uploadPicture(SharedAlbum album, SharedPicture sharedPicture, byte[] data) {
+        super.uploadPicture(album, sharedPicture, data);
+        UploadPictureEnvelop message = new UploadPictureEnvelop(album, sharedPicture, data);
+        SafeInvoker.invoke(this, ()->
+                this.target.path("/uploadPicture").request().post(Entity.entity(message, MediaType.APPLICATION_JSON)));
 
-        if (response != null && response.getStatus() == Response.Status.OK.getStatusCode()) {
-            return new SharedPicture(name);
-        }
-        return null;
     }
 
     @Override
-    public void deleteAlbum(Album album) {
+    public void deleteAlbum(SharedAlbum album) {
         super.deleteAlbum(album);
 
         SafeInvoker.invoke(this, () -> {
-            this.target.path("/deleteAlbum/"+album.getName()).request().delete();
+            this.target.path("/deleteAlbum").request().post(Entity.entity(album, MediaType.APPLICATION_JSON));
             return null;
         });
 
     }
 
     @Override
-    public boolean deletePicture(Album album, Picture picture) {
+    public boolean deletePicture(SharedAlbum album, SharedPicture picture) {
         super.deletePicture(album, picture);
 
+        DeletePictureEnvelop message = new DeletePictureEnvelop(album, picture);
         Response response = SafeInvoker.invoke(this, () ->
-                this.target.path("/deletePicture/" + album.getName() + "/" + picture.getPictureName()).request().delete());
+                this.target.path("/deletePicture").request().post(Entity.entity(message, MediaType.APPLICATION_JSON)));
 
         return response != null && response.getStatus() == Response.Status.OK.getStatusCode();
 

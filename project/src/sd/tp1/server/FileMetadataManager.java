@@ -1,11 +1,11 @@
 package sd.tp1.server;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import sd.tp1.common.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
 import java.nio.file.NotDirectoryException;
-import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -87,12 +87,15 @@ public class FileMetadataManager implements MetadataManager {
             if(!file.exists())
                 return null;
 
-            ObjectInput in = new ObjectInputStream(new FileInputStream(file));
-            SharedAlbum sharedAlbum = (SharedAlbum) in.readObject();
+            //ObjectInput in = new ObjectInputStream(new FileInputStream(file));
+            //SharedAlbum sharedAlbum = (SharedAlbum) in.readObject();
+            FileReader in = (new FileReader(file));
+            SharedAlbum sharedAlbum = new Gson().fromJson(in, SharedAlbum.class);
+
             in.close();
 
             return sharedAlbum;
-        } catch (ClassNotFoundException| IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -103,13 +106,16 @@ public class FileMetadataManager implements MetadataManager {
             if(!file.exists())
                 return null;
 
-            ObjectInput in = new ObjectInputStream(new FileInputStream(file));
-            SharedPicture sharedPicture = (SharedPicture) in.readObject();
+            //ObjectInput in = new ObjectInputStream(new FileInputStream(file));
+            //SharedPicture sharedPicture = (SharedPicture) in.readObject();
+            FileReader in = (new FileReader(file));
+            SharedPicture sharedPicture = new Gson().fromJson(in, SharedPicture.class);
+
             in.close();
 
             return sharedPicture;
 
-        } catch (ClassNotFoundException| IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -117,8 +123,15 @@ public class FileMetadataManager implements MetadataManager {
     protected void writeAlbumMeta(Album album){
         try{
             File file = new File(root, album.getName() + META_EXT);
-            ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
-            out.writeObject(album);
+            //ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
+            //out.writeObject(album);
+
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+
+            PrintStream out = new PrintStream(new FileOutputStream(file));
+            out.println(gson.toJson(album));
+
             out.flush();
             out.close();
 
@@ -131,8 +144,15 @@ public class FileMetadataManager implements MetadataManager {
         writeAlbumMeta(album);
         try{
             File file = new File(openAlbum(album), picture.getPictureName() + META_EXT);
-            ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
-            out.writeObject(picture);
+            //ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
+            //out.writeObject(picture);
+
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+
+            PrintStream out = new PrintStream(new FileOutputStream(file));
+            out.println(gson.toJson(picture));
+
             out.flush();
             out.close();
 

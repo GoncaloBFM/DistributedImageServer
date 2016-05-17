@@ -60,4 +60,10 @@ public abstract class LoggedAbstractServer implements Server {
         logger.info(caller+".deletePicture(album=" + album.getName()+", picture=" + picture.getPictureName()+")");
         return false;
     }
+
+    @Override
+    public String getServerId() {
+        logger.info(caller+".getServerId()");
+        return null;
+    }
 }

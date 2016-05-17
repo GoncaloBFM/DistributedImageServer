@@ -16,6 +16,10 @@ public abstract class AbstractCloudObject extends LogicClockMetadata implements 
 
     private Collection<Server> serverCollection = new ConcurrentLinkedQueue<>();
 
+    AbstractCloudObject(String serverId){
+        super(serverId);
+    }
+
     @Override
     public void addServer(Server server) {
         if(!this.serverCollection.contains(server))

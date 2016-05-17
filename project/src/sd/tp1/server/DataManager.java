@@ -25,4 +25,6 @@ public interface DataManager {
     void deleteAlbum(Album album);
 
     boolean deletePicture(Album album, Picture picture);
+
+    String getServerId();
 }

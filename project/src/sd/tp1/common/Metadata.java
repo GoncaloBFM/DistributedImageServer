@@ -8,6 +8,8 @@ public interface Metadata extends Comparable<Metadata> {
     boolean isDeleted();
     void setDeleted(boolean delete);
 
+    int getVersion();
+
     String getAuthorId();
     void updateVersion(String authorId);
 }

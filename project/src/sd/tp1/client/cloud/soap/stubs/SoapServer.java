@@ -33,12 +33,12 @@ public interface SoapServer {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getListOfPictures", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.GetListOfPictures")
-    @ResponseWrapper(localName = "getListOfPicturesResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.GetListOfPicturesResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/getListOfPicturesRequest", output = "http://soap.server.tp1.sd/SoapServer/getListOfPicturesResponse")
-    public List<SharedPicture> getListOfPictures(
+    @RequestWrapper(localName = "loadListOfPictures", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.LoadListOfPictures")
+    @ResponseWrapper(localName = "loadListOfPicturesResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.LoadListOfPicturesResponse")
+    @Action(input = "http://soap.server.tp1.sd/SoapServer/loadListOfPicturesRequest", output = "http://soap.server.tp1.sd/SoapServer/loadListOfPicturesResponse")
+    public List<SharedPicture> loadListOfPictures(
         @WebParam(name = "arg0", targetNamespace = "")
-        SharedAlbum arg0);
+        String arg0);
 
     /**
      * 
@@ -47,10 +47,10 @@ public interface SoapServer {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "listOfAlbums", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.ListOfAlbums")
-    @ResponseWrapper(localName = "listOfAlbumsResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.ListOfAlbumsResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/listOfAlbumsRequest", output = "http://soap.server.tp1.sd/SoapServer/listOfAlbumsResponse")
-    public List<SharedAlbum> listOfAlbums();
+    @RequestWrapper(localName = "loadListOfAlbums", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.LoadListOfAlbums")
+    @ResponseWrapper(localName = "loadListOfAlbumsResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.LoadListOfAlbumsResponse")
+    @Action(input = "http://soap.server.tp1.sd/SoapServer/loadListOfAlbumsRequest", output = "http://soap.server.tp1.sd/SoapServer/loadListOfAlbumsResponse")
+    public List<SharedAlbum> loadListOfAlbums();
 
     /**
      * 
@@ -61,10 +61,10 @@ public interface SoapServer {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPictureData", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.GetPictureData")
-    @ResponseWrapper(localName = "getPictureDataResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.GetPictureDataResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/getPictureDataRequest", output = "http://soap.server.tp1.sd/SoapServer/getPictureDataResponse")
-    public byte[] getPictureData(
+    @RequestWrapper(localName = "loadPictureData", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.LoadPictureData")
+    @ResponseWrapper(localName = "loadPictureDataResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.LoadPictureDataResponse")
+    @Action(input = "http://soap.server.tp1.sd/SoapServer/loadPictureDataRequest", output = "http://soap.server.tp1.sd/SoapServer/loadPictureDataResponse")
+    public byte[] loadPictureData(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
         @WebParam(name = "arg1", targetNamespace = "")
@@ -129,5 +129,17 @@ public interface SoapServer {
         SharedAlbum arg0,
         @WebParam(name = "arg1", targetNamespace = "")
         SharedPicture arg1);
+
+    /**
+     * 
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getServerId", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.GetServerId")
+    @ResponseWrapper(localName = "getServerIdResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.client.cloud.soap.stubs.GetServerIdResponse")
+    @Action(input = "http://soap.server.tp1.sd/SoapServer/getServerIdRequest", output = "http://soap.server.tp1.sd/SoapServer/getServerIdResponse")
+    public String getServerId();
 
 }

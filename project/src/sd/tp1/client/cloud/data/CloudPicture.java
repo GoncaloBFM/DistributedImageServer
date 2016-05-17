@@ -11,7 +11,9 @@ public class CloudPicture extends AbstractCloudObject implements Picture {
     private String name;
     private CloudAlbum album;
 
-    public CloudPicture(String name, CloudAlbum album){
+    public CloudPicture(String name, CloudAlbum album, String serverId){
+        super(serverId);
+
         this.name = name;this.album = album;
     }
 

@@ -37,20 +37,20 @@ public class SoapServer {
 
 
     @WebMethod
-    public List<SharedPicture> getListOfPictures(SharedAlbum album) {
-        logger.info("getListOfPictures" + "(album=" + album.getName()+")");
-        return dataManager.loadListOfPictures(album.getName());
+    public List<SharedPicture> loadListOfPictures(String album) {
+        logger.info("getListOfPictures" + "(album=" + album+")");
+        return dataManager.loadListOfPictures(album);
 
     }
 
     @WebMethod
-    public List<SharedAlbum> listOfAlbums() {
+    public List<SharedAlbum> loadListOfAlbums() {
         logger.info("getListOfAlbums");
         return dataManager.loadListOfAlbums();
     }
 
     @WebMethod
-    public byte[] getPictureData(String album, String picture){
+    public byte[] loadPictureData(String album, String picture){
         logger.info("getPictureData"+"(album=" + album+", picture=" + picture + ")");
         return dataManager.loadPictureData(album, picture);
     }
@@ -77,5 +77,10 @@ public class SoapServer {
     public boolean deletePicture(SharedAlbum album, SharedPicture picture) {
         logger.info("deletePicture" + "(album=" + album.getName()+", picture=" + picture.getPictureName()+")");
         return dataManager.deletePicture(album, picture);
+    }
+
+    @WebMethod
+    public String getServerId(){
+        return dataManager.getServerId();
     }
 }

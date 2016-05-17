@@ -29,9 +29,14 @@ public class HashCachedServer implements CachedServer{
     }
 
     @Override
-    public List<Album> getListOfAlbums() {
+    public String getServerId() {
+        return server.getServerId();
+    }
+
+    @Override
+    public List<Album> loadListOfAlbums() {
         if(this.listOfAlbums == null || this.listOfAlbums.isDirty()){
-            List<Album> fetchedAlbumList = this.server.getListOfAlbums();
+            List<Album> fetchedAlbumList = this.server.loadListOfAlbums();
 
             if(this.listOfAlbums == null)
                 this.listOfAlbums = new CachedObject<>(fetchedAlbumList);
@@ -43,14 +48,14 @@ public class HashCachedServer implements CachedServer{
     }
 
     @Override
-    public List<Picture> getListOfPictures(Album album) {
-        Cached<List<Picture>> cachedPictureList = this.picturesMap.get(album.getName());
+    public List<Picture> loadListOfPictures(String album) {
+        Cached<List<Picture>> cachedPictureList = this.picturesMap.get(album);
         if(cachedPictureList == null || cachedPictureList.isDirty()){
-            List<Picture> fetchedPictureList = this.server.getListOfPictures(album);
+            List<Picture> fetchedPictureList = this.server.loadListOfPictures(album);
 
             if(cachedPictureList == null){
                 cachedPictureList = new CachedObject<>(fetchedPictureList);
-                this.picturesMap.put(album.getName(), cachedPictureList);
+                this.picturesMap.put(album, cachedPictureList);
             }
             else
                 cachedPictureList.recache(fetchedPictureList);
@@ -61,27 +66,24 @@ public class HashCachedServer implements CachedServer{
     }
 
     @Override
-    public byte[] getPictureData(Album album, Picture picture) {
-        return server.getPictureData(album, picture);
+    public byte[] loadPictureData(String album, String picture) {
+        return server.loadPictureData(album, picture);
     }
 
     @Override
-    public Album createAlbum(String name) {
-        Album album = this.server.createAlbum(name);
-        if(album != null)
+    public void createAlbum(Album album) {
+        if(album != null) {
+            this.server.createAlbum(album);
             this.listOfAlbums.makeDirty();
-
-        return album;
+        }
     }
 
     @Override
-    public Picture uploadPicture(Album album, String name, byte[] data) {
-        Picture picture = this.server.uploadPicture(album, name, data);
-
-        if(picture != null)
+    public void uploadPicture(Album album, Picture picture, byte[] data) {
+        if(picture != null) {
+            this.server.uploadPicture(album, picture, data);
             this.picturesMap.get(album.getName()).makeDirty();
-
-        return picture;
+        }
     }
 
     @Override

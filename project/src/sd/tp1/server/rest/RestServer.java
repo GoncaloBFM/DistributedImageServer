@@ -1,5 +1,6 @@
 package sd.tp1.server.rest;
 
+import com.sun.org.apache.regexp.internal.RE;
 import sd.tp1.common.SharedAlbum;
 import sd.tp1.common.SharedPicture;
 import sd.tp1.common.rest_envelops.DeletePictureEnvelop;
@@ -108,5 +109,12 @@ public class RestServer {
         logger.info("uploadPicture" + "(album=" + env.album+", picture=" + env.picture+")");
         dataManager.uploadPicture(env.album, env.picture, env.data);
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("/getServerId")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getServerId(){
+        return Response.ok(dataManager.getServerId()).build();
     }
 }

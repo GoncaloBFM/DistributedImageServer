@@ -9,6 +9,7 @@ import sd.tp1.client.gui.GuiGalleryContentProvider;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Created by apontes on 3/21/16.
@@ -22,7 +23,7 @@ public class CloudClient implements GuiGalleryContentProvider {
 	protected Gui gui;
 
 	Map<Server, List<CloudAlbum>> serverAlbumMap;
-	Set<String> albumSet;
+	Map<String, CloudAlbum> albumMap;
 
 	CloudClient() {
 		this(true);
@@ -77,10 +78,9 @@ public class CloudClient implements GuiGalleryContentProvider {
 	 */
 	@Override
 	public List<Album> getListOfAlbums() {
-		List<Album> lst = new LinkedList<>();
 		HashMap<String, CloudAlbum> albums = new HashMap<>();
 		Map<Server, List<CloudAlbum>> albumMap = new ConcurrentHashMap<>();
-		albumSet = new HashSet<>();
+		albumMap = new HashMap<>();
 
 		Collection<Server> servers = HashServerManager.getServerManager().getServers();
 		servers.size();
@@ -95,10 +95,17 @@ public class CloudClient implements GuiGalleryContentProvider {
 				CloudAlbum cloudAlbum = albums.get(album.getName());
 
 				if(cloudAlbum == null){
-					cloudAlbum = new CloudAlbum(album.getName());
+					cloudAlbum = new CloudAlbum(album.getName(), album.getAuthorId());
+					cloudAlbum.setVersion(album.getVersion());
+					cloudAlbum.setDeleted(album.isDeleted());
+
 					albums.put(album.getName(), cloudAlbum);
-					this.albumSet.add(album.getName());
-					lst.add(cloudAlbum);
+					this.albumMap.put(album.getName(), cloudAlbum);
+				}
+				else if(cloudAlbum.compareTo(album) <0){
+					cloudAlbum.setVersion(album.getVersion());
+					cloudAlbum.setAuthorId(album.getAuthorId());
+					cloudAlbum.setDeleted(album.isDeleted());
 				}
 
 				albumServer.add(cloudAlbum);
@@ -109,7 +116,8 @@ public class CloudClient implements GuiGalleryContentProvider {
 		}
 
 		this.serverAlbumMap = albumMap;
-		return lst;
+
+		return albums.values().parallelStream().filter(x -> !x.isDeleted()).collect(Collectors.toList());
 	}
 
 	/**
@@ -118,7 +126,6 @@ public class CloudClient implements GuiGalleryContentProvider {
 	 */
 	@Override
 	public List<Picture> getListOfPictures(Album album) {
-		List<Picture> lst = new LinkedList<>();
 		Map<String, CloudPicture> pictureMap = new HashMap<>();
 
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
@@ -131,17 +138,24 @@ public class CloudClient implements GuiGalleryContentProvider {
 				CloudPicture cloudPicture = pictureMap.get(p.getPictureName());
 
 				if(cloudPicture == null){
-					cloudPicture = new CloudPicture(p.getPictureName(), cloudAlbum);
+					cloudPicture = new CloudPicture(p.getPictureName(), cloudAlbum, p.getAuthorId());
+					cloudPicture.setVersion(p.getVersion());
+					cloudPicture.setDeleted(p.isDeleted());
+
 					pictureMap.put(p.getPictureName(), cloudPicture);
 					cloudAlbum.getPictures().add(cloudPicture);
-					lst.add(cloudPicture);
+				}
+				else if(cloudPicture.compareTo(p) < 0){
+					cloudPicture.setVersion(p.getVersion());
+					cloudPicture.setAuthorId(p.getAuthorId());
+					cloudPicture.setDeleted(p.isDeleted());
 				}
 
 				cloudPicture.addServer(s);
 			}
 		}
 
-		return lst;
+		return pictureMap.values().parallelStream().filter(x -> !x.isDeleted()).collect(Collectors.toList());
 	}
 
 	/**
@@ -167,7 +181,8 @@ public class CloudClient implements GuiGalleryContentProvider {
 	 */
 	@Override
 	public Album createAlbum(String name) {
-		if(this.albumSet.contains(name))
+		CloudAlbum album = this.albumMap.get(name);
+		if(album != null && !album.isDeleted())
 			return null;
 
 		Iterator<Server>  list = HashServerManager.getServerManager().getServerToCreateAlbum().iterator();
@@ -177,12 +192,18 @@ public class CloudClient implements GuiGalleryContentProvider {
 		while (list.hasNext() &&  i <NUMBER_OF_TRIES) {
 			i++;
 			Server server = list.next();
-			Album album = server.createAlbum(name);
-			if(album != null) {
-				cloudAlbum = new CloudAlbum(album.getName());
-				cloudAlbum.addServer(server);
-				albumSet.add(album.getName());
-			}
+			//Album album = server.createAlbum(name);
+
+			if(album == null)
+				album = new CloudAlbum(name, server.getServerId());
+
+			server.createAlbum(album);
+
+			cloudAlbum = new CloudAlbum(album.getName(), album.getAuthorId());
+			cloudAlbum.setVersion(album.getVersion());
+
+			cloudAlbum.addServer(server);
+			albumMap.put(album.getName(), album);
 		}
 
 		return cloudAlbum;
@@ -196,11 +217,24 @@ public class CloudClient implements GuiGalleryContentProvider {
 	public void deleteAlbum(Album album) {
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
 
+		if(album.isDeleted()) {
+			this.albumMap.remove(album);
+			return;
+		}
+
+		album.setDeleted(true);
+
+		boolean first = true;
 		for(Server s : cloudAlbum.getServers()){
+			if(first) {
+				album.updateVersion(s.getServerId());
+				first = false;
+			}
+
 			s.deleteAlbum(album);
 		}
 
-		this.albumSet.remove(album);
+		this.albumMap.remove(album);
 	}
 
 	/**
@@ -210,20 +244,34 @@ public class CloudClient implements GuiGalleryContentProvider {
 	@Override
 	public Picture uploadPicture(Album album, String name, byte[] data) {
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
-		if(cloudAlbum.containsPicture(name))
+		if(cloudAlbum.containsPicture(name) && !cloudAlbum.isDeleted())
 			return null;
 
 		Collection<Server> availableServers =  HashServerManager.getServerManager().getServerToUploadPicture(cloudAlbum);
 
-		for (Server server : availableServers) {
-			Picture p = server.uploadPicture(album, name, data);
-			if(p != null){
-				CloudPicture cloudPicture = new CloudPicture(p.getPictureName(), cloudAlbum);
-				cloudPicture.addServer(server);
-				cloudAlbum.addServer(server);
-				cloudAlbum.getPictures().add(cloudPicture);
-				return cloudPicture;
+		CloudPicture picture = null;
+		for(CloudPicture p : cloudAlbum.getPictures())
+			if(p.getPictureName().equals(name)) {
+				picture = p;
+				break;
 			}
+
+		for (Server server : availableServers) {
+			if(picture == null){
+				picture = new CloudPicture(name, cloudAlbum, server.getServerId());
+				cloudAlbum.getPictures().add(picture);
+			}
+			else{
+				picture.setDeleted(false);
+				picture.updateVersion(server.getServerId());
+			}
+
+			picture.addServer(server);
+			cloudAlbum.addServer(server);
+
+			server.uploadPicture(album, picture, data);
+
+			return picture;
 		}
 
 		return null;
@@ -241,8 +289,16 @@ public class CloudClient implements GuiGalleryContentProvider {
 		cloudAlbum.getPictures().remove(picture);
 
 		CloudPicture cloudPicture = (CloudPicture) picture;
-		for(Server s : cloudPicture.getServers())
+		picture.setDeleted(true);
+
+		boolean first = true;
+		for(Server s : cloudPicture.getServers()) {
+			if(first){
+				cloudPicture.updateVersion(s.getServerId());
+				first = false;
+			}
 			del = s.deletePicture(album, picture) && del;
+		}
 
 		return del;
 	}

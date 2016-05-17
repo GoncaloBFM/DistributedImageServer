@@ -18,6 +18,7 @@ public class SoapServerWrapper extends LoggedAbstractServer implements Server {
 
     private SoapServer server;
     private final URL url;
+    private String serverId;
 
     public SoapServerWrapper(URL url){
         super(SoapServerWrapper.class.getSimpleName());
@@ -28,26 +29,26 @@ public class SoapServerWrapper extends LoggedAbstractServer implements Server {
     }
 
     @Override
-    public List<Album> getListOfAlbums() {
-        super.getListOfAlbums();
+    public List<Album> loadListOfAlbums() {
+        super.loadListOfAlbums();
 
-        List<SharedAlbum> list = SafeInvoker.invoke(this, server::getListOfAlbums);
+        List<SharedAlbum> list = SafeInvoker.invoke(this, server::loadListOfAlbums);
 
         if(list == null)
             return null;
 
-        return server.getListOfAlbums()
+        return server.loadListOfAlbums()
                 .stream()
                 .<Album>map(AlbumWrapper::new)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Picture> getListOfPictures(Album album) {
-        super.getListOfPictures(album);
+    public List<Picture> loadListOfPictures(String album) {
+        super.loadListOfPictures(album);
 
         List<SharedPicture> pictures = SafeInvoker.invoke(this, () ->
-                server.getListOfPictures(new AlbumWrapper(album)));
+                server.loadListOfPictures(album));
         if(pictures == null)
             return null;
 
@@ -58,36 +59,27 @@ public class SoapServerWrapper extends LoggedAbstractServer implements Server {
     }
 
     @Override
-    public byte[] getPictureData(Album album, Picture picture) {
-        super.getPictureData(album, picture);
+    public byte[] loadPictureData(String album, String picture) {
+        super.loadPictureData(album, picture);
         return SafeInvoker.invoke(this, () ->
-                server.getPictureData(new AlbumWrapper(album), new PictureWrapper(picture)));
+                server.loadPictureData(album, picture));
     }
 
     @Override
-    public Album createAlbum(String name) {
-        SharedAlbum album = SafeInvoker.invoke(this, () ->
-                server.createAlbum(name));
-        if(album == null)
-            return null;
-
-        return new AlbumWrapper(album);
+    public void createAlbum(Album album) {
+        SafeInvoker.invoke(this, () -> {server.createAlbum(new AlbumWrapper(album)); return null;});
     }
 
     @Override
-    public Picture uploadPicture(Album album, String name, byte[] data) {
-        super.uploadPicture(album, name, data);
-        SharedPicture picture = SafeInvoker.invoke(this, () ->
-                server.uploadPicture(
-                new AlbumWrapper(album),
-                name,
-                data
-        ));
-
-        if(picture == null)
+    public void uploadPicture(Album album, Picture picture, byte[] data) {
+        super.uploadPicture(album, picture, data);
+        SafeInvoker.invoke(this, () -> {
+            server.uploadPicture(
+                    new AlbumWrapper(album),
+                    new PictureWrapper(picture),
+                    data);
             return null;
-
-        return new PictureWrapper(picture);
+        });
     }
 
     @Override
@@ -113,5 +105,16 @@ public class SoapServerWrapper extends LoggedAbstractServer implements Server {
     @Override
     public URL getUrl() {
         return this.url;
+    }
+
+    @Override
+    public String getServerId() {
+        super.getServerId();
+
+        if(serverId != null)
+            return serverId;
+
+        serverId = SafeInvoker.invoke(this, () -> this.server.getServerId());
+        return serverId;
     }
 }

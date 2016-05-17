@@ -10,6 +10,7 @@ import java.util.List;
  */
 public interface Server {
     URL getUrl();
+    String getServerId();
 
     default boolean equals(Server server){
         return server.getUrl().equals(this.getUrl());
@@ -29,3 +30,4 @@ public interface Server {
 
     boolean deletePicture(Album album, Picture picture);
 }
+

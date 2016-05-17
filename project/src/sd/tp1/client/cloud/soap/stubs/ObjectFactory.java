@@ -24,22 +24,24 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _GetPictureData_QNAME = new QName("http://soap.server.tp1.sd/", "getPictureData");
-    private final static QName _GetPictureDataResponse_QNAME = new QName("http://soap.server.tp1.sd/", "getPictureDataResponse");
+    private final static QName _LoadListOfPictures_QNAME = new QName("http://soap.server.tp1.sd/", "loadListOfPictures");
+    private final static QName _LoadListOfAlbumsResponse_QNAME = new QName("http://soap.server.tp1.sd/", "loadListOfAlbumsResponse");
     private final static QName _UploadPicture_QNAME = new QName("http://soap.server.tp1.sd/", "uploadPicture");
     private final static QName _DeleteAlbumResponse_QNAME = new QName("http://soap.server.tp1.sd/", "deleteAlbumResponse");
     private final static QName _CreateAlbumResponse_QNAME = new QName("http://soap.server.tp1.sd/", "createAlbumResponse");
+    private final static QName _LoadListOfAlbums_QNAME = new QName("http://soap.server.tp1.sd/", "loadListOfAlbums");
+    private final static QName _LoadPictureDataResponse_QNAME = new QName("http://soap.server.tp1.sd/", "loadPictureDataResponse");
+    private final static QName _LoadPictureData_QNAME = new QName("http://soap.server.tp1.sd/", "loadPictureData");
     private final static QName _DeletePicture_QNAME = new QName("http://soap.server.tp1.sd/", "deletePicture");
     private final static QName _UploadPictureResponse_QNAME = new QName("http://soap.server.tp1.sd/", "uploadPictureResponse");
-    private final static QName _ListOfAlbumsResponse_QNAME = new QName("http://soap.server.tp1.sd/", "listOfAlbumsResponse");
+    private final static QName _GetServerIdResponse_QNAME = new QName("http://soap.server.tp1.sd/", "getServerIdResponse");
     private final static QName _DeleteAlbum_QNAME = new QName("http://soap.server.tp1.sd/", "deleteAlbum");
     private final static QName _DeletePictureResponse_QNAME = new QName("http://soap.server.tp1.sd/", "deletePictureResponse");
-    private final static QName _GetListOfPictures_QNAME = new QName("http://soap.server.tp1.sd/", "getListOfPictures");
-    private final static QName _GetListOfPicturesResponse_QNAME = new QName("http://soap.server.tp1.sd/", "getListOfPicturesResponse");
     private final static QName _CreateAlbum_QNAME = new QName("http://soap.server.tp1.sd/", "createAlbum");
-    private final static QName _ListOfAlbums_QNAME = new QName("http://soap.server.tp1.sd/", "listOfAlbums");
+    private final static QName _GetServerId_QNAME = new QName("http://soap.server.tp1.sd/", "getServerId");
+    private final static QName _LoadListOfPicturesResponse_QNAME = new QName("http://soap.server.tp1.sd/", "loadListOfPicturesResponse");
     private final static QName _UploadPictureArg2_QNAME = new QName("", "arg2");
-    private final static QName _GetPictureDataResponseReturn_QNAME = new QName("", "return");
+    private final static QName _LoadPictureDataResponseReturn_QNAME = new QName("", "return");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: sd.tp1.client.cloud.soap.stubs
@@ -57,19 +59,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetPictureData }
+     * Create an instance of {@link LoadListOfPictures }
      * 
      */
-    public GetPictureData createGetPictureData() {
-        return new GetPictureData();
+    public LoadListOfPictures createLoadListOfPictures() {
+        return new LoadListOfPictures();
     }
 
     /**
-     * Create an instance of {@link GetPictureDataResponse }
+     * Create an instance of {@link LoadListOfAlbumsResponse }
      * 
      */
-    public GetPictureDataResponse createGetPictureDataResponse() {
-        return new GetPictureDataResponse();
+    public LoadListOfAlbumsResponse createLoadListOfAlbumsResponse() {
+        return new LoadListOfAlbumsResponse();
     }
 
     /**
@@ -97,6 +99,30 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link LoadListOfAlbums }
+     * 
+     */
+    public LoadListOfAlbums createLoadListOfAlbums() {
+        return new LoadListOfAlbums();
+    }
+
+    /**
+     * Create an instance of {@link LoadPictureDataResponse }
+     * 
+     */
+    public LoadPictureDataResponse createLoadPictureDataResponse() {
+        return new LoadPictureDataResponse();
+    }
+
+    /**
+     * Create an instance of {@link LoadPictureData }
+     * 
+     */
+    public LoadPictureData createLoadPictureData() {
+        return new LoadPictureData();
+    }
+
+    /**
      * Create an instance of {@link UploadPictureResponse }
      * 
      */
@@ -105,11 +131,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ListOfAlbumsResponse }
+     * Create an instance of {@link GetServerIdResponse }
      * 
      */
-    public ListOfAlbumsResponse createListOfAlbumsResponse() {
-        return new ListOfAlbumsResponse();
+    public GetServerIdResponse createGetServerIdResponse() {
+        return new GetServerIdResponse();
     }
 
     /**
@@ -129,22 +155,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetListOfPictures }
-     * 
-     */
-    public GetListOfPictures createGetListOfPictures() {
-        return new GetListOfPictures();
-    }
-
-    /**
-     * Create an instance of {@link GetListOfPicturesResponse }
-     * 
-     */
-    public GetListOfPicturesResponse createGetListOfPicturesResponse() {
-        return new GetListOfPicturesResponse();
-    }
-
-    /**
      * Create an instance of {@link CreateAlbum }
      * 
      */
@@ -153,11 +163,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ListOfAlbums }
+     * Create an instance of {@link GetServerId }
      * 
      */
-    public ListOfAlbums createListOfAlbums() {
-        return new ListOfAlbums();
+    public GetServerId createGetServerId() {
+        return new GetServerId();
+    }
+
+    /**
+     * Create an instance of {@link LoadListOfPicturesResponse }
+     * 
+     */
+    public LoadListOfPicturesResponse createLoadListOfPicturesResponse() {
+        return new LoadListOfPicturesResponse();
     }
 
     /**
@@ -185,21 +203,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetPictureData }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link LoadListOfPictures }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "getPictureData")
-    public JAXBElement<GetPictureData> createGetPictureData(GetPictureData value) {
-        return new JAXBElement<GetPictureData>(_GetPictureData_QNAME, GetPictureData.class, null, value);
+    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "loadListOfPictures")
+    public JAXBElement<LoadListOfPictures> createLoadListOfPictures(LoadListOfPictures value) {
+        return new JAXBElement<LoadListOfPictures>(_LoadListOfPictures_QNAME, LoadListOfPictures.class, null, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetPictureDataResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link LoadListOfAlbumsResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "getPictureDataResponse")
-    public JAXBElement<GetPictureDataResponse> createGetPictureDataResponse(GetPictureDataResponse value) {
-        return new JAXBElement<GetPictureDataResponse>(_GetPictureDataResponse_QNAME, GetPictureDataResponse.class, null, value);
+    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "loadListOfAlbumsResponse")
+    public JAXBElement<LoadListOfAlbumsResponse> createLoadListOfAlbumsResponse(LoadListOfAlbumsResponse value) {
+        return new JAXBElement<LoadListOfAlbumsResponse>(_LoadListOfAlbumsResponse_QNAME, LoadListOfAlbumsResponse.class, null, value);
     }
 
     /**
@@ -230,6 +248,33 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link LoadListOfAlbums }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "loadListOfAlbums")
+    public JAXBElement<LoadListOfAlbums> createLoadListOfAlbums(LoadListOfAlbums value) {
+        return new JAXBElement<LoadListOfAlbums>(_LoadListOfAlbums_QNAME, LoadListOfAlbums.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link LoadPictureDataResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "loadPictureDataResponse")
+    public JAXBElement<LoadPictureDataResponse> createLoadPictureDataResponse(LoadPictureDataResponse value) {
+        return new JAXBElement<LoadPictureDataResponse>(_LoadPictureDataResponse_QNAME, LoadPictureDataResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link LoadPictureData }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "loadPictureData")
+    public JAXBElement<LoadPictureData> createLoadPictureData(LoadPictureData value) {
+        return new JAXBElement<LoadPictureData>(_LoadPictureData_QNAME, LoadPictureData.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeletePicture }{@code >}}
      * 
      */
@@ -248,12 +293,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ListOfAlbumsResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetServerIdResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "listOfAlbumsResponse")
-    public JAXBElement<ListOfAlbumsResponse> createListOfAlbumsResponse(ListOfAlbumsResponse value) {
-        return new JAXBElement<ListOfAlbumsResponse>(_ListOfAlbumsResponse_QNAME, ListOfAlbumsResponse.class, null, value);
+    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "getServerIdResponse")
+    public JAXBElement<GetServerIdResponse> createGetServerIdResponse(GetServerIdResponse value) {
+        return new JAXBElement<GetServerIdResponse>(_GetServerIdResponse_QNAME, GetServerIdResponse.class, null, value);
     }
 
     /**
@@ -275,24 +320,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetListOfPictures }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "getListOfPictures")
-    public JAXBElement<GetListOfPictures> createGetListOfPictures(GetListOfPictures value) {
-        return new JAXBElement<GetListOfPictures>(_GetListOfPictures_QNAME, GetListOfPictures.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetListOfPicturesResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "getListOfPicturesResponse")
-    public JAXBElement<GetListOfPicturesResponse> createGetListOfPicturesResponse(GetListOfPicturesResponse value) {
-        return new JAXBElement<GetListOfPicturesResponse>(_GetListOfPicturesResponse_QNAME, GetListOfPicturesResponse.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CreateAlbum }{@code >}}
      * 
      */
@@ -302,12 +329,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ListOfAlbums }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetServerId }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "listOfAlbums")
-    public JAXBElement<ListOfAlbums> createListOfAlbums(ListOfAlbums value) {
-        return new JAXBElement<ListOfAlbums>(_ListOfAlbums_QNAME, ListOfAlbums.class, null, value);
+    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "getServerId")
+    public JAXBElement<GetServerId> createGetServerId(GetServerId value) {
+        return new JAXBElement<GetServerId>(_GetServerId_QNAME, GetServerId.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link LoadListOfPicturesResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://soap.server.tp1.sd/", name = "loadListOfPicturesResponse")
+    public JAXBElement<LoadListOfPicturesResponse> createLoadListOfPicturesResponse(LoadListOfPicturesResponse value) {
+        return new JAXBElement<LoadListOfPicturesResponse>(_LoadListOfPicturesResponse_QNAME, LoadListOfPicturesResponse.class, null, value);
     }
 
     /**
@@ -323,9 +359,9 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "return", scope = GetPictureDataResponse.class)
-    public JAXBElement<byte[]> createGetPictureDataResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_GetPictureDataResponseReturn_QNAME, byte[].class, GetPictureDataResponse.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "return", scope = LoadPictureDataResponse.class)
+    public JAXBElement<byte[]> createLoadPictureDataResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_LoadPictureDataResponseReturn_QNAME, byte[].class, LoadPictureDataResponse.class, ((byte[]) value));
     }
 
 }

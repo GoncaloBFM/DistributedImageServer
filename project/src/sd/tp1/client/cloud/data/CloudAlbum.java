@@ -14,7 +14,8 @@ public class CloudAlbum extends AbstractCloudObject implements Album {
     private String name;
     private List<CloudPicture> pictures = new LinkedList<>();
 
-    public CloudAlbum(String name){
+    public CloudAlbum(String name, String serverId){
+        super(serverId);
         this.name = name;
     }
 

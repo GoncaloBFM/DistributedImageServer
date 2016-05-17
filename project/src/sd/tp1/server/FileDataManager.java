@@ -195,5 +195,10 @@ public class FileDataManager implements DataManager {
     private File openPicture(Album album, Picture picture){
         return openPicture(album.getName(), picture.getPictureName());
     }
+
+    @Override
+    public String getServerId() {
+        return "abc.def.ghi"; //todo modify
+    }
 }
 

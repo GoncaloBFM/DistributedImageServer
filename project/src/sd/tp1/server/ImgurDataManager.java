@@ -165,4 +165,8 @@ public class ImgurDataManager implements DataManager{
         map.put(name, id);
     }
 
+    @Override
+    public String getServerId() {
+        return "abc-def-ghi-imgur";
+    }
 }

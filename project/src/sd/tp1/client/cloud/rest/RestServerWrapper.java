@@ -30,6 +30,7 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
 
     private final URL url;
     private WebTarget target;
+    private String serverId;
 
     protected RestServerWrapper(String loggerTag, URL url, WebTarget target){
         super(loggerTag);
@@ -59,6 +60,17 @@ public class RestServerWrapper extends LoggedAbstractServer implements Server {
     @Override
     public URL getUrl() {
         return this.url;
+    }
+
+    @Override
+    public String getServerId() {
+        if(serverId != null)
+            return serverId;
+
+        serverId = SafeInvoker.invoke(this, () ->
+            this.target.path("/getServerId").request().accept(MediaType.APPLICATION_JSON).get(String.class));
+
+        return serverId;
     }
 
     @Override

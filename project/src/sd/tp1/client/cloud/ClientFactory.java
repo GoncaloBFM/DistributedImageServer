@@ -3,9 +3,10 @@ package sd.tp1.client.cloud;
 import sd.tp1.client.cloud.cache.HashCachedServer;
 import sd.tp1.common.discovery.HeartbeatDiscovery;
 import sd.tp1.common.discovery.ServiceHandler;
-import sd.tp1.client.cloud.rest.RestServerWrapper;
-import sd.tp1.client.cloud.rest.ssl.RestSSLServerWrapper;
-import sd.tp1.client.cloud.soap.SoapServerWrapper;
+import sd.tp1.common.protocol.Endpoint;
+import sd.tp1.common.protocol.rest.client.RestClient;
+import sd.tp1.common.protocol.rest.ssl.client.RestSSLClient;
+import sd.tp1.common.protocol.soap.client.SoapClient;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -20,20 +21,20 @@ public enum ClientFactory {
     SOAP("42845_43178_SOAP", 6969){
         @Override
         public Server create(URL url) throws ClientFactoryException {
-            return this.wrap(new SoapServerWrapper(url));
+            return this.wrap(new SoapClient(url));
         }
     },
     REST("42845_43178_REST", 6968){
         @Override
         public Server create(URL url) throws ClientFactoryException {
-            return this.wrap(new RestServerWrapper(url));
+            return this.wrap(new RestClient(url));
         }
     },
     REST_SSL("42845_43178_REST_SSL", 6967){
         @Override
         public Server create(URL url) throws ClientFactoryException {
             try {
-                return this.wrap(new RestSSLServerWrapper(url));
+                return this.wrap(new RestSSLClient(url));
             } catch (MalformedURLException | NoSuchAlgorithmException | KeyManagementException | URISyntaxException e) {
                 throw new ClientFactoryException(e);
             }
@@ -55,7 +56,7 @@ public enum ClientFactory {
 
     abstract public Server create(URL url) throws ClientFactoryException;
 
-    protected Server wrap(Server server) throws ClientFactoryException {
+    protected Server wrap(Endpoint server) throws ClientFactoryException {
         return new HashCachedServer(server);
     }
 

@@ -1,7 +1,6 @@
 package sd.tp1.client.cloud.data;
 
-import sd.tp1.common.Metadata;
-import sd.tp1.common.Picture;
+import sd.tp1.common.data.Picture;
 
 /**
  * Created by apontes on 3/27/16.

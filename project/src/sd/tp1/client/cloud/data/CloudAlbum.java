@@ -1,8 +1,7 @@
 package sd.tp1.client.cloud.data;
 
-import sd.tp1.common.Album;
-import sd.tp1.common.Metadata;
-import sd.tp1.common.Picture;
+import sd.tp1.common.data.Album;
+import sd.tp1.common.data.Picture;
 
 import java.util.LinkedList;
 import java.util.List;

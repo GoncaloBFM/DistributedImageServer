@@ -1,6 +1,8 @@
 package sd.tp1.client.cloud;
 
-import sd.tp1.common.*;
+import sd.tp1.common.data.Album;
+import sd.tp1.common.data.Picture;
+import sd.tp1.common.protocol.Endpoint;
 
 import java.net.URL;
 import java.util.List;
@@ -8,26 +10,7 @@ import java.util.List;
 /**
  * Created by apontes on 3/25/16.
  */
-public interface Server {
-    URL getUrl();
-    String getServerId();
+public interface Server extends Endpoint{
 
-    default boolean equals(Server server){
-        return server.getUrl().equals(this.getUrl());
-    }
-
-    List<Album> loadListOfAlbums();
-
-    List<Picture> loadListOfPictures(String album);
-
-    byte[] loadPictureData(String album, String picture);
-
-    boolean createAlbum(Album album);
-
-    boolean uploadPicture(Album album, Picture picture, byte[] data);
-
-    boolean deleteAlbum(Album album);
-
-    boolean deletePicture(Album album, Picture picture);
 }
 

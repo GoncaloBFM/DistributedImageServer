@@ -1,9 +1,9 @@
 package sd.tp1.client.cloud.cache;
 
-import sd.tp1.common.Album;
-import sd.tp1.common.LogicClockMetadata;
-import sd.tp1.common.Metadata;
-import sd.tp1.common.Picture;
+import sd.tp1.common.data.Album;
+import sd.tp1.common.data.LogicClockMetadata;
+import sd.tp1.common.data.Metadata;
+import sd.tp1.common.data.Picture;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
@@ -182,7 +182,7 @@ public class CachedPicture extends CachedObject<byte[]> implements Picture, Cach
     }
 
     @Override
-    public int compareTo(sd.tp1.common.Metadata o) {
+    public int compareTo(Metadata o) {
         if(o instanceof LogicClockMetadata){
             LogicClockMetadata x = (LogicClockMetadata) o;
             if(this.version != x.getVersion())

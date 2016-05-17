@@ -1,7 +1,7 @@
 package sd.tp1.client.cloud.cache;
 
-import sd.tp1.common.Album;
-import sd.tp1.common.Picture;
+import sd.tp1.common.data.Album;
+import sd.tp1.common.data.Picture;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

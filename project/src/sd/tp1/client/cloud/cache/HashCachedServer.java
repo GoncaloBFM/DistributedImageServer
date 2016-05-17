@@ -1,8 +1,9 @@
 package sd.tp1.client.cloud.cache;
 
-import sd.tp1.common.Album;
-import sd.tp1.common.Picture;
+import sd.tp1.common.data.Album;
+import sd.tp1.common.data.Picture;
 import sd.tp1.client.cloud.Server;
+import sd.tp1.common.protocol.Endpoint;
 
 import java.net.URL;
 import java.util.List;
@@ -14,12 +15,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class HashCachedServer implements CachedServer{
 
-    Server server;
+    Endpoint server;
 
     Cached<List<Album>> listOfAlbums;
     Map<String, Cached<List<Picture>>> picturesMap = new ConcurrentHashMap<>();
 
-    public HashCachedServer(Server server){
+    public HashCachedServer(Endpoint server){
         this.server = server;
     }
 

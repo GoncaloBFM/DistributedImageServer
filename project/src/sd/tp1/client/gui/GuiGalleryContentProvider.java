@@ -1,6 +1,6 @@
 package sd.tp1.client.gui;
 
-import sd.tp1.common.GalleryContentProvider;
+import sd.tp1.common.data.GalleryContentProvider;
 
 /*
  * The GUI will request content to display from an object

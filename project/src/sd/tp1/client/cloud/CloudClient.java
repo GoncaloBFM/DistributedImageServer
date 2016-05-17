@@ -1,7 +1,7 @@
 package sd.tp1.client.cloud;
 
-import sd.tp1.common.Album;
-import sd.tp1.common.Picture;
+import sd.tp1.common.data.Album;
+import sd.tp1.common.data.Picture;
 import sd.tp1.client.cloud.data.CloudAlbum;
 import sd.tp1.client.cloud.data.CloudPicture;
 import sd.tp1.client.gui.Gui;

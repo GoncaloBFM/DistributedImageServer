@@ -1,7 +1,6 @@
 package sd.tp1.client.cloud.data;
 
 import sd.tp1.client.cloud.Server;
-import sd.tp1.client.cloud.soap.stubs.Metadata;
 import sd.tp1.common.LogicClockMetadata;
 
 import java.util.Collection;

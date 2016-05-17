@@ -38,16 +38,12 @@ public class RestServer {
     }
 
     @POST
-    @Path("/createAlbum/{albumName}")
+    @Path("/createAlbum")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createAlbum(@PathParam("albumName") String albumName) {
-        logger.info("createAlbum" + "(album=" + albumName + ")");
-        SharedAlbum album = this.dataManager.createAlbum(albumName);
-        if (album != null) {
-            return Response.ok().build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+    public Response createAlbum(SharedAlbum sharedAlbum) {
+        logger.info("createAlbum" + "(album=" + sharedAlbum.getName() + ")");
+        this.dataManager.createAlbum(sharedAlbum);
+        return Response.ok().build();
     }
 
     @GET
@@ -65,7 +61,7 @@ public class RestServer {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getListOfPictures(@PathParam("album") String album) {
         logger.info("getListOfPictures" + "(album=" + album +")");
-        List<SharedPicture> listOfPictures = this.dataManager.loadListOfPictures(new SharedAlbum(album));
+        List<SharedPicture> listOfPictures = this.dataManager.loadListOfPictures(album);
         if (listOfPictures != null) {
             SharedPicture[] array = listOfPictures.toArray(new SharedPicture[listOfPictures.size()]);
             return Response.ok(array).build();
@@ -75,18 +71,20 @@ public class RestServer {
     }
 
     @DELETE
-    @Path("/deleteAlbum/{album}")
-    public Response deleteAlbum(@PathParam("album") String album) {
+    @Path("/deleteAlbum")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response deleteAlbum(SharedAlbum album) {
         logger.info("deleteAlbum" + "(album=" + album+")");
-        this.dataManager.deleteAlbum(new SharedAlbum(album));
+        this.dataManager.deleteAlbum(album);
         return Response.ok().build();
     }
 
     @DELETE
-    @Path("/deletePicture/{album}/{picture}")
-    public Response deletePicture(@PathParam("album") String album, @PathParam("picture") String picture) {
+    @Path("/deletePicture")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response deletePicture(SharedAlbum album, SharedPicture picture) {
         logger.info("deletePicture" + "(album=" + album+", picture=" + picture+")");
-        if (this.dataManager.deletePicture(new SharedAlbum(album), new SharedPicture(picture))) {
+        if (this.dataManager.deletePicture(album, picture)) {
             return Response.ok().build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -95,44 +93,19 @@ public class RestServer {
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Path("/getPictureData/{album}/{picture}")
-    public Response getPictureData(@PathParam("album") String album, @PathParam("picture") String picture) {
+    public Response getPictureData(SharedAlbum album, SharedPicture picture) {
         logger.info("getPictureData"+"(album=" + album+", picture=" + picture+")");
-        byte[] bytes = dataManager.loadPictureData(new SharedAlbum(album), new SharedPicture(picture));
+        byte[] bytes = dataManager.loadPictureData(album, picture);
         return Response.ok(bytes).build();
 
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/uploadPicture/{album}/{picture}")
-    public Response uploadPicture(@PathParam("album") String album,@PathParam("picture") String picture, byte[] data) {
+    @Path("/uploadPicture")
+    public Response uploadPicture(SharedAlbum album, SharedPicture picture, byte[] data) {
         logger.info("uploadPicture" + "(album=" + album+", picture=" + picture+")");
-        SharedPicture newPicture = dataManager.uploadPicture(new SharedAlbum(album), picture, data);
-        if(newPicture != null) {
-            return Response.ok().build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-    }
-
-    @GET
-    @Path("/search/{val}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response search(@PathParam("val") String val){
-        List<SharedAlbum> albumList = dataManager.loadListOfAlbums();
-        List<String> pictureList = new LinkedList<>();
-        for(SharedAlbum album : albumList) {
-            List<SharedPicture> list = dataManager.loadListOfPictures(album);
-            if(list == null)
-                continue;
-
-            pictureList.addAll(list.stream()
-                    .filter(picture -> picture.getPictureName().contains(val))
-                    .map( p -> String.format("/getPictureData/%s/%s", album.getName(), p.getPictureName()))
-                    .collect(Collectors.toList()));
-        }
-
-        return this.accessControllAllowOrigin(
-                Response.ok(pictureList.toArray(new String[pictureList.size()])).build());
+        dataManager.uploadPicture(album, picture, data);
+        return Response.ok().build();
     }
 }

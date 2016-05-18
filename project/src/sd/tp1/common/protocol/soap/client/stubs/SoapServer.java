@@ -18,39 +18,12 @@ import javax.xml.ws.ResponseWrapper;
  * Generated source version: 2.2
  * 
  */
-@WebService(name = "SoapServer", targetNamespace = "http://soap.server.tp1.sd/")
+@WebService(name = "SoapServer", targetNamespace = "http://server.soap.protocol.common.tp1.sd/")
 @XmlSeeAlso({
     ObjectFactory.class
 })
 public interface SoapServer {
 
-
-    /**
-     * 
-     * @param arg0
-     * @return
-     *     returns java.util.List<sd.tp1.common.protocol.soap.client.stubs.SharedPicture>
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "loadListOfPictures", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.LoadListOfPictures")
-    @ResponseWrapper(localName = "loadListOfPicturesResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.LoadListOfPicturesResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/loadListOfPicturesRequest", output = "http://soap.server.tp1.sd/SoapServer/loadListOfPicturesResponse")
-    public List<SharedPicture> loadListOfPictures(
-        @WebParam(name = "arg0", targetNamespace = "")
-        String arg0);
-
-    /**
-     * 
-     * @return
-     *     returns java.util.List<sd.tp1.common.protocol.soap.client.stubs.SharedAlbum>
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "loadListOfAlbums", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.LoadListOfAlbums")
-    @ResponseWrapper(localName = "loadListOfAlbumsResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.LoadListOfAlbumsResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/loadListOfAlbumsRequest", output = "http://soap.server.tp1.sd/SoapServer/loadListOfAlbumsResponse")
-    public List<SharedAlbum> loadListOfAlbums();
 
     /**
      * 
@@ -61,9 +34,9 @@ public interface SoapServer {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "loadPictureData", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.LoadPictureData")
-    @ResponseWrapper(localName = "loadPictureDataResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.LoadPictureDataResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/loadPictureDataRequest", output = "http://soap.server.tp1.sd/SoapServer/loadPictureDataResponse")
+    @RequestWrapper(localName = "loadPictureData", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.LoadPictureData")
+    @ResponseWrapper(localName = "loadPictureDataResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.LoadPictureDataResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/loadPictureDataRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/loadPictureDataResponse")
     public byte[] loadPictureData(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
@@ -74,13 +47,28 @@ public interface SoapServer {
      * 
      * @param arg0
      * @return
+     *     returns java.util.List<sd.tp1.common.protocol.soap.client.stubs.SharedPicture>
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "loadListOfPictures", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.LoadListOfPictures")
+    @ResponseWrapper(localName = "loadListOfPicturesResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.LoadListOfPicturesResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/loadListOfPicturesRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/loadListOfPicturesResponse")
+    public List<SharedPicture> loadListOfPictures(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
      *     returns boolean
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createAlbum", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.CreateAlbum")
-    @ResponseWrapper(localName = "createAlbumResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.CreateAlbumResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/createAlbumRequest", output = "http://soap.server.tp1.sd/SoapServer/createAlbumResponse")
+    @RequestWrapper(localName = "createAlbum", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.CreateAlbum")
+    @ResponseWrapper(localName = "createAlbumResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.CreateAlbumResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/createAlbumRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/createAlbumResponse")
     public boolean createAlbum(
         @WebParam(name = "arg0", targetNamespace = "")
         SharedAlbum arg0);
@@ -95,9 +83,9 @@ public interface SoapServer {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "uploadPicture", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.UploadPicture")
-    @ResponseWrapper(localName = "uploadPictureResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.UploadPictureResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/uploadPictureRequest", output = "http://soap.server.tp1.sd/SoapServer/uploadPictureResponse")
+    @RequestWrapper(localName = "uploadPicture", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.UploadPicture")
+    @ResponseWrapper(localName = "uploadPictureResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.UploadPictureResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/uploadPictureRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/uploadPictureResponse")
     public boolean uploadPicture(
         @WebParam(name = "arg0", targetNamespace = "")
         SharedAlbum arg0,
@@ -114,9 +102,9 @@ public interface SoapServer {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "deleteAlbum", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.DeleteAlbum")
-    @ResponseWrapper(localName = "deleteAlbumResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.DeleteAlbumResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/deleteAlbumRequest", output = "http://soap.server.tp1.sd/SoapServer/deleteAlbumResponse")
+    @RequestWrapper(localName = "deleteAlbum", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.DeleteAlbum")
+    @ResponseWrapper(localName = "deleteAlbumResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.DeleteAlbumResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/deleteAlbumRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/deleteAlbumResponse")
     public boolean deleteAlbum(
         @WebParam(name = "arg0", targetNamespace = "")
         SharedAlbum arg0);
@@ -130,9 +118,9 @@ public interface SoapServer {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "deletePicture", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.DeletePicture")
-    @ResponseWrapper(localName = "deletePictureResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.DeletePictureResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/deletePictureRequest", output = "http://soap.server.tp1.sd/SoapServer/deletePictureResponse")
+    @RequestWrapper(localName = "deletePicture", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.DeletePicture")
+    @ResponseWrapper(localName = "deletePictureResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.DeletePictureResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/deletePictureRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/deletePictureResponse")
     public boolean deletePicture(
         @WebParam(name = "arg0", targetNamespace = "")
         SharedAlbum arg0,
@@ -146,9 +134,87 @@ public interface SoapServer {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getServerId", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.GetServerId")
-    @ResponseWrapper(localName = "getServerIdResponse", targetNamespace = "http://soap.server.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.GetServerIdResponse")
-    @Action(input = "http://soap.server.tp1.sd/SoapServer/getServerIdRequest", output = "http://soap.server.tp1.sd/SoapServer/getServerIdResponse")
+    @RequestWrapper(localName = "getServerId", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.GetServerId")
+    @ResponseWrapper(localName = "getServerIdResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.GetServerIdResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/getServerIdRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/getServerIdResponse")
     public String getServerId();
+
+    /**
+     * 
+     * @return
+     *     returns sd.tp1.common.protocol.soap.client.stubs.MetadataBundle
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getMetadata", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.GetMetadata")
+    @ResponseWrapper(localName = "getMetadataResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.GetMetadataResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/getMetadataRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/getMetadataResponse")
+    public MetadataBundle getMetadata();
+
+    /**
+     * 
+     * @return
+     *     returns boolean
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "isRunning", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.IsRunning")
+    @ResponseWrapper(localName = "isRunningResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.IsRunningResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/isRunningRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/isRunningResponse")
+    public boolean isRunning();
+
+    /**
+     * 
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getUrl", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.GetUrl")
+    @ResponseWrapper(localName = "getUrlResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.GetUrlResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/getUrlRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/getUrlResponse")
+    public String getUrl();
+
+    /**
+     * 
+     * @return
+     *     returns java.util.List<sd.tp1.common.protocol.soap.client.stubs.SharedAlbum>
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "loadListOfAlbums", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.LoadListOfAlbums")
+    @ResponseWrapper(localName = "loadListOfAlbumsResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.LoadListOfAlbumsResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/loadListOfAlbumsRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/loadListOfAlbumsResponse")
+    public List<SharedAlbum> loadListOfAlbums();
+
+    /**
+     * 
+     */
+    @WebMethod
+    @RequestWrapper(localName = "start", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.Start")
+    @ResponseWrapper(localName = "startResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.StartResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/startRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/startResponse")
+    public void start();
+
+    /**
+     * 
+     */
+    @WebMethod
+    @RequestWrapper(localName = "stop", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.Stop")
+    @ResponseWrapper(localName = "stopResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.StopResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/stopRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/stopResponse")
+    public void stop();
+
+    /**
+     * 
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getType", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.GetType")
+    @ResponseWrapper(localName = "getTypeResponse", targetNamespace = "http://server.soap.protocol.common.tp1.sd/", className = "sd.tp1.common.protocol.soap.client.stubs.GetTypeResponse")
+    @Action(input = "http://server.soap.protocol.common.tp1.sd/SoapServer/getTypeRequest", output = "http://server.soap.protocol.common.tp1.sd/SoapServer/getTypeResponse")
+    public String getType();
 
 }

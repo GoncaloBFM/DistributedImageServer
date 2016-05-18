@@ -18,8 +18,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://soap.server.tp1.sd/}sharedAlbum" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://soap.server.tp1.sd/}sharedPicture" minOccurs="0"/>
+ *         &lt;element name="arg0" type="{http://server.soap.protocol.common.tp1.sd/}sharedAlbum" minOccurs="0"/>
+ *         &lt;element name="arg1" type="{http://server.soap.protocol.common.tp1.sd/}sharedPicture" minOccurs="0"/>
  *         &lt;element name="arg2" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>

@@ -21,7 +21,7 @@ import java.util.Arrays;
 public class RestSSLClient extends RestClient {
 
     public RestSSLClient(URL url) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, MalformedURLException {
-        super(RestSSLClient.class.getSimpleName(), url, getTarget(url));
+        super(url, getTarget(url));
     }
 
     static public WebTarget getTarget(URL url) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, MalformedURLException {

@@ -1,27 +1,37 @@
 package sd.tp1.common.protocol.soap.client;
 
-import sd.tp1.common.data.Album;
-import sd.tp1.common.data.Picture;
+import sd.tp1.common.data.*;
+import sd.tp1.common.data.MetadataBundle;
+import sd.tp1.common.data.SharedAlbumPicture;
 import sd.tp1.common.protocol.LoggedAbstractEndpoint;
 import sd.tp1.common.protocol.SafeInvoker;
 import sd.tp1.common.protocol.Endpoint;
 import sd.tp1.common.protocol.soap.client.stubs.*;
+import sd.tp1.common.protocol.soap.client.stubs.SharedAlbum;
+import sd.tp1.common.protocol.soap.client.stubs.SharedPicture;
 
 import java.net.URL;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Created by apontes on 3/25/16.
  */
-public class SoapClient extends LoggedAbstractEndpoint implements Endpoint {
+public class SoapClient implements Endpoint {
+
+    private LoggedAbstractEndpoint logger = new LoggedAbstractEndpoint(SoapClient.class.getSimpleName()) {
+        @Override
+        public URL getUrl() {
+            return null;
+        }
+    };
 
     private SoapServer server;
     private final URL url;
     private String serverId;
 
     public SoapClient(URL url){
-        super(SoapClient.class.getSimpleName());
         this.url = url;
 
         SoapServerService soapServerService = new SoapServerService(url);
@@ -30,7 +40,7 @@ public class SoapClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public List<Album> loadListOfAlbums() {
-        super.loadListOfAlbums();
+        logger.loadListOfAlbums();
 
         List<SharedAlbum> list = SafeInvoker.invoke(this, server::loadListOfAlbums);
 
@@ -45,7 +55,7 @@ public class SoapClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public List<Picture> loadListOfPictures(String album) {
-        super.loadListOfPictures(album);
+        logger.loadListOfPictures(album);
 
         List<SharedPicture> pictures = SafeInvoker.invoke(this, () ->
                 server.loadListOfPictures(album));
@@ -60,7 +70,7 @@ public class SoapClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public byte[] loadPictureData(String album, String picture) {
-        super.loadPictureData(album, picture);
+        logger.loadPictureData(album, picture);
         return SafeInvoker.invoke(this, () ->
                 server.loadPictureData(album, picture));
     }
@@ -73,7 +83,7 @@ public class SoapClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public boolean uploadPicture(Album album, Picture picture, byte[] data) {
-        super.uploadPicture(album, picture, data);
+        logger.uploadPicture(album, picture, data);
         Boolean bool = SafeInvoker.invoke(this, () -> server.uploadPicture(
                     new SoapAlbumWrapper(album),
                     new SoapPictureWrapper(picture),
@@ -84,7 +94,7 @@ public class SoapClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public boolean deleteAlbum(Album album) {
-        super.deleteAlbum(album);
+        logger.deleteAlbum(album);
         Boolean bool = SafeInvoker.invoke(this, () ->
             server.deleteAlbum(new SoapAlbumWrapper(album)));
 
@@ -93,11 +103,31 @@ public class SoapClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
-        super.deletePicture(album, picture);
+        logger.deletePicture(album, picture);
         Boolean bool = SafeInvoker.invoke(this, () ->
                 server.deletePicture(new SoapAlbumWrapper(album), new SoapPictureWrapper(picture)));
 
         return bool != null && bool;
+    }
+
+    @Override
+    public MetadataBundle getMetadata() {
+        logger.getMetadata();
+
+        sd.tp1.common.protocol.soap.client.stubs.MetadataBundle stubMeta = SafeInvoker.invoke(this, () ->
+                server.getMetadata());
+
+        List<Album> albumList = stubMeta.getAlbumList()
+                .parallelStream()
+                .map(x -> new SoapAlbumWrapper(x))
+                .collect(Collectors.toList());
+
+        List<AlbumPicture> pictureList = new LinkedList();
+        stubMeta.getPictureList().forEach(x -> new SharedAlbumPicture(new SoapAlbumWrapper(x.getAlbum()), new SoapPictureWrapper(x.getPicture())));
+
+        MetadataBundle metadata = new MetadataBundle(albumList, pictureList);
+
+        return metadata;
     }
 
     @Override
@@ -107,7 +137,7 @@ public class SoapClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public String getServerId() {
-        super.getServerId();
+        logger.getServerId();
 
         if(serverId != null)
             return serverId;

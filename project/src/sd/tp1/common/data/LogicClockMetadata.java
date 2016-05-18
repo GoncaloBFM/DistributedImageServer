@@ -54,6 +54,9 @@ public class LogicClockMetadata implements Metadata, Serializable {
 
     @Override
     public int compareTo(Metadata o) {
+        if(o == null)
+            return -1;
+
         if(o instanceof LogicClockMetadata) {
             LogicClockMetadata x = (LogicClockMetadata) o;
             if(this.version - x.version != 0)

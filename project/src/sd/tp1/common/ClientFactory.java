@@ -1,6 +1,5 @@
-package sd.tp1.client.cloud;
+package sd.tp1.common;
 
-import sd.tp1.client.cloud.cache.HashCachedServer;
 import sd.tp1.common.discovery.HeartbeatDiscovery;
 import sd.tp1.common.discovery.ServiceHandler;
 import sd.tp1.common.protocol.Endpoint;
@@ -20,21 +19,21 @@ import java.security.NoSuchAlgorithmException;
 public enum ClientFactory {
     SOAP("42845_43178_SOAP", 6969){
         @Override
-        public Server create(URL url) throws ClientFactoryException {
-            return this.wrap(new SoapClient(url));
+        public Endpoint create(URL url) throws ClientFactoryException {
+            return new SoapClient(url);
         }
     },
     REST("42845_43178_REST", 6968){
         @Override
-        public Server create(URL url) throws ClientFactoryException {
-            return this.wrap(new RestClient(url));
+        public Endpoint create(URL url) throws ClientFactoryException {
+            return new RestClient(url);
         }
     },
     REST_SSL("42845_43178_REST_SSL", 6967){
         @Override
-        public Server create(URL url) throws ClientFactoryException {
+        public Endpoint create(URL url) throws ClientFactoryException {
             try {
-                return this.wrap(new RestSSLClient(url));
+                return new RestSSLClient(url);
             } catch (MalformedURLException | NoSuchAlgorithmException | KeyManagementException | URISyntaxException e) {
                 throw new ClientFactoryException(e);
             }
@@ -54,13 +53,10 @@ public enum ClientFactory {
             new HeartbeatDiscovery(cfI.service, cfI.port).discoverService(handler);
     }
 
-    abstract public Server create(URL url) throws ClientFactoryException;
+    abstract public Endpoint create(URL url) throws ClientFactoryException;
 
-    protected Server wrap(Endpoint server) throws ClientFactoryException {
-        return new HashCachedServer(server);
-    }
 
-    public static Server create(String service, URL url) throws ClientFactoryException {
+    public static Endpoint create(String service, URL url) throws ClientFactoryException {
         for(ClientFactory cfI : ClientFactory.values())
             if(cfI.service.equals(service))
                 return cfI.create(url);
@@ -68,7 +64,7 @@ public enum ClientFactory {
         throw new InvalidServiceException();
     }
 
-    static class ClientFactoryException extends Exception{
+    public static class ClientFactoryException extends Exception{
         ClientFactoryException(String message){
             super(message);
         }
@@ -77,7 +73,7 @@ public enum ClientFactory {
         }
     }
 
-    static class InvalidServiceException extends ClientFactoryException {
+    public static class InvalidServiceException extends ClientFactoryException {
         InvalidServiceException() {
             super("Invalid service exception");
         }

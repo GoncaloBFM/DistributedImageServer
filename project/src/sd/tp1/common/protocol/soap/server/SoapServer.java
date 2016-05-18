@@ -1,5 +1,6 @@
 package sd.tp1.common.protocol.soap.server;
 
+import sd.tp1.common.data.MetadataBundle;
 import sd.tp1.common.data.SharedAlbum;
 import sd.tp1.common.data.SharedPicture;
 import sd.tp1.common.data.DataManager;
@@ -87,6 +88,12 @@ public class SoapServer implements EndpointServer{
     public String getServerId(){
         logger.getServerId();
         return dataManager.getServerId();
+    }
+
+    @WebMethod
+    public MetadataBundle getMetadata(){
+        logger.getMetadata();
+        return dataManager.getMetadata();
     }
 
     @Override

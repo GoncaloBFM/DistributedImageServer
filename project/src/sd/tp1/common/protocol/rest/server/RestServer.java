@@ -180,4 +180,12 @@ public class RestServer implements EndpointServer{
                 Response.ok(serverId).build()
                 : Response.serverError().build();
     }
+
+    @GET
+    @Path("/getMetadata")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMetadata(){
+        logger.getMetadata();
+        return Response.ok(dataManager.getMetadata()).build();
+    }
 }

@@ -1,10 +1,7 @@
 package sd.tp1.common.protocol.rest.client;
 
 import org.glassfish.jersey.client.ClientConfig;
-import sd.tp1.common.data.Album;
-import sd.tp1.common.data.Picture;
-import sd.tp1.common.data.SharedAlbum;
-import sd.tp1.common.data.SharedPicture;
+import sd.tp1.common.data.*;
 import sd.tp1.common.protocol.LoggedAbstractEndpoint;
 import sd.tp1.common.protocol.SafeInvoker;
 import sd.tp1.common.protocol.Endpoint;
@@ -26,24 +23,25 @@ import java.util.List;
 /**
  * Created by gbfm on 4/4/16.
  */
-public class RestClient extends LoggedAbstractEndpoint implements Endpoint {
+public class RestClient implements Endpoint {
 
     private final URL url;
     private WebTarget target;
     private String serverId;
 
-    protected RestClient(String loggerTag, URL url, WebTarget target){
-        super(loggerTag);
+    private LoggedAbstractEndpoint logger = new LoggedAbstractEndpoint() {
+        @Override
+        public URL getUrl() {
+            return url;
+        }
+    };
+
+    protected RestClient(URL url, WebTarget target){
         this.url = url;
         this.target = target;
     }
 
-    protected RestClient(URL url, WebTarget target){
-        this(RestClient.class.getSimpleName(), url, target);
-    }
-
     public RestClient(URL url){
-        super(RestClient.class.getSimpleName());
         this.url = url;
 
         ClientConfig config = new ClientConfig();
@@ -75,7 +73,7 @@ public class RestClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public List<Album> loadListOfAlbums() {
-        super.loadListOfAlbums();
+        logger.loadListOfAlbums();
         SharedAlbum[] list = SafeInvoker.invoke(this, () ->
             this.target.path("/getListOfAlbums").request().accept(MediaType.APPLICATION_JSON).get(SharedAlbum[].class));
 
@@ -84,7 +82,7 @@ public class RestClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public List<Picture> loadListOfPictures(String album) {
-        super.loadListOfPictures(album);
+        logger.loadListOfPictures(album);
         Response response = SafeInvoker.invoke(this, () ->
                 this.target.path("/getListOfPictures/" + album).request().accept(MediaType.APPLICATION_JSON).buildGet().invoke());
 
@@ -97,7 +95,7 @@ public class RestClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public byte[] loadPictureData(String album, String picture) {
-        super.loadPictureData(album, picture);
+        logger.loadPictureData(album, picture);
         byte[] bytes = SafeInvoker.invoke(this, () ->
                 this.target.path("/getPictureData/" + album + "/" + picture).request().accept(MediaType.APPLICATION_OCTET_STREAM).get(byte[].class));
         return bytes;
@@ -105,7 +103,7 @@ public class RestClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public boolean createAlbum(Album album) {
-        super.createAlbum(album);
+        logger.createAlbum(album);
 
         SharedAlbum sharedAlbum = new SharedAlbum(album);
         Response response = SafeInvoker.invoke(this, () ->
@@ -117,7 +115,7 @@ public class RestClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public boolean uploadPicture(Album album, Picture picture, byte[] data) {
-        super.uploadPicture(album, picture, data);
+        logger.uploadPicture(album, picture, data);
         UploadPictureEnvelop message = new UploadPictureEnvelop(album, picture, data);
 
         Response response = SafeInvoker.invoke(this, ()->
@@ -128,7 +126,7 @@ public class RestClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public boolean deleteAlbum(Album album) {
-        super.deleteAlbum(album);
+        logger.deleteAlbum(album);
 
         SharedAlbum sharedAlbum = new SharedAlbum(album);
         Response response = SafeInvoker.invoke(this, () ->
@@ -139,14 +137,26 @@ public class RestClient extends LoggedAbstractEndpoint implements Endpoint {
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
-        super.deletePicture(album, picture);
+        logger.deletePicture(album, picture);
 
         DeletePictureEnvelop message = new DeletePictureEnvelop(album, picture);
         Response response = SafeInvoker.invoke(this, () ->
                 this.target.path("/deletePicture").request().post(Entity.entity(message, MediaType.APPLICATION_JSON)));
 
         return response != null && response.getStatus() == Response.Status.OK.getStatusCode();
+    }
 
+    @Override
+    public MetadataBundle getMetadata() {
+        logger.getMetadata();
+
+        Response response = SafeInvoker.invoke(this, () ->
+                this.target.path("/getMetadata").request().accept(MediaType.APPLICATION_JSON).buildGet().invoke());
+
+        if(response != null && response.getStatus() == Response.Status.OK.getStatusCode())
+            return response.readEntity(MetadataBundle.class);
+
+        return null;
     }
 }
 

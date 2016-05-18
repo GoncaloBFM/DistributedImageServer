@@ -2,6 +2,7 @@ package sd.tp1.common.protocol;
 
 import sd.tp1.client.cloud.Server;
 import sd.tp1.common.data.Album;
+import sd.tp1.common.data.MetadataBundle;
 import sd.tp1.common.data.Picture;
 
 import java.util.List;
@@ -71,6 +72,12 @@ public abstract class LoggedAbstractEndpoint implements Endpoint {
     @Override
     public String getServerId() {
         logger.info("getServerId()");
+        return null;
+    }
+
+    @Override
+    public MetadataBundle getMetadata(){
+        logger.info("getMetadata()");
         return null;
     }
 }

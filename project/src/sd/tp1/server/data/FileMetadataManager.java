@@ -6,6 +6,8 @@ import sd.tp1.common.data.*;
 
 import java.io.*;
 import java.nio.file.NotDirectoryException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -204,6 +206,87 @@ public class FileMetadataManager implements MetadataManager {
     @Override
     public String getServerId() {
         return readServerId();
+    }
+
+    @Override
+    public MetadataBundle getMetadata() {
+        List<Album> albumList = new LinkedList<>();
+        List<AlbumPicture> pictureList = new LinkedList<>();
+
+        for(File file : this.root.listFiles()){
+            if(file.isDirectory()){
+                //Album folder
+
+                SharedAlbum album = readAlbumMeta(file.getName());
+                if(album == null)
+                    continue;
+
+                albumList.add(album);
+
+                for(File innerFile : file.listFiles()){
+                    if(!isMetafile(innerFile)){
+                        //Picture file
+                        SharedPicture picture = readPictureMeta(album.getName(), innerFile.getName());
+                        if(picture == null)
+                            continue;
+
+                        pictureList.add(new SharedAlbumPicture(album, picture));
+                    }
+                }
+            }
+        }
+
+        return new MetadataBundle(albumList, pictureList);
+    }
+
+    @Override
+    public Album getAlbum(String albumName) {
+        return this.readAlbumMeta(albumName);
+    }
+
+    @Override
+    public Picture getPicture(String albumName, String pictureName) {
+        return this.readPictureMeta(albumName, pictureName);
+    }
+
+    @Override
+    public void setAlbum(Album album) {
+        if(isNewer(album))
+            this.writeAlbumMeta(album);
+    }
+
+    @Override
+    public void setPicture(Album album, Picture picture) {
+        if(isNewer(album, picture))
+            this.writePictureMeta(album, picture);
+    }
+
+    @Override
+    public boolean isNewer(Album album) {
+        if(album == null)
+            return false;
+
+        Album actual = readAlbumMeta(album.getName());
+        if(actual == null)
+            return false; //TODO discuss
+
+        return actual.compareTo(actual) < 0;
+    }
+
+    @Override
+    public boolean isNewer(Album album, Picture picture) {
+        if(album == null || picture == null)
+            return false;
+
+        Picture actual = readPictureMeta(album.getName(), picture.getPictureName());
+        if(actual == null)
+            return false; //TODO discuss
+
+        return actual.compareTo(actual) < 0;
+    }
+
+    protected boolean isMetafile(File file){
+        return file.getName().endsWith(META_EXT);
     }
 
     protected File openAlbum(Album album){

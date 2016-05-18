@@ -4,6 +4,7 @@ import sd.tp1.common.data.DataManager;
 import sd.tp1.common.discovery.HeartbeatAnnouncer;
 import sd.tp1.common.discovery.ServiceAnnouncer;
 import sd.tp1.common.protocol.EndpointServer;
+import sd.tp1.server.replication.ReplicationEngine;
 
 import java.net.URL;
 import java.util.logging.Logger;
@@ -30,7 +31,9 @@ public class ServerRunner implements EndpointServer{
     private boolean running;
     private ServiceAnnouncer serviceAnnouncer;
 
-    public ServerRunner(DataManager dataManager, EndpointServer server){
+    private ReplicationEngine replicationEngine;
+
+    public ServerRunner(DataManager dataManager, EndpointServer server) {
         this.server = server;
         this.dataManager = dataManager;
 
@@ -41,6 +44,7 @@ public class ServerRunner implements EndpointServer{
                 url.getFile(),
                 url.getPort());
 
+        replicationEngine = new ReplicationEngine(dataManager);
     }
 
     protected static int generateRandomPort(){
@@ -59,6 +63,9 @@ public class ServerRunner implements EndpointServer{
 
         serviceAnnouncer.startAnnounceService();
         LOGGER.info("Service announcer started! ;)");
+
+        replicationEngine.startReplication();
+        LOGGER.info("ReplicationStopped started! ;)");
     }
 
     @Override
@@ -69,6 +76,9 @@ public class ServerRunner implements EndpointServer{
         this.serviceAnnouncer.stopAnnounceService();
         this.server.stop();
         LOGGER.info("Server stopped!");
+
+        replicationEngine.stopReplication();
+        LOGGER.info("ReplicationEngine stopped!");
     }
 
     @Override

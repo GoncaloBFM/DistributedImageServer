@@ -1,6 +1,7 @@
 package sd.tp1.common.protocol;
 
 import sd.tp1.common.data.Album;
+import sd.tp1.common.data.MetadataBundle;
 import sd.tp1.common.data.Picture;
 
 import java.net.URL;
@@ -34,4 +35,6 @@ public interface Endpoint {
     boolean deleteAlbum(Album album);
 
     boolean deletePicture(Album album, Picture picture);
+
+    MetadataBundle getMetadata();
 }

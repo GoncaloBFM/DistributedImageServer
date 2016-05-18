@@ -1,6 +1,7 @@
 package sd.tp1.client.cloud.cache;
 
 import sd.tp1.common.data.Album;
+import sd.tp1.common.data.MetadataBundle;
 import sd.tp1.common.data.Picture;
 import sd.tp1.client.cloud.Server;
 import sd.tp1.common.protocol.Endpoint;
@@ -109,6 +110,11 @@ public class HashCachedServer implements CachedServer{
         }
 
         return false;
+    }
+
+    @Override
+    public MetadataBundle getMetadata() {
+        return server.getMetadata();
     }
 
     @Override

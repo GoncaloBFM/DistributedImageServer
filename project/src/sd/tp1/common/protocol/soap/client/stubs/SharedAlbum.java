@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="sharedAlbum">
  *   &lt;complexContent>
- *     &lt;extension base="{http://soap.server.tp1.sd/}logicClockMetadata">
+ *     &lt;extension base="{http://server.soap.protocol.common.tp1.sd/}logicClockMetadata">
  *       &lt;sequence>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>

@@ -1,7 +1,10 @@
 package sd.tp1.client.cloud;
 
+import sd.tp1.client.cloud.cache.HashCachedServer;
 import sd.tp1.client.cloud.data.CloudAlbum;
+import sd.tp1.common.ClientFactory;
 import sd.tp1.common.discovery.ServiceHandler;
+import sd.tp1.common.protocol.Endpoint;
 
 import java.net.URL;
 import java.util.*;
@@ -45,7 +48,10 @@ public class HashServerManager implements ServerManager {
 
         if(server == null){
             try{
-                server = ClientFactory.create(service, url);
+
+                server = new HashCachedServer(
+                        ClientFactory.create(service, url));
+
                 if(server == null)
                     return;
 

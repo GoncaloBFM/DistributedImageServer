@@ -41,22 +41,6 @@ public class FileMetadataManager implements MetadataManager {
         return m1.compareTo(m2) > 0;
     }
 
-    protected boolean isLocalNewer(Album album){
-        Album local = readAlbumMeta(album.getName());
-        if(local == null)
-            return false;
-
-        return local.compareTo(album) > 0;
-    }
-
-    protected boolean isLocalNewer(Album album, Picture picture){
-        Picture local = readPictureMeta(album.getName(), picture.getPictureName());
-        if(local == null)
-            return false;
-
-        return local.compareTo(picture) > 0;
-    }
-
     protected String readServerId(){
         if(serverId != null)
             return serverId;
@@ -169,8 +153,7 @@ public class FileMetadataManager implements MetadataManager {
 
     @Override
     public boolean createAlbum(Album album) {
-        Album local = readAlbumMeta(album.getName());
-        if(needUpdate(local, album))
+        if(!needUpdate(album))
             return false;
 
         writeAlbumMeta(album);
@@ -179,8 +162,7 @@ public class FileMetadataManager implements MetadataManager {
 
     @Override
     public boolean uploadPicture(Album album, Picture picture, byte[] data) {
-        Picture local = readPictureMeta(album.getName(), picture.getPictureName());
-        if(needUpdate(local, picture))
+        if(!needUpdate(album, picture))
             return false;
 
         writePictureMeta(album, picture);
@@ -189,8 +171,7 @@ public class FileMetadataManager implements MetadataManager {
 
     @Override
     public boolean deleteAlbum(Album album) {
-        Album local = readAlbumMeta(album.getName());
-        if(needUpdate(local, album))
+        if(!needUpdate(album))
             return false;
 
         writeAlbumMeta(album);
@@ -199,8 +180,7 @@ public class FileMetadataManager implements MetadataManager {
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
-        Picture local = readPictureMeta(album.getName(), picture.getPictureName());
-        if(needUpdate(local, picture))
+        if(needUpdate(album, picture))
             return false;
 
         writePictureMeta(album, picture);

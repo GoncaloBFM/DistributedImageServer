@@ -92,7 +92,7 @@ public class FileDataManager extends FileMetadataManager implements DataManager 
         if(!super.uploadPicture(album, picture, data))
             return false;
 
-        File file = openPicture(album, picture.getPictureName());
+        File file = openPicture(album, picture);
         try {
             Files.write(file.toPath(), data);
             return true;

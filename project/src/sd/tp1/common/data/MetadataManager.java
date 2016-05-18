@@ -18,12 +18,6 @@ public interface MetadataManager {
 
     MetadataBundle getMetadata();
 
-    Album getAlbum(String albumName);
-    Picture getPicture(String albumName, String pictureName);
-
-    void setAlbum(Album album);
-    void setPicture(Album album, Picture picture);
-
-    boolean isNewer(Album album);
-    boolean isNewer(Album album, Picture picture);
+    boolean needUpdate(Album album);
+    boolean needUpdate(Album album, Picture picture);
 }

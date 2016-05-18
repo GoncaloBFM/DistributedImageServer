@@ -2,11 +2,7 @@ package sd.tp1.server.replication;
 
 import sd.tp1.common.ClientFactory;
 import sd.tp1.common.data.DataManager;
-import sd.tp1.common.data.Metadata;
 import sd.tp1.common.data.MetadataBundle;
-import sd.tp1.common.data.Picture;
-import sd.tp1.common.discovery.HeartbeatDiscovery;
-import sd.tp1.common.discovery.ServiceDiscovery;
 import sd.tp1.common.discovery.ServiceHandler;
 import sd.tp1.common.protocol.Endpoint;
 
@@ -103,27 +99,26 @@ public class ReplicationEngine {
 
                     remoteMeta.getAlbumList()
                             .parallelStream()
-                            .filter(local::isNewer)
+                            .filter(local::needUpdate)
                             .forEach(x -> {
                                 //Update album
-                                local.setAlbum(x);
-                                //todo fetch picture albums (or not)
+                                if(!x.isDeleted())
+                                    local.createAlbum(x);
+                                else
+                                    local.deleteAlbum(x);
                             });
 
                     remoteMeta.getPictureList()
                             .parallelStream()
-                            .filter(x -> local.isNewer(x.getAlbum(), x.getPicture()))
+                            .filter(x -> local.needUpdate(x.getAlbum(), x.getPicture()))
                             .forEach(x -> {
                                 //Update picture
-                                Picture old = local.getPicture(x.getAlbum().getName(), x.getPicture().getPictureName());
-                                if(old == null){
-                                    //fetch pictures
-                                    byte[] data = remote.loadPictureData(x.getAlbum().getName(), x.getPicture().getPictureName());
-                                    local.uploadPicture(x.getAlbum(), x.getPicture(), data);
-                                }
-                                else{
-                                    local.setPicture(x.getAlbum(), x.getPicture());
-                                }
+                                if(!x.getPicture().isDeleted())
+                                    local.uploadPicture(x.getAlbum(), x.getPicture(),
+                                            remote.loadPictureData(x.getAlbum().getName(), x.getPicture().getPictureName()));
+                                else
+                                    local.deletePicture(x.getAlbum(), x.getPicture());
+
                             });
 
 

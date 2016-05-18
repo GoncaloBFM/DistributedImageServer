@@ -31,7 +31,7 @@ public class FileMetadataManager implements MetadataManager {
         this.root = root;
     }
 
-    protected boolean isNewer(Metadata m1, Metadata m2){
+    protected boolean needUpdate(Metadata m1, Metadata m2){
         if(m1 == null)
             return false;
 
@@ -170,7 +170,7 @@ public class FileMetadataManager implements MetadataManager {
     @Override
     public boolean createAlbum(Album album) {
         Album local = readAlbumMeta(album.getName());
-        if(isNewer(local, album))
+        if(needUpdate(local, album))
             return false;
 
         writeAlbumMeta(album);
@@ -180,7 +180,7 @@ public class FileMetadataManager implements MetadataManager {
     @Override
     public boolean uploadPicture(Album album, Picture picture, byte[] data) {
         Picture local = readPictureMeta(album.getName(), picture.getPictureName());
-        if(isNewer(local, picture))
+        if(needUpdate(local, picture))
             return false;
 
         writePictureMeta(album, picture);
@@ -190,7 +190,7 @@ public class FileMetadataManager implements MetadataManager {
     @Override
     public boolean deleteAlbum(Album album) {
         Album local = readAlbumMeta(album.getName());
-        if(isNewer(local, album))
+        if(needUpdate(local, album))
             return false;
 
         writeAlbumMeta(album);
@@ -200,7 +200,7 @@ public class FileMetadataManager implements MetadataManager {
     @Override
     public boolean deletePicture(Album album, Picture picture) {
         Picture local = readPictureMeta(album.getName(), picture.getPictureName());
-        if(isNewer(local, picture))
+        if(needUpdate(local, picture))
             return false;
 
         writePictureMeta(album, picture);
@@ -244,29 +244,7 @@ public class FileMetadataManager implements MetadataManager {
     }
 
     @Override
-    public Album getAlbum(String albumName) {
-        return this.readAlbumMeta(albumName);
-    }
-
-    @Override
-    public Picture getPicture(String albumName, String pictureName) {
-        return this.readPictureMeta(albumName, pictureName);
-    }
-
-    @Override
-    public void setAlbum(Album album) {
-        if(isNewer(album))
-            this.writeAlbumMeta(album);
-    }
-
-    @Override
-    public void setPicture(Album album, Picture picture) {
-        if(isNewer(album, picture))
-            this.writePictureMeta(album, picture);
-    }
-
-    @Override
-    public boolean isNewer(Album album) {
+    public boolean needUpdate(Album album) {
         if(album == null)
             return false;
 
@@ -278,7 +256,7 @@ public class FileMetadataManager implements MetadataManager {
     }
 
     @Override
-    public boolean isNewer(Album album, Picture picture) {
+    public boolean needUpdate(Album album, Picture picture) {
         if(album == null || picture == null)
             return false;
 

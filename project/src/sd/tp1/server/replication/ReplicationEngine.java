@@ -21,6 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ReplicationEngine {
 
+    private static final int MILLIS_BETWEEN_SERVERS = 5000;
+    private static final int MILLIS_BETWEEN_ROUNDS = 600000;
+
     private final DataManager local;
     private final Map<URL, Endpoint> endpointMap = new ConcurrentHashMap<>();
 
@@ -114,6 +117,18 @@ public class ReplicationEngine {
                                 }
                             });
 
+
+                    try {
+                        Thread.sleep(MILLIS_BETWEEN_SERVERS);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                try {
+                    Thread.sleep(MILLIS_BETWEEN_ROUNDS);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }

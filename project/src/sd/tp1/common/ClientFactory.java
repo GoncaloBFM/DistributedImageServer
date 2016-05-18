@@ -23,13 +23,13 @@ public enum ClientFactory {
             return new SoapClient(url);
         }
     },
-    REST("42845_43178_REST", 6968){
+    REST("42845_43178_REST", 6969){
         @Override
         public Endpoint create(URL url) throws ClientFactoryException {
             return new RestClient(url);
         }
     },
-    REST_SSL("42845_43178_REST_SSL", 6967){
+    REST_SSL("42845_43178_REST_SSL", 6969){
         @Override
         public Endpoint create(URL url) throws ClientFactoryException {
             try {

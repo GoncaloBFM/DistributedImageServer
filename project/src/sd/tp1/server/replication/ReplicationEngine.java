@@ -15,20 +15,23 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /**
  * Created by apontes on 5/18/16.
  */
 public class ReplicationEngine {
 
-    private static final int MILLIS_BETWEEN_SERVERS = 5000;
-    private static final int MILLIS_BETWEEN_ROUNDS = 600000;
+    private static final int MILLIS_BETWEEN_SERVERS = 1000; //5000;
+    private static final int MILLIS_BETWEEN_ROUNDS = 5000; //60000;
+
+    private final Logger logger = Logger.getLogger(ReplicationEngine.class.getName());
 
     private final DataManager local;
     private final Map<URL, Endpoint> endpointMap = new ConcurrentHashMap<>();
 
     private boolean running;
-    private boolean firstRun;
+    private boolean firstRun = true;
 
     private ReplicationThread replicationWorker = new ReplicationThread();
 
@@ -89,6 +92,12 @@ public class ReplicationEngine {
                 while(running && !queue.isEmpty()){
                     Endpoint remote = queue.poll();
 
+                    URL url = remote.getUrl();
+                    if(url == null)
+                        continue;
+
+                    logger.info("Start replication with: " + url);
+
                     //MetadataBundle localMeta = local.getMetadata();
                     MetadataBundle remoteMeta = remote.getMetadata();
 
@@ -124,6 +133,8 @@ public class ReplicationEngine {
                         e.printStackTrace();
                     }
                 }
+
+                logger.info("ReplicationRound ended");
 
                 try {
                     Thread.sleep(MILLIS_BETWEEN_ROUNDS);

@@ -14,16 +14,12 @@ import java.util.logging.Logger;
  */
 public class ServerRunner implements EndpointServer{
     private static final String SERVICE_TO_ANNOUNCE = "42845_43178_";
-    private static final int ANNOUNCE_ON_PORT = 6968;
+    private static final int ANNOUNCE_ON_PORT = 6969;
 
     private static final Logger LOGGER = Logger.getLogger(ServerRunner.class.getSimpleName());
 
     private static final int MIN_PORT = 49152; //1024;
     private static final int MAX_PORT = 65535; //65535;
-
-    private static final int DEFAULT_PORT = generateRandomPort();
-    private static final String DEFAULT_ROOT = ".";
-    private static final String DEFAULT_SERVICE_PATH = "PictureServer";
 
     private EndpointServer server;
     private DataManager dataManager;
@@ -53,7 +49,7 @@ public class ServerRunner implements EndpointServer{
 
     @Override
     public void start() {
-        if(isRunning())
+        if(running)
             return;
 
         this.server.start();
@@ -65,12 +61,14 @@ public class ServerRunner implements EndpointServer{
         LOGGER.info("Service announcer started! ;)");
 
         replicationEngine.startReplication();
-        LOGGER.info("ReplicationStopped started! ;)");
+        LOGGER.info("ReplicationEngine started! ;)");
+
+        running = true;
     }
 
     @Override
     public void stop() {
-        if(!isRunning())
+        if(!running)
             return;
 
         this.serviceAnnouncer.stopAnnounceService();
@@ -79,6 +77,8 @@ public class ServerRunner implements EndpointServer{
 
         replicationEngine.stopReplication();
         LOGGER.info("ReplicationEngine stopped!");
+
+        running = false;
     }
 
     @Override

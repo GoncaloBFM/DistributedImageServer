@@ -7,6 +7,8 @@ public class SharedAlbumPicture implements AlbumPicture {
     private SharedAlbum album;
     private SharedPicture picture;
 
+    public SharedAlbumPicture(){}
+
     public SharedAlbumPicture(Album album, Picture picture){
         this.album = new SharedAlbum(album);
         this.picture = new SharedPicture(picture);

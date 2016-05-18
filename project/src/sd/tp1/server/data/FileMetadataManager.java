@@ -145,7 +145,11 @@ public class FileMetadataManager implements MetadataManager {
     protected void writePictureMeta(Album album, Picture picture){
         writeAlbumMeta(album);
         try{
-            File file = new File(openAlbum(album), picture.getPictureName() + META_EXT);
+            File albumFolder = openAlbum(album);
+            if(!albumFolder.exists())
+                albumFolder.mkdir(); //todo discuss
+
+            File file = new File(albumFolder, picture.getPictureName() + META_EXT);
             //ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
             //out.writeObject(picture);
 
@@ -268,7 +272,7 @@ public class FileMetadataManager implements MetadataManager {
 
         Album actual = readAlbumMeta(album.getName());
         if(actual == null)
-            return false; //TODO discuss
+            return true; //TODO discuss
 
         return actual.compareTo(actual) < 0;
     }
@@ -280,7 +284,7 @@ public class FileMetadataManager implements MetadataManager {
 
         Picture actual = readPictureMeta(album.getName(), picture.getPictureName());
         if(actual == null)
-            return false; //TODO discuss
+            return true; //TODO discuss
 
         return actual.compareTo(actual) < 0;
     }

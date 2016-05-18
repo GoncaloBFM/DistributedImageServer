@@ -11,6 +11,10 @@ public class MetadataBundle implements Serializable{
     private List<SharedAlbum> albumList;
     private List<SharedAlbumPicture> pictureList;
 
+    public MetadataBundle(){
+
+    }
+
     public MetadataBundle(List<Album> albumList, List<AlbumPicture> pictureList){
         this.albumList = albumList.stream().map(x -> new SharedAlbum(x)).collect(Collectors.toList());
         this.pictureList = pictureList.parallelStream().map(x -> new SharedAlbumPicture(x.getAlbum(), x.getPicture())).collect(Collectors.toList());

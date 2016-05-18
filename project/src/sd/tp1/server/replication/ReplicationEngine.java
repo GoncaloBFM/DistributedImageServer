@@ -88,11 +88,11 @@ public class ReplicationEngine {
                 while(running && !queue.isEmpty()){
                     Endpoint remote = queue.poll();
 
-                    URL url = remote.getUrl();
-                    if(url == null)
+                    String serverId = remote.getServerId();
+                    if(serverId == null || serverId.equals(local.getServerId()))
                         continue;
 
-                    logger.info("Start replication with: " + url);
+                    logger.info("Start replication with: " + serverId);
 
                     //MetadataBundle localMeta = local.getMetadata();
                     MetadataBundle remoteMeta = remote.getMetadata();

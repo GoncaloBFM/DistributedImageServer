@@ -7,6 +7,7 @@ import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
+import com.google.gson.Gson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -16,7 +17,11 @@ import sd.tp1.common.data.*;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.NotDirectoryException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by gbfm on 5/17/16.
@@ -32,48 +37,44 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
     //username = Gazdesnake
     //password = conacona
 
+    private static final int ID_REFRESH_DELAY_SECONDS = 2;
+    private static final int ID_REFRESH_INITIAL_DELAY_SECONDS = 2;
+
+    private static final String CONNECTION_FILE = "imgur.con";
     private static final String LINK = "https://api.imgur.com/3";
     private static final String ME = "/account/me";
-    private static final String CONNECTION_FILE = "con";
 
-    HashMap<String, String> pictureNameIdMap = new HashMap<>();
-    HashMap<String, String> albumNameIdMap = new HashMap<>();
+    private final ImgurRegistry pictureRegistry = new ImgurRegistry();
+    private final ImgurRegistry albumResgistry = new ImgurRegistry();
 
+    private OAuth20Service service;
+    private OAuth2AccessToken accessToken;
+
+
+    private ImgurConnectionInfo connection;
     JSONParser parser = new JSONParser();
 
-    private final String apiKey;
-    private final String apiSecret;
-    private final String pin;
-
-    private final OAuth20Service service;
-    private final OAuth2AccessToken accessToken;
-
     public ImgurDataManager() throws IOException {
-        this(new File("."));
+        super();
+        connect();
     }
 
-    public ImgurDataManager(File root) throws IOException {
+    public ImgurDataManager(File root) throws FileNotFoundException, NotDirectoryException {
         super(root);
+        connect();
+    }
 
+    private void connect() throws FileNotFoundException {
         File file = new File(root, CONNECTION_FILE );
-        Scanner in;
-        try {
-            in = new Scanner(new FileInputStream(file));
-
-            apiKey = in.nextLine();
-            apiSecret = in.nextLine();
-            pin = in.nextLine();
-
-            service = new ServiceBuilder().apiKey(apiKey).apiSecret(apiSecret)
-                    .build(ImgurApi.instance());
-            accessToken = new OAuth2AccessToken(pin);
-
-            in.close();
-
-        } catch (FileNotFoundException e) {
-            throw new IOException("Server connection data not found");
+        if(!file.exists()) {
+            throw new FileNotFoundException("Server connection data not found");
         }
 
+        FileReader in = (new FileReader(file));
+        connection = new Gson().fromJson(in, ImgurConnectionInfo.class);
+        service = new ServiceBuilder().apiKey(connection.apiKey).apiSecret(connection.apiSecret)
+                .build(ImgurApi.instance());
+        accessToken = new OAuth2AccessToken(connection.pin);
     }
 
     private class Param {
@@ -114,13 +115,13 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
         JSONArray albums = (JSONArray) response.get("data");
         Iterator iterator = albums.iterator();
         LinkedList<SharedAlbum> result = new LinkedList<>();
-        albumNameIdMap = new HashMap<>();
+        albumResgistry.clear();
         while (iterator.hasNext()) {
             JSONObject album = (JSONObject) iterator.next();
             String albumId = album.get("id").toString();
             String albumName = album.get("title").toString();
-            addUnique(albumName, albumId, albumNameIdMap);
-            //result.add(new SharedAlbum(albumName));
+            albumResgistry.updateEntry(albumId, albumName);
+            result.add(new SharedAlbum(albumName, serverId));
         }
         return result;
     }
@@ -130,13 +131,13 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
         if(!super.deleteAlbum(album))
             return false;
 
-        JSONObject response = sendRequest(ME+"/albums/" + albumNameIdMap.get(album.getName()), Verb.DELETE);
+        JSONObject response = sendRequest(ME+"/albums/" + albumResgistry.getId(album.getName()), Verb.DELETE);
         return (boolean)response.get("success");
     }
 
     @Override
     public List<SharedPicture> loadListOfPictures(String album) {
-        JSONObject response = sendRequest("/album/" + albumNameIdMap.get(album) + "/images", Verb.GET);
+        JSONObject response = sendRequest("/album/" + albumResgistry.getId(album) + "/images", Verb.GET);
         if (!(boolean)response.get("success")) {
             return null;
         }
@@ -147,8 +148,8 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
             JSONObject picture = (JSONObject) iterator.next();
             String pictureId = picture.get("id").toString();
             String pictureName = picture.get("title").toString();
-            addUnique(pictureName, pictureId, pictureNameIdMap);
-            //result.add(new SharedPicture(pictureId));
+            pictureRegistry.updateEntry(pictureId, pictureName);
+            result.add(new SharedPicture(pictureId, serverId));
         }
         return result;
     }
@@ -158,7 +159,7 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
 
         InputStream inputStream = null;
         try {
-            inputStream = new BufferedInputStream(new URL("http://imgur.com/" + pictureNameIdMap.get(picture)).openStream());
+            inputStream = new BufferedInputStream(new URL("http://imgur.com/" + pictureRegistry.getId(picture)).openStream());
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];
@@ -185,7 +186,7 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
         }
         String id = (String) ((JSONObject)response.get("data")).get("id");
         String name = album.getName();
-        addUnique(name, id, albumNameIdMap);
+        albumResgistry.updateEntry(id, name);
 
         return true;
     }
@@ -202,7 +203,7 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
 
         String id = (String) ((JSONObject)response.get("data")).get("id");
         String name = picture.getPictureName();
-        addUnique(name, id, pictureNameIdMap);
+        pictureRegistry.updateEntry(id, name);
 
         return true;
     }
@@ -212,31 +213,25 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
         if(!super.deletePicture(album, picture))
             return false;
 
-        boolean result = (boolean)sendRequest("/image/"+pictureNameIdMap.get(picture.getPictureName()),Verb.DELETE).get("success");
-        pictureNameIdMap.remove(picture.getPictureName());
+        String id = pictureRegistry.getName(picture.getPictureName());
+        boolean result = (boolean)sendRequest("/image/"+id,Verb.DELETE).get("success");
+        pictureRegistry.removeById(picture.getPictureName());
 
         return result;
     }
 
 
-
-    private void addUnique(String name, String id, Map<String, String> map) {
-        if(map.containsKey(name)) {
-            name += id;
-        }
-        map.put(name, id);
-    }
-
-
     private void updatePictureIds() {
-        updateIds("/images", pictureNameIdMap);
+        updateIds("/images", pictureRegistry);
     }
+
 
     private void updateAlbumIds() {
-        updateIds("/albums", albumNameIdMap);
+        albumResgistry.clear();
+        updateIds("/albums", albumResgistry);
     }
 
-    private void updateIds(String query, HashMap<String,String> map) {
+    private void updateIds(String query, ImgurRegistry registry) {
         JSONObject response = sendRequest(query, Verb.GET);
         if (!(boolean)response.get("success")) {
             return;
@@ -246,8 +241,10 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
             JSONObject object = (JSONObject) raw;
             String objectId = object.get("id").toString();
             String objectName = object.get("title").toString();
-            addUnique(objectName, objectId, map);
+            registry.updateEntry(objectId, objectName);
         }
     }
+
+
 
 }

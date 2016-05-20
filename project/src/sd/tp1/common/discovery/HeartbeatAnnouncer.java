@@ -43,7 +43,7 @@ public class HeartbeatAnnouncer implements ServiceAnnouncer {
         final DatagramPacket packet;
         try {
             multicastSocket = new MulticastSocket();
-            byte[] input = String.format("%s@%d:/%s", serviceToAnnounce, serverPort, serverPath).getBytes();
+            byte[] input = String.format("%s@%d:%s", serviceToAnnounce, serverPort, serverPath).getBytes();
             packet = new DatagramPacket(input, input.length);
             packet.setPort(announceOnPort);
             packet.setAddress(InetAddress.getByName(ADDRESS));

@@ -41,7 +41,7 @@ public class RestServer implements EndpointServer{
 
         this.uri = uri;
         URL url = uri.toURL();
-        this.url = new URL(url.getProtocol(), url.getHost(), url.getPort(), serverPath);
+        this.url = new URL(url.getProtocol(), url.getHost(), url.getPort(), "/" + serverPath);
     }
 
     protected HttpServer startScript(){

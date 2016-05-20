@@ -90,7 +90,11 @@ public class HeartbeatDiscovery implements ServiceDiscovery {
                 String file; int port;
 
                 try{
-                    data = data.split("@")[1];
+                    String[] serviceData = data.split("@");
+                    if(!serviceData[0].equals(serviceToDiscover))
+                        return;
+
+                    data = serviceData[1];
                     String[] portFile = data.split(":");
 
                     port = Integer.parseInt(portFile[0]);

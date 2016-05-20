@@ -3,7 +3,6 @@ package sd.tp1.server;
 import sd.tp1.common.data.DataManager;
 import sd.tp1.common.protocol.EndpointServer;
 import sd.tp1.common.protocol.rest.server.RestServer;
-import sd.tp1.server.data.FileDataManager;
 import sd.tp1.server.data.ImgurDataManager;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -17,12 +16,12 @@ import java.nio.file.NotDirectoryException;
 /**
  * Created by gbfm on 3/29/16.
  */
-public class RestServerRun extends ServerRunner{
+public class ImgurRestServerRun extends ServerRunner{
     private static final int DEFAULT_PORT = generateRandomPort();
     private static final String DEFAULT_ROOT = ".";
     private static final String DEFAULT_SERVICE_PATH = "PictureServer";
 
-    public RestServerRun(DataManager dataManager, EndpointServer server) {
+    public ImgurRestServerRun(DataManager dataManager, EndpointServer server) {
         super(dataManager, server);
         throw new NotImplementedException();
     }
@@ -35,7 +34,7 @@ public class RestServerRun extends ServerRunner{
         URI baseUri = UriBuilder.fromUri("http://0.0.0.0/").port(port).build();
 
         try {
-            DataManager dataManager = new FileDataManager(root);
+            DataManager dataManager = new ImgurDataManager(root);
             RestServer server = new RestServer(serverPath, baseUri, dataManager);
 
             ServerRunner serverRunner = new ServerRunner(dataManager, server);
@@ -47,6 +46,8 @@ public class RestServerRun extends ServerRunner{
         } catch (MalformedURLException e) {
             System.err.println("Invalid serverPath or serverPort");
             System.exit(2);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
 
     }

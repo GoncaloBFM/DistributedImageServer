@@ -31,7 +31,7 @@ public class FileMetadataManager implements MetadataManager {
         this.root = root;
     }
 
-    protected boolean needUpdate(Metadata m1, Metadata m2){
+    /*protected boolean needUpdate(Metadata m1, Metadata m2){
         if(m1 == null)
             return false;
 
@@ -39,7 +39,7 @@ public class FileMetadataManager implements MetadataManager {
             return true;
 
         return m1.compareTo(m2) > 0;
-    }
+    }*/
 
     protected String readServerId(){
         if(serverId != null)
@@ -232,7 +232,7 @@ public class FileMetadataManager implements MetadataManager {
         if(actual == null)
             return true; //TODO discuss
 
-        return actual.compareTo(actual) < 0;
+        return actual.compareTo(album) < 0;
     }
 
     @Override
@@ -244,7 +244,7 @@ public class FileMetadataManager implements MetadataManager {
         if(actual == null)
             return true; //TODO discuss
 
-        return actual.compareTo(actual) < 0;
+        return actual.compareTo(album) < 0;
     }
 
     protected boolean isMetafile(File file){

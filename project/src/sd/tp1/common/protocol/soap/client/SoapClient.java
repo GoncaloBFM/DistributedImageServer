@@ -117,6 +117,9 @@ public class SoapClient implements Endpoint {
         sd.tp1.common.protocol.soap.client.stubs.MetadataBundle stubMeta = SafeInvoker.invoke(this, () ->
                 server.getMetadata());
 
+        if(stubMeta == null)
+            return null;
+
         List<Album> albumList = stubMeta.getAlbumList()
                 .parallelStream()
                 .map(x -> new SoapAlbumWrapper(x))

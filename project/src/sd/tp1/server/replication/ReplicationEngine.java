@@ -85,17 +85,21 @@ public class ReplicationEngine {
                 LinkedList<Endpoint> queue = new LinkedList(endpointMap.values());
                 Collections.shuffle(queue);
 
-                while(running && !queue.isEmpty()){
+                while(running && !queue.isEmpty()) {
                     Endpoint remote = queue.poll();
 
                     String serverId = remote.getServerId();
-                    if(serverId == null || serverId.equals(local.getServerId()))
+                    if (serverId == null || serverId.equals(local.getServerId()))
                         continue;
 
                     logger.info("Start replication with: " + serverId);
 
                     //MetadataBundle localMeta = local.getMetadata();
                     MetadataBundle remoteMeta = remote.getMetadata();
+                    if (remoteMeta == null || remoteMeta.getAlbumList() == null || remoteMeta.getPictureList() == null){
+                        logger.severe("Replication error with: " + serverId);
+                        continue;
+                    }
 
                     remoteMeta.getAlbumList()
                             .parallelStream()

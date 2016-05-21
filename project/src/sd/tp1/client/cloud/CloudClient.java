@@ -25,37 +25,24 @@ public class CloudClient implements GuiGalleryContentProvider {
 	Map<Server, List<CloudAlbum>> serverAlbumMap;
 	Map<String, CloudAlbum> albumsMap;
 
-	CloudClient() {
-		this(true);
-	}
-
-	CloudClient(boolean guiHandler){
-		if(guiHandler) {
-			HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
-				@Override
-				public void serverAdded(Server server) {
-					gui.updateAlbums();
-				}
-
-				@Override
-				public void serverLost(Server server) {
-					gui.updateAlbums();
-				}
-			});
-		}
-
+	CloudClient(){
 		HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
 			@Override
 			public void serverAdded(Server server) {
-				//
+				gui.updateAlbums();
 			}
 
 			@Override
 			public void serverLost(Server server) {
 				if(serverAlbumMap != null){
 					List<CloudAlbum> albums = serverAlbumMap.get(server);
-					for(CloudAlbum album : albums)
+					for(CloudAlbum album : albums) {
 						album.remServer(server);
+						if(album.getServers().size() <= 0) {
+							gui.updateAlbums();
+							return;
+						}
+					}
 				}
 			}
 		});

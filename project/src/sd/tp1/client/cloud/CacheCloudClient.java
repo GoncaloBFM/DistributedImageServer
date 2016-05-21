@@ -14,12 +14,12 @@ public class CacheCloudClient extends CloudClient{
     private PictureCache pictureCache = new HashPictureCache();
 
     CacheCloudClient(){
-        super(false);
+        super();
 
         HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
             @Override
             public void serverAdded(Server server) {
-                gui.updateAlbums();
+                //
             }
 
             @Override

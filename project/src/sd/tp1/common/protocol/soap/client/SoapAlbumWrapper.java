@@ -13,11 +13,17 @@ class SoapAlbumWrapper extends SharedAlbum implements Album {
     SoapAlbumWrapper(SharedAlbum album){
         super();
         super.name = album.getName();
+        super.authorId = album.getAuthorId();
+        super.deleted = album.isDeleted();
+        super.version = album.getVersion();
     }
 
     SoapAlbumWrapper(Album album){
         super();
         super.name = album.getName();
+        super.authorId = album.getAuthorId();
+        super.deleted = album.isDeleted();
+        super.version = album.getVersion();
     }
 
     @Override

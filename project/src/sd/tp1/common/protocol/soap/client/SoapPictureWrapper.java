@@ -12,10 +12,16 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 class SoapPictureWrapper extends SharedPicture implements Picture {
     SoapPictureWrapper(SharedPicture picture){
         super.pictureName = picture.getPictureName();
+        super.authorId = picture.getAuthorId();
+        super.deleted = picture.isDeleted();
+        super.version = picture.getVersion();
     }
 
     public SoapPictureWrapper(Picture picture) {
         super.pictureName = picture.getPictureName();
+        super.authorId = picture.getAuthorId();
+        super.deleted = picture.isDeleted();
+        super.version = picture.getVersion();
     }
 
     @Override

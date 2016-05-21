@@ -180,7 +180,7 @@ public class FileMetadataManager implements MetadataManager {
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
-        if(needUpdate(album, picture))
+        if(!needUpdate(album, picture))
             return false;
 
         writePictureMeta(album, picture);

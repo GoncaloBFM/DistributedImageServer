@@ -123,7 +123,7 @@ public class SoapClient implements Endpoint {
                 .collect(Collectors.toList());
 
         List<AlbumPicture> pictureList = new LinkedList();
-        stubMeta.getPictureList().forEach(x -> new SharedAlbumPicture(new SoapAlbumWrapper(x.getAlbum()), new SoapPictureWrapper(x.getPicture())));
+        stubMeta.getPictureList().forEach(x -> pictureList.add(new SharedAlbumPicture(new SoapAlbumWrapper(x.getAlbum()), new SoapPictureWrapper(x.getPicture()))));
 
         MetadataBundle metadata = new MetadataBundle(albumList, pictureList);
 

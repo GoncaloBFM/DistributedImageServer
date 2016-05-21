@@ -1,6 +1,7 @@
 package sd.tp1.client.cloud.cache;
 
 import sd.tp1.common.data.Album;
+import sd.tp1.common.data.AlbumPicture;
 import sd.tp1.common.data.MetadataBundle;
 import sd.tp1.common.data.Picture;
 import sd.tp1.client.cloud.Server;
@@ -125,5 +126,24 @@ public class HashCachedServer implements CachedServer{
     @Override
     public List<Picture> getCachedListOfPictures(Album album) {
         return this.picturesMap.get(album.getName()).get();
+    }
+
+    @Override
+    public void notifyAlbumChange(Album album) {
+        this.listOfAlbums.makeDirty();
+        Cached cachedAlbum = this.picturesMap.get(album.getName());
+        if(cachedAlbum != null)
+            cachedAlbum.makeDirty();
+    }
+
+    @Override
+    public void notifyPictureChange(AlbumPicture albumPicture) {
+        Cached album = this.picturesMap.get(albumPicture.getAlbum());
+        if(album == null) {
+            listOfAlbums.makeDirty();
+            return;
+        }
+
+        album.makeDirty();
     }
 }

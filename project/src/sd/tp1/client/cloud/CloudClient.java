@@ -83,7 +83,6 @@ public class CloudClient implements GuiGalleryContentProvider {
 		albumsMap = new ConcurrentHashMap<>();
 
 		Collection<Server> servers = HashServerManager.getServerManager().getServers();
-		servers.size();
 		for(Server s : servers){
 			//Verify if should be a Set
 			List<Album> albumList = s.loadListOfAlbums();
@@ -129,6 +128,12 @@ public class CloudClient implements GuiGalleryContentProvider {
 		Map<String, CloudPicture> pictureMap = new HashMap<>();
 
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
+
+		if(cloudAlbum.getServers().size() <= 0){
+			gui.updateAlbums();
+			return Collections.EMPTY_LIST;
+		}
+
 		for(Server s : cloudAlbum.getServers()){
 			List<Picture> pictures = s.loadListOfPictures(album.getName());
 			if(pictures == null)

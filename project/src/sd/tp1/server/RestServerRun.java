@@ -4,12 +4,10 @@ import sd.tp1.common.data.DataManager;
 import sd.tp1.common.protocol.EndpointServer;
 import sd.tp1.common.protocol.rest.server.RestServer;
 import sd.tp1.server.data.FileDataManager;
-import sd.tp1.server.data.ImgurDataManager;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.file.NotDirectoryException;

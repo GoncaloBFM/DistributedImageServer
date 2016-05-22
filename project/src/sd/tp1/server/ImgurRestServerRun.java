@@ -3,7 +3,7 @@ package sd.tp1.server;
 import sd.tp1.common.data.DataManager;
 import sd.tp1.common.protocol.EndpointServer;
 import sd.tp1.common.protocol.rest.server.RestServer;
-import sd.tp1.server.data.ImgurDataManager;
+import sd.tp1.server.data.imgur.ImgurDataManager;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.core.UriBuilder;

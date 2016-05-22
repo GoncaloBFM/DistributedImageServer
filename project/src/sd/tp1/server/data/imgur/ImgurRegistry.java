@@ -1,23 +1,21 @@
-package sd.tp1.server.data;
+package sd.tp1.server.data.imgur;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SplittableRandom;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by gbfm on 5/19/16.
  */
 public class ImgurRegistry {
 
-    private HashMap<String,String> idName = new HashMap<>();
-    private HashMap<String,String> nameId = new HashMap<>();
+    private ConcurrentHashMap<String,String> idName = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String,String> nameId = new ConcurrentHashMap<>();
 
     public boolean updateEntry(String id, String name) {
         if (idName.containsKey(id)) {
             return false;
-        }
-
-        if(nameId.containsKey(name)) {
-            name += id;
         }
 
         nameId.put(name, id);
@@ -26,22 +24,22 @@ public class ImgurRegistry {
         return true;
     }
 
-    public boolean removeById(String id) {
+    public String removeById(String id) {
         if (!idName.containsKey(id)) {
-            return false;
+            return null;
         }
 
         String name = idName.remove(id);
         nameId.remove(name);
+        return name;
 
-        return true;
     }
 
     public boolean hasId(String id) {
         return idName.containsKey(id);
     }
 
-    public boolean hasName(String name) {
+    public boolean hasname(String name) {
         return nameId.containsKey(name);
     }
 
@@ -56,6 +54,10 @@ public class ImgurRegistry {
     public void clear() {
         idName.clear();
         nameId.clear();
+    }
+
+    public Map<String,String> getIdNameMap() {
+        return idName;
     }
 
 }

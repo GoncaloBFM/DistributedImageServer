@@ -1,7 +1,7 @@
 package sd.tp1.common.notifier;
 
-import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -17,7 +17,9 @@ public class KafkaSubscriber implements Subscriber {
     public KafkaSubscriber(){
         Properties props = new Properties();
 
-        props.put("bootstrap.servers", "240.255.255.255:9092");
+        //props.put("bootstrap.servers", "240.255.255.255:9092");
+        props.put("bootstrap.servers", "localhost:9092");
+
 
         props.put("key.deserializer", StringDeserializer.class.getName());
         props.put("value.deserializer", StringDeserializer.class.getName());

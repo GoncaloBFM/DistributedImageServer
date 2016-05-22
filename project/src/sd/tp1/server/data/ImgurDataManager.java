@@ -14,6 +14,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.apache.commons.codec.binary.Base64;
 import sd.tp1.common.data.*;
+import sd.tp1.common.notifier.EventHandler;
 
 import java.io.*;
 import java.net.URL;
@@ -201,6 +202,11 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public void addEventHandler(EventHandler eventHandler) {
+        //TODO implement
     }
 
     @Override

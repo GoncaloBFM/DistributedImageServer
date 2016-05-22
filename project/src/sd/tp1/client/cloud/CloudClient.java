@@ -34,11 +34,17 @@ public class CloudClient implements GuiGalleryContentProvider {
 		HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
 			@Override
 			public void serverAdded(Server server) {
+				if(gui == null)
+					return;
+
 				gui.updateAlbums();
 			}
 
 			@Override
 			public void serverLost(Server server) {
+				if(gui == null)
+					return;
+
 				if(serverAlbumMap != null){
 					List<CloudAlbum> albums = serverAlbumMap.get(server);
 					for(CloudAlbum album : albums) {

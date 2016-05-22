@@ -7,6 +7,6 @@ import sd.tp1.common.data.AlbumPicture;
  * Created by apontes on 5/21/16.
  */
 public interface EventHandler {
-    void onAlbumUpdate(Album album);
-    void onPictureUpdate(AlbumPicture picture);
+    void onAlbumUpdate(String album);
+    void onPictureUpdate(String album, String picture);
 }

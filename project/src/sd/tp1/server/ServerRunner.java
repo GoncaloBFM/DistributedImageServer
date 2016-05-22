@@ -3,6 +3,9 @@ package sd.tp1.server;
 import sd.tp1.common.data.DataManager;
 import sd.tp1.common.discovery.HeartbeatAnnouncer;
 import sd.tp1.common.discovery.ServiceAnnouncer;
+import sd.tp1.common.notifier.EventHandler;
+import sd.tp1.common.notifier.KafkaPublisher;
+import sd.tp1.common.notifier.Publisher;
 import sd.tp1.common.protocol.EndpointServer;
 import sd.tp1.server.replication.ReplicationEngine;
 
@@ -41,6 +44,20 @@ public class ServerRunner implements EndpointServer{
                 url.getPort());
 
         replicationEngine = new ReplicationEngine(dataManager);
+
+        Publisher publisher = new KafkaPublisher();
+
+        dataManager.addEventHandler(new EventHandler() {
+            @Override
+            public void onAlbumUpdate(String album) {
+                publisher.notifyAlbumUpdate(album);
+            }
+
+            @Override
+            public void onPictureUpdate(String album, String picture) {
+                publisher.notifyPictureUpdate(album, picture);
+            }
+        });
     }
 
     protected static int generateRandomPort(){

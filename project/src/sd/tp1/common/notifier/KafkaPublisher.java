@@ -26,21 +26,21 @@ public class KafkaPublisher implements Publisher {
 
         props.put("log.retention.ms", 5000);
 
-        producer = new KafkaProducer(props);
+        producer = new KafkaProducer<>(props);
     }
 
 
     @Override
-    public void notifyAlbumUpdate(Album album) {
-        ProducerRecord<String, String> data = new ProducerRecord<String, String>("album", album.getName());
+    public void notifyAlbumUpdate(String album) {
+        ProducerRecord<String, String> data = new ProducerRecord<>("album", album);
         producer.send(data);
         producer.flush();
     }
 
     @Override
-    public void notifyPictureUpdate(AlbumPicture picture) {
-        ProducerRecord<String, String> data = new ProducerRecord<String, String>("picture",
-                String.format("%s/%s", picture.getAlbum().getName(), picture.getPicture().getPictureName()));
+    public void notifyPictureUpdate(String album, String picture) {
+        ProducerRecord<String, String> data = new ProducerRecord<>("picture",
+                String.format("%s/%s", album, picture));
         producer.send(data);
         producer.flush();
 

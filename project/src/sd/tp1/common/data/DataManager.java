@@ -1,5 +1,7 @@
 package sd.tp1.common.data;
 
+import sd.tp1.common.notifier.EventHandler;
+
 import java.util.List;
 
 /**
@@ -11,4 +13,6 @@ public interface DataManager extends MetadataManager {
     List<SharedPicture> loadListOfPictures(String album);
 
     byte[] loadPictureData(String album, String picture);
+
+    void addEventHandler(EventHandler eventHandler);
 }

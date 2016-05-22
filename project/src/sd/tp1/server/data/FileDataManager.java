@@ -1,17 +1,21 @@
 package sd.tp1.server.data;
 
 import sd.tp1.common.data.*;
+import sd.tp1.common.notifier.EventHandler;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.NotDirectoryException;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * Created by gbfm on 4/1/16.
  */
 public class FileDataManager extends FileMetadataManager implements DataManager {
 
+
+    private Queue<EventHandler> handlers = new ConcurrentLinkedDeque<>();
 
     public FileDataManager() throws NotDirectoryException {
     }
@@ -79,12 +83,30 @@ public class FileDataManager extends FileMetadataManager implements DataManager 
     }
 
     @Override
+    public void addEventHandler(EventHandler eventHandler) {
+        handlers.add(eventHandler);
+    }
+
+    private void notifyAlbumUpdate(String album){
+        handlers.forEach(x -> x.onAlbumUpdate(album));
+    }
+
+    private void notifyPictureUpdate(String album, String picture){
+        handlers.forEach(x -> x.onPictureUpdate(album, picture));
+    }
+
+    @Override
     public boolean createAlbum(Album album) {
         if(!super.createAlbum(album))
             return false;
 
         File folder = new File(root, album.getName());
-        return folder.exists() || folder.mkdir();
+        if(folder.exists() || folder.mkdir()) {
+            notifyAlbumUpdate(album.getName());
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -95,6 +117,7 @@ public class FileDataManager extends FileMetadataManager implements DataManager 
         File file = openPicture(album, picture);
         try {
             Files.write(file.toPath(), data);
+            notifyPictureUpdate(album.getName(), picture.getPictureName());
             return true;
 
         } catch (IOException e) {
@@ -105,7 +128,12 @@ public class FileDataManager extends FileMetadataManager implements DataManager 
 
     @Override
     public boolean deleteAlbum(Album album) {
-        return super.deleteAlbum(album);
+        if(super.deleteAlbum(album)){
+            notifyAlbumUpdate(album.getName());
+            return true;
+        }
+
+        return false;
 
         ///File folder = openAlbum(album);
         //return folder.renameTo(new File(folder.getAbsolutePath() + ".delete"));
@@ -113,7 +141,12 @@ public class FileDataManager extends FileMetadataManager implements DataManager 
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
-        return super.deletePicture(album, picture);
+        if(super.deletePicture(album, picture)){
+            notifyPictureUpdate(album.getName(), picture.getPictureName());
+            return true;
+        }
+
+        return false;
 
         //File file = openPicture(album, picture);
         //return file.renameTo(new File(file.getAbsolutePath() + ".delete"));

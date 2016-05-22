@@ -1,10 +1,14 @@
 package sd.tp1.client.cloud;
 
+import sd.tp1.client.cloud.data.CloudAlbum;
 import sd.tp1.common.data.Album;
 import sd.tp1.common.data.Picture;
 import sd.tp1.client.cloud.cache.CachedServer;
 import sd.tp1.client.cloud.cache.HashPictureCache;
 import sd.tp1.client.cloud.cache.PictureCache;
+import sd.tp1.common.notifier.EventHandler;
+import sd.tp1.common.notifier.KafkaSubscriber;
+import sd.tp1.common.notifier.Subscriber;
 
 /**
  * Created by apontes on 4/5/16.
@@ -13,8 +17,10 @@ public class CacheCloudClient extends CloudClient{
 
     private PictureCache pictureCache = new HashPictureCache();
 
-    CacheCloudClient(){
-        super();
+    CacheCloudClient() {this(true);}
+
+    CacheCloudClient(boolean subscriber){
+        super(false);
 
         HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
             @Override
@@ -33,6 +39,39 @@ public class CacheCloudClient extends CloudClient{
                 }
             }
         });
+
+        if(subscriber){
+            Subscriber sub = new KafkaSubscriber();
+            sub.addEventHandler(new EventHandler() {
+                @Override
+                public void onAlbumUpdate(String album) {
+                    CloudAlbum a = albumsMap.get(album);
+                    if(a != null && !a.getServers().isEmpty()){
+                        a.getServers().forEach(s -> {
+                            try{
+                                CachedServer cs = (CachedServer) s;
+                                cs.notifyAlbumChange(a);
+                            }
+                            catch (ClassCastException e){
+                                //
+                            }
+                        });
+
+                        gui.updateAlbum(a);
+                    }
+                    else
+                        gui.updateAlbums();
+                }
+
+                @Override
+                public void onPictureUpdate(String album, String picture) {
+                    onAlbumUpdate(album);
+                }
+            });
+
+
+
+        }
     }
 
     /**

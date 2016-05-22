@@ -6,6 +6,9 @@ import sd.tp1.client.cloud.data.CloudAlbum;
 import sd.tp1.client.cloud.data.CloudPicture;
 import sd.tp1.client.gui.Gui;
 import sd.tp1.client.gui.GuiGalleryContentProvider;
+import sd.tp1.common.notifier.EventHandler;
+import sd.tp1.common.notifier.KafkaSubscriber;
+import sd.tp1.common.notifier.Subscriber;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +28,9 @@ public class CloudClient implements GuiGalleryContentProvider {
 	Map<Server, List<CloudAlbum>> serverAlbumMap;
 	Map<String, CloudAlbum> albumsMap;
 
-	CloudClient(){
+	CloudClient(){this(false);}
+
+	CloudClient(boolean subscriber){
 		HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
 			@Override
 			public void serverAdded(Server server) {
@@ -46,6 +51,25 @@ public class CloudClient implements GuiGalleryContentProvider {
 				}
 			}
 		});
+
+		if(subscriber){
+			Subscriber sub = new KafkaSubscriber();
+			sub.addEventHandler(new EventHandler() {
+				@Override
+				public void onAlbumUpdate(String album) {
+					CloudAlbum a = albumsMap.get(album);
+					if(a != null && !a.getServers().isEmpty())
+						gui.updateAlbum(a);
+					else
+						gui.updateAlbums();
+				}
+
+				@Override
+				public void onPictureUpdate(String album, String picture) {
+					onAlbumUpdate(album);
+				}
+			});
+		}
 	}
 
 

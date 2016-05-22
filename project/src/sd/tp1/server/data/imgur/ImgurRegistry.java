@@ -1,5 +1,6 @@
 package sd.tp1.server.data.imgur;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SplittableRandom;
@@ -8,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by gbfm on 5/19/16.
  */
-public class ImgurRegistry {
+public abstract class ImgurRegistry {
 
     private ConcurrentHashMap<String,String> idName = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String,String> nameId = new ConcurrentHashMap<>();
@@ -16,6 +17,10 @@ public class ImgurRegistry {
     public boolean updateEntry(String id, String name) {
         if (idName.containsKey(id)) {
             return false;
+        }
+
+        if(nameId.containsKey(name)){
+            name+=id;
         }
 
         nameId.put(name, id);
@@ -56,8 +61,8 @@ public class ImgurRegistry {
         nameId.clear();
     }
 
-    public Map<String,String> getIdNameMap() {
-        return idName;
+    public Collection<String> getIds() {
+        return idName.keySet();
     }
 
 }

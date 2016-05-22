@@ -39,7 +39,7 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
 
 
     //username = Gazdesnake
-    //password = conacona
+    //password = 123456
 
     private static final int ID_REFRESH_DELAY_SECONDS = 2;
     private static final int ID_REFRESH_INITIAL_DELAY_SECONDS = 2;

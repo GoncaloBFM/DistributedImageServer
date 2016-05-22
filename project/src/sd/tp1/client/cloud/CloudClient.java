@@ -25,37 +25,24 @@ public class CloudClient implements GuiGalleryContentProvider {
 	Map<Server, List<CloudAlbum>> serverAlbumMap;
 	Map<String, CloudAlbum> albumsMap;
 
-	CloudClient() {
-		this(true);
-	}
-
-	CloudClient(boolean guiHandler){
-		if(guiHandler) {
-			HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
-				@Override
-				public void serverAdded(Server server) {
-					gui.updateAlbums();
-				}
-
-				@Override
-				public void serverLost(Server server) {
-					gui.updateAlbums();
-				}
-			});
-		}
-
+	CloudClient(){
 		HashServerManager.getServerManager().addServerHandler(new ServerHandler() {
 			@Override
 			public void serverAdded(Server server) {
-				//
+				gui.updateAlbums();
 			}
 
 			@Override
 			public void serverLost(Server server) {
 				if(serverAlbumMap != null){
 					List<CloudAlbum> albums = serverAlbumMap.get(server);
-					for(CloudAlbum album : albums)
+					for(CloudAlbum album : albums) {
 						album.remServer(server);
+						if(album.getServers().size() <= 0) {
+							gui.updateAlbums();
+							return;
+						}
+					}
 				}
 			}
 		});
@@ -83,7 +70,6 @@ public class CloudClient implements GuiGalleryContentProvider {
 		albumsMap = new ConcurrentHashMap<>();
 
 		Collection<Server> servers = HashServerManager.getServerManager().getServers();
-		servers.size();
 		for(Server s : servers){
 			//Verify if should be a Set
 			List<Album> albumList = s.loadListOfAlbums();
@@ -129,6 +115,12 @@ public class CloudClient implements GuiGalleryContentProvider {
 		Map<String, CloudPicture> pictureMap = new HashMap<>();
 
 		CloudAlbum cloudAlbum = (CloudAlbum) album;
+
+		if(cloudAlbum.getServers().size() <= 0){
+			gui.updateAlbums();
+			return Collections.EMPTY_LIST;
+		}
+
 		for(Server s : cloudAlbum.getServers()){
 			List<Picture> pictures = s.loadListOfPictures(album.getName());
 			if(pictures == null)
@@ -259,8 +251,8 @@ public class CloudClient implements GuiGalleryContentProvider {
 			}
 
 		//Already uploaded
-		if(picture != null && !picture.isDeleted())
-			return null;
+		//if(picture != null && !picture.isDeleted())
+		//	return null;
 
 		Collection<Server> availableServers =  HashServerManager.getServerManager().getServerToUploadPicture(cloudAlbum);
 
@@ -302,8 +294,8 @@ public class CloudClient implements GuiGalleryContentProvider {
 		//CloudAlbum cloudAlbum = (CloudAlbum) album;
 		//cloudAlbum.getPictures().remove(picture);
 
-		if(picture.isDeleted())
-			return false;
+		//if(picture.isDeleted())
+		//	return false;
 
 		boolean first = true;
 		for(Server s : ((CloudPicture) picture).getServers()) {

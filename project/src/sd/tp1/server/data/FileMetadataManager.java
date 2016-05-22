@@ -180,7 +180,7 @@ public class FileMetadataManager implements MetadataManager {
 
     @Override
     public boolean deletePicture(Album album, Picture picture) {
-        if(needUpdate(album, picture))
+        if(!needUpdate(album, picture))
             return false;
 
         writePictureMeta(album, picture);
@@ -244,7 +244,7 @@ public class FileMetadataManager implements MetadataManager {
         if(actual == null)
             return true; //TODO discuss
 
-        return actual.compareTo(album) < 0;
+        return actual.compareTo(picture) < 0;
     }
 
     protected boolean isMetafile(File file){

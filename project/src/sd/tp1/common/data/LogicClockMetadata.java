@@ -57,16 +57,10 @@ public class LogicClockMetadata implements Metadata, Serializable {
         if(o == null)
             return -1;
 
-        if(o instanceof LogicClockMetadata) {
-            LogicClockMetadata x = (LogicClockMetadata) o;
-            if(this.version - x.version != 0)
-                return this.version - x.version;
+        if(this.version - o.getVersion() != 0)
+            return this.version - o.getVersion();
 
-            return this.authorId.compareTo(x.authorId);
-        }
-
-        else
-            throw new NotImplementedException();
+        return this.authorId.compareTo(o.getAuthorId());
     }
 }
 

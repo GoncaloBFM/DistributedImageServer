@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * Created by apontes on 4/5/16.
+ * Created by everyone on 4/5/16.
  */
 public abstract class AbstractCloudObject extends LogicClockMetadata implements CloudObject{
 

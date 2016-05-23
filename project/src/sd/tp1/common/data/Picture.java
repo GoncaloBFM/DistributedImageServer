@@ -1,7 +1,7 @@
 package sd.tp1.common.data;
 
 /**
- * Created by apontes on 3/15/16.
+ * Created by everyone on 3/15/16.
  */ /*
  * The GUI expects objects representing pictures to implement this interface.
  *

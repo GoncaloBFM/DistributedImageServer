@@ -7,7 +7,7 @@ import sd.tp1.common.data.LogicClockMetadata;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
- * Created by apontes on 3/25/16.
+ * Created by everyone on 3/25/16.
  */
 class SoapAlbumWrapper extends SharedAlbum implements Album {
     SoapAlbumWrapper(SharedAlbum album){

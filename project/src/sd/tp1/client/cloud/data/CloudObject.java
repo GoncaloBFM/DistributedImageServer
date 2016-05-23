@@ -5,7 +5,7 @@ import sd.tp1.client.cloud.Server;
 import java.util.Collection;
 
 /**
- * Created by apontes on 4/5/16.
+ * Created by everyone on 4/5/16.
  */
 public interface CloudObject {
     void addServer(Server server);

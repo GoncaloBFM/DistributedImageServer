@@ -3,7 +3,7 @@ package sd.tp1.common.data;
 import java.util.List;
 
 /**
- * Created by apontes on 5/17/16.
+ * Created by everyone on 5/17/16.
  */
 public interface MetadataManager {
     boolean createAlbum(Album album);

@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
- * Created by gbfm on 4/1/16.
+ * Created by everyone on 4/1/16.
  */
 public class FileDataManager extends FileMetadataManager implements DataManager {
 

@@ -13,7 +13,7 @@ import java.net.URL;
 import java.nio.file.NotDirectoryException;
 
 /**
- * Created by apontes on 3/21/16.
+ * Created by everyone on 3/21/16.
  */
 public class ImgurSoapServerRun extends ServerRunner {
 

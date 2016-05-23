@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
 /**
- * Created by apontes on 3/25/16.
+ * Created by everyone on 3/25/16.
  */
 public class HashServerManager implements ServerManager {
 

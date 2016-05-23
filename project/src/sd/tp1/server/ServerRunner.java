@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.logging.Logger;
 
 /**
- * Created by apontes on 5/17/16.
+ * Created by everyone on 5/17/16.
  */
 public class ServerRunner implements EndpointServer{
     private static final String SERVICE_TO_ANNOUNCE = "42845_43178_";

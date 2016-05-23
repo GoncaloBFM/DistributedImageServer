@@ -1,7 +1,7 @@
 package sd.tp1.server.data.imgur;
 
 /**
- * Created by gbfm on 5/19/16.
+ * Created by everyone on 5/19/16.
  */
 public class ConnectionInfo {
 

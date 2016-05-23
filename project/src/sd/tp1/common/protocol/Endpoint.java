@@ -8,7 +8,7 @@ import java.net.URL;
 import java.util.List;
 
 /**
- * Created by apontes on 5/17/16.
+ * Created by everyone on 5/17/16.
  */
 public interface Endpoint {
     URL getUrl();

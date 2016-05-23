@@ -5,7 +5,7 @@ import sd.tp1.common.notifier.EventHandler;
 import java.util.List;
 
 /**
- * Created by gbfm on 4/4/16.
+ * Created by everyone on 4/4/16.
  */
 public interface DataManager extends MetadataManager {
     List<SharedAlbum> loadListOfAlbums();

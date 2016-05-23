@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.List;
 
 /**
- * Created by apontes on 3/21/16.
+ * Created by everyone on 3/21/16.
  */
 @WebService
 public class SoapServer implements EndpointServer{

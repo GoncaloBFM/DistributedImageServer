@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 /**
- * Created by apontes on 4/5/16.
+ * Created by everyone on 4/5/16.
  */
 public class CachedPicture extends CachedObject<byte[]> implements Picture, CachedBlob {
 

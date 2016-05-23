@@ -8,7 +8,7 @@ import sd.tp1.client.cloud.Server;
 import java.util.List;
 
 /**
- * Created by apontes on 4/8/16.
+ * Created by everyone on 4/8/16.
  */
 public interface CachedServer extends Server {
     List<Album> getCachedListOfAlbums();

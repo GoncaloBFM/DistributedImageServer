@@ -7,7 +7,7 @@ import sd.tp1.common.protocol.soap.client.stubs.SharedPicture;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
- * Created by apontes on 3/25/16.
+ * Created by everyone on 3/25/16.
  */
 class SoapPictureWrapper extends SharedPicture implements Picture {
     SoapPictureWrapper(SharedPicture picture){

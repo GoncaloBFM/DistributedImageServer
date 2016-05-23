@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * Created by apontes on 3/21/16.
+ * Created by everyone on 3/21/16.
  */ /*
  * This class provides the album/picture content to the gui/main application.
  *

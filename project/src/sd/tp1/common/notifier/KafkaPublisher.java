@@ -11,7 +11,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Created by apontes on 5/22/16.
+ * Created by everyone on 5/22/16.
  */
 public class KafkaPublisher implements Publisher {
 

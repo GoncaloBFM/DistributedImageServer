@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by apontes on 3/25/16.
+ * Created by everyone on 3/25/16.
  */
 public class SoapClient implements Endpoint {
 

@@ -8,7 +8,7 @@ import java.net.URL;
 import java.util.List;
 
 /**
- * Created by apontes on 3/25/16.
+ * Created by everyone on 3/25/16.
  */
 public interface Server extends Endpoint{
 

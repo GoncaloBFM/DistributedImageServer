@@ -3,7 +3,7 @@ package sd.tp1.client.cloud.data;
 import sd.tp1.common.data.Picture;
 
 /**
- * Created by apontes on 3/27/16.
+ * Created by everyone on 3/27/16.
  */
 public class CloudPicture extends AbstractCloudObject implements Picture {
 

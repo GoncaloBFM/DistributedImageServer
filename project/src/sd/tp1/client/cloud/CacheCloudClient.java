@@ -11,7 +11,7 @@ import sd.tp1.common.notifier.KafkaSubscriber;
 import sd.tp1.common.notifier.Subscriber;
 
 /**
- * Created by apontes on 4/5/16.
+ * Created by everyone on 4/5/16.
  */
 public class CacheCloudClient extends CloudClient{
 

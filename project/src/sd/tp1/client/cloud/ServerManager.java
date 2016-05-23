@@ -5,7 +5,7 @@ import sd.tp1.client.cloud.data.CloudAlbum;
 import java.util.Collection;
 
 /**
- * Created by apontes on 3/25/16.
+ * Created by everyone on 3/25/16.
  */
 public interface ServerManager {
     Collection<Server> getServers();

@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * Created by apontes on 5/22/16.
+ * Created by everyone on 5/22/16.
  */
 public class KafkaSubscriber implements Subscriber {
 

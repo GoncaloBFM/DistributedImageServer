@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * Created by apontes on 4/7/16.
+ * Created by everyone on 4/7/16.
  */
 public class SafeInvoker {
     private static final Logger LOGGER = Logger.getLogger(SafeInvoker.class.getName());

@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by gbfm on 4/4/16.
+ * Created by everyone on 4/4/16.
  */
 public class RestClient implements Endpoint {
 

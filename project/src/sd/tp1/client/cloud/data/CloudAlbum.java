@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by apontes on 3/27/16.
+ * Created by everyone on 3/27/16.
  */
 public class CloudAlbum extends AbstractCloudObject implements Album {
     private String name;

@@ -12,7 +12,7 @@ import java.net.URI;
 import java.nio.file.NotDirectoryException;
 
 /**
- * Created by gbfm on 3/29/16.
+ * Created by everyone on 3/29/16.
  */
 public class RestSSLServerRun extends ServerRunner {
 

@@ -11,7 +11,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**
- * Created by gbfm on 4/7/16.
+ * Created by everyone on 4/7/16.
  */
 public abstract class LoggedAbstractEndpoint implements Endpoint {
 

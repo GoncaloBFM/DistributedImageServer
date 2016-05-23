@@ -8,7 +8,7 @@ import sd.tp1.common.data.SharedPicture;
 
 
 /**
- * Created by apontes on 5/17/16.
+ * Created by everyone on 5/17/16.
  */
 public class UploadPictureEnvelop {
     public SharedAlbum album;

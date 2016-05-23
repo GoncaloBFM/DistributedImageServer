@@ -9,7 +9,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by apontes on 4/5/16.
+ * Created by everyone on 4/5/16.
  */
 public class HashPictureCache implements PictureCache{
     private static final int MAX_RAM = 100 * 1024 * 1024; //100MB

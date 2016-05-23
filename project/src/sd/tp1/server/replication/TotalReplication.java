@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * Created by apontes on 5/18/16.
+ * Created by everyone on 5/18/16.
  */
 public class TotalReplication implements ReplicationEngine{
 

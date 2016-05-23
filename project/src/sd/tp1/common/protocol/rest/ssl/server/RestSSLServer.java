@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Created by apontes on 5/17/16.
+ * Created by everyone on 5/17/16.
  */
 public class RestSSLServer extends RestServer {
 

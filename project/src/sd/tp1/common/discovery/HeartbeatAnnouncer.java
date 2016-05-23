@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.concurrent.*;
 
 /**
- * Created by apontes on 3/21/16.
+ * Created by everyone on 3/21/16.
  */
 public class HeartbeatAnnouncer implements ServiceAnnouncer {
 

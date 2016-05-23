@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by gbfm on 5/19/16.
+ * Created by everyone on 5/19/16.
  */
 public class ImgurAlbumRegistry extends ImgurRegistry{
 

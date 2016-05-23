@@ -5,7 +5,7 @@ import sd.tp1.common.protocol.Endpoint;
 import java.util.Collection;
 
 /**
- * Created by apontes on 5/23/16.
+ * Created by everyone on 5/23/16.
  */
 public interface PartialReplicated {
 

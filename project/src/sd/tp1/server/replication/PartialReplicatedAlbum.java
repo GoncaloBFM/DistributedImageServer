@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by apontes on 5/23/16.
+ * Created by everyone on 5/23/16.
  */
 public class PartialReplicatedAlbum extends SharedAlbum implements PartialReplicated{
 

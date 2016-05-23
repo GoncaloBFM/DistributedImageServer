@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * Created by apontes on 3/21/16.
+ * Created by everyone on 3/21/16.
  */
 public class HeartbeatDiscovery implements ServiceDiscovery {
 

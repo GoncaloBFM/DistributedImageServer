@@ -18,7 +18,7 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
 /**
- * Created by gbfm on 4/4/16.
+ * Created by everyone on 4/4/16.
  */
 public class RestSSLClient extends RestClient {
 

@@ -4,7 +4,7 @@ import sd.tp1.common.data.Album;
 import sd.tp1.common.data.Picture;
 
 /**
- * Created by apontes on 4/5/16.
+ * Created by everyone on 4/5/16.
  */
 public interface PictureCache {
     byte[] get(Album album, Picture picture);

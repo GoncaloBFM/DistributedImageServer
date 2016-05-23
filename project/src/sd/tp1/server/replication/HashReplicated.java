@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
 /**
- * Created by apontes on 5/23/16.
+ * Created by everyone on 5/23/16.
  */
 public class HashReplicated implements PartialReplicated{
 

@@ -33,7 +33,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by gbfm on 5/17/16.
+ * Created by everyone on 5/17/16.
  */
 public class ImgurDataManager extends FileMetadataManager implements DataManager {
 

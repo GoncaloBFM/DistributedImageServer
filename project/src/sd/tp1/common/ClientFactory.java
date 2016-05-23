@@ -14,7 +14,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Created by apontes on 5/10/16.
+ * Created by everyone on 5/10/16.
  */
 public enum ClientFactory {
     SOAP("42845_43178_SOAP", 6969){

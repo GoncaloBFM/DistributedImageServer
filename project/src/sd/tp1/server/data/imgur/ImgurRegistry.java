@@ -7,7 +7,7 @@ import java.util.SplittableRandom;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by gbfm on 5/19/16.
+ * Created by everyone on 5/19/16.
  */
 public abstract class ImgurRegistry {
 

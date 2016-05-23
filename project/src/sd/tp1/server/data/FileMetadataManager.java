@@ -12,7 +12,7 @@ import java.util.Scanner;
 import java.util.UUID;
 
 /**
- * Created by apontes on 5/17/16.
+ * Created by everyone on 5/17/16.
  */
 public class FileMetadataManager implements MetadataManager {
     private final static String META_EXT = ".meta";

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by apontes on 5/18/16.
+ * Created by everyone on 5/18/16.
  */
 public class MetadataBundle implements Serializable{
     private List<SharedAlbum> albumList;

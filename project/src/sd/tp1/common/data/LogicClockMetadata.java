@@ -5,7 +5,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.Serializable;
 
 /**
- * Created by apontes on 5/17/16.
+ * Created by everyone on 5/17/16.
  */
 public class LogicClockMetadata implements Metadata, Serializable {
 

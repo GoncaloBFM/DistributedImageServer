@@ -8,7 +8,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 
 /**
- * Created by apontes on 5/22/16.
+ * Created by everyone on 5/22/16.
  */
 public class MulticastPublisher implements Publisher{
 

@@ -3,7 +3,7 @@ package sd.tp1.common.notifier;
 import java.io.Serializable;
 
 /**
- * Created by apontes on 5/22/16.
+ * Created by everyone on 5/22/16.
  */
 public class MulticastEnvelop implements Serializable {
     public String album;

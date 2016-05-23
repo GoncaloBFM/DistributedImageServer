@@ -184,7 +184,7 @@ class AlbumPictureRegistry {
     private SharedAlbum getLocalMetadata(SharedAlbum album){
         Album lAlbum = local.getMetadata(album.getName());
         if(lAlbum != null)
-            return new SharedAlbum();
+            return new SharedAlbum(lAlbum);
 
         return null;
     }

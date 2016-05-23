@@ -32,7 +32,7 @@ public class HashReplicated implements PartialReplicated{
 
     @Override
     public void remSouce(String remoteId) {
-        this.remSouce(remoteId);
+        sources.remove(remoteId);
     }
 
     private boolean isPrimary(){

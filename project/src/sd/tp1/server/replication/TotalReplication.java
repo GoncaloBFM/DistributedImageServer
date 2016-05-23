@@ -73,6 +73,7 @@ public class TotalReplication implements ReplicationEngine{
         if(running)
             return;
 
+        running = true;
         this.replicationWorker.start();
     }
 

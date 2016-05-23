@@ -397,6 +397,7 @@ class AlbumPictureRegistry {
 
             Collection<String> targets = rPicture.findReplicationTargets(available);
             lock.unlock();
+
             return targets;
         }
         catch(Throwable t){

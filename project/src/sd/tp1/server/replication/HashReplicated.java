@@ -2,10 +2,7 @@ package sd.tp1.server.replication;
 
 import sd.tp1.common.protocol.Endpoint;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
@@ -71,9 +68,12 @@ public class HashReplicated implements PartialReplicated{
 
     @Override
     public Collection<String> findReplicationTargets(Collection<String> available) {
-        return available
+        List<String> list = available
                 .parallelStream()
                 .filter(s -> !sources.contains(s))
                 .collect(Collectors.toList());
+
+        Collections.shuffle(list);
+        return list;
     }
 }

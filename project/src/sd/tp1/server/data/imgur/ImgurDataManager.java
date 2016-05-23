@@ -25,6 +25,7 @@ import java.net.URL;
 import java.nio.file.NotDirectoryException;
 import java.rmi.registry.Registry;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -66,6 +67,9 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
     private Gson gson = builder.create();
 
     private Lock lock = new ReentrantLock(false);
+
+    private Queue<EventHandler> handlers = new ConcurrentLinkedDeque<>();
+
 
     public ImgurDataManager() throws NotDirectoryException {
         super();
@@ -217,6 +221,7 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
             albumResgistry.removeById(albumId);
             deleteAlbum(album);
             lock.unlock();
+            notifyAlbumUpdate(album.getName());
             return true;
         }
         lock.unlock();
@@ -279,7 +284,15 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
 
     @Override
     public void addEventHandler(EventHandler eventHandler) {
-        //TODO implement
+        handlers.add(eventHandler);
+    }
+
+    private void notifyAlbumUpdate(String album){
+        handlers.forEach(x -> x.onAlbumUpdate(album));
+    }
+
+    private void notifyPictureUpdate(String album, String picture){
+        handlers.forEach(x -> x.onPictureUpdate(album, picture));
     }
 
     @Override
@@ -298,7 +311,7 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
         lock.unlock();
 
         super.createAlbum(album);
-
+        notifyAlbumUpdate(album.getName());
         return true;
     }
 
@@ -322,6 +335,7 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
         lock.unlock();
 
         super.uploadPicture(album,picture,data);
+        notifyPictureUpdate(album.getName(), picture.getPictureName());
 
         return true;
     }
@@ -342,6 +356,8 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
         lock.unlock();
 
         super.deletePicture(album, picture);
+        notifyPictureUpdate(album.getName(), picture.getPictureName());
+
 
         return result;
     }
@@ -377,7 +393,9 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
         }
 
         for (String idToRemove : albumResgistry.getIds()) {
+            String albumName = albumResgistry.getName(idToRemove);
             super.deleteAlbum(new SharedAlbum(albumResgistry.getName(idToRemove), getServerId()));
+            notifyAlbumUpdate(albumName);
         }
 
         albumResgistry = newRegistry;
@@ -388,6 +406,7 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
             albumResgistry.updateEntry(albumId, albumName);
             SharedAlbum newAlbum = new SharedAlbum(albumName, getServerId());
             super.createAlbum(newAlbum);
+            notifyAlbumUpdate(albumName);
         }
         lock.unlock();
 
@@ -416,7 +435,9 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
         }
 
         for (String idToRemove : registry.getIds()) {
-            super.deletePicture(new SharedAlbum(albumName, getServerId()), new SharedPicture(albumResgistry.getName(idToRemove), getServerId()));
+            String pictureName = registry.getName(idToRemove);
+            super.deletePicture(new SharedAlbum(albumName, getServerId()), new SharedPicture(pictureName, getServerId()));
+            notifyPictureUpdate(albumName, pictureName);
         }
 
         for (JSONObject picture : pictureToAdd) {
@@ -424,6 +445,7 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
             String pictureName = picture.get("name").toString();
             newRegistry.updateEntry(pictureId, pictureName);
             super.uploadPicture(new SharedAlbum(albumName, getServerId()), new SharedPicture(pictureName, getServerId()), null);
+            notifyPictureUpdate(albumName, pictureName);
         }
 
         albumResgistry.setPictureRegistry(albumId, newRegistry);

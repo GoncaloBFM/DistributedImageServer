@@ -133,6 +133,10 @@ public class FileMetadataManager implements MetadataManager {
             out.flush();
             out.close();
 
+            File folder = openAlbum(album);
+            if(!folder.exists())
+                folder.mkdir();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -216,9 +220,9 @@ public class FileMetadataManager implements MetadataManager {
                 albumList.add(album);
 
                 for(File innerFile : file.listFiles()){
-                    if(!isMetafile(innerFile)){
+                    if(isMetafile(innerFile)){
                         //Picture file
-                        SharedPicture picture = readPictureMeta(album.getName(), innerFile.getName());
+                        SharedPicture picture = readPictureMeta(album.getName(), extractName(innerFile));
                         if(picture == null)
                             continue;
 
@@ -229,6 +233,12 @@ public class FileMetadataManager implements MetadataManager {
         }
 
         return new MetadataBundle(albumList, pictureList);
+    }
+
+    private String extractName(File metafile){
+        String name = metafile.getName();
+
+        return name.substring(0, name.length() - META_EXT.length());
     }
 
     @Override

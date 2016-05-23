@@ -1,5 +1,6 @@
 package sd.tp1.server.replication;
 
+import sd.tp1.common.data.SharedAlbum;
 import sd.tp1.common.data.SharedAlbumPicture;
 import sd.tp1.common.protocol.Endpoint;
 
@@ -14,6 +15,10 @@ public class PartialReplicatedPicture extends SharedAlbumPicture implements Part
 
     private HashReplicated sources;
 
+    public PartialReplicatedPicture(SharedAlbumPicture picture, String localId){
+        this(picture, localId, TARGET_REPLICS);
+    }
+
     public PartialReplicatedPicture(SharedAlbumPicture picture, String localId, int targetReplics){
         this.setAlbum(picture.getAlbum());
         this.setPicture(picture.getPicture());
@@ -22,8 +27,8 @@ public class PartialReplicatedPicture extends SharedAlbumPicture implements Part
     }
 
     @Override
-    public void addSource(String remoteId, Endpoint remote) {
-        sources.addSource(remoteId, remote);
+    public void addSource(String remoteId) {
+        sources.addSource(remoteId);
     }
 
     @Override

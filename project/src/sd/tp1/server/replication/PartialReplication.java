@@ -319,6 +319,13 @@ class AlbumPictureRegistry {
             albumList.parallelStream()
                     .forEach(a -> {
                         PartialReplicatedAlbum album = albumMap.get(a);
+                        if(album == null){
+                            album = new PartialReplicatedAlbum(a, localId);
+                            albumMap.put(a, album);
+                        }
+
+                        album.addSource(remoteId);
+
                         int canDispose = album.canDispose();
                         if(canDispose > 0)
                             toDispose.album.put(album, canDispose);
@@ -328,6 +335,13 @@ class AlbumPictureRegistry {
             pictureList.parallelStream()
                     .forEach(p -> {
                         PartialReplicatedPicture picture = pictureMap.get(p);
+                        if(picture == null){
+                            picture = new PartialReplicatedPicture(p, localId);
+                            pictureMap.put(p, picture);
+                        }
+
+                        picture.addSource(remoteId);
+
                         int canDispose = picture.canDispose();
                         if(canDispose > 0)
                             toDispose.pictures.put(picture, canDispose);

@@ -5,7 +5,9 @@ import sd.tp1.common.protocol.Endpoint;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
 /**
@@ -15,7 +17,7 @@ public class HashReplicated implements PartialReplicated{
 
     private int targetReplics;
     private String localId;
-    private Map<String, Endpoint> sources = new ConcurrentHashMap<>();
+    private Set<String> sources = new ConcurrentSkipListSet<>();
 
 
     public HashReplicated(String localId, int targetReplics) {
@@ -24,8 +26,8 @@ public class HashReplicated implements PartialReplicated{
     }
 
     @Override
-    public void addSource(String remoteId, Endpoint remote) {
-        this.sources.put(remoteId, remote);
+    public void addSource(String remoteId) {
+        this.sources.add(remoteId);
     }
 
     @Override
@@ -35,7 +37,7 @@ public class HashReplicated implements PartialReplicated{
 
     private boolean isPrimary(){
         return this.localId.equals(
-                this.sources.keySet()
+                this.sources
                         .parallelStream()
                         .max(Comparator.naturalOrder())
                         .orElse(null));
@@ -43,7 +45,7 @@ public class HashReplicated implements PartialReplicated{
 
     private boolean isWeakestLink(){
         return this.localId.equals(
-                this.sources.keySet()
+                this.sources
                         .parallelStream()
                         .min(Comparator.naturalOrder())
                         .orElse(null));
@@ -71,7 +73,7 @@ public class HashReplicated implements PartialReplicated{
     public Collection<String> findReplicationTargets(Collection<String> available) {
         return available
                 .parallelStream()
-                .filter(s -> !sources.containsKey(s))
+                .filter(s -> !sources.contains(s))
                 .collect(Collectors.toList());
     }
 }

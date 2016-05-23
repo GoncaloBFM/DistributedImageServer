@@ -55,7 +55,7 @@ public class PartialReplicatedAlbum extends SharedAlbum implements PartialReplic
     }
 
     @Override
-    public void addSource(String remoteId, Endpoint remote) {
-        sources.addSource(remoteId, remote);
+    public void addSource(String remoteId) {
+        sources.addSource(remoteId);
     }
 }

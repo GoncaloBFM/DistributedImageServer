@@ -9,7 +9,7 @@ import java.util.Collection;
  */
 public interface PartialReplicated {
 
-    void addSource(String remoteId, Endpoint remote);
+    void addSource(String remoteId);
     void remSouce(String remoteId);
 
     int needReplicate();

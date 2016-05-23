@@ -163,5 +163,17 @@ public class FileDataManager extends FileMetadataManager implements DataManager 
     private File openPicture(Album album, Picture picture){
         return openPicture(album.getName(), picture.getPictureName());
     }
+
+    @Override
+    public void dispose(String album) {
+        super.dispose(album);
+        openAlbum(album).delete();
+    }
+
+    @Override
+    public void dispose(String album, String picture) {
+        super.dispose(album, picture);
+        openPicture(album, picture).delete();
+    }
 }
 

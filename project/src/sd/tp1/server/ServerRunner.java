@@ -7,7 +7,9 @@ import sd.tp1.common.notifier.EventHandler;
 import sd.tp1.common.notifier.KafkaPublisher;
 import sd.tp1.common.notifier.Publisher;
 import sd.tp1.common.protocol.EndpointServer;
+import sd.tp1.server.replication.PartialReplication;
 import sd.tp1.server.replication.ReplicationEngine;
+import sd.tp1.server.replication.TotalReplication;
 
 import java.net.URL;
 import java.util.logging.Logger;
@@ -43,7 +45,8 @@ public class ServerRunner implements EndpointServer{
                 url.getFile(),
                 url.getPort());
 
-        replicationEngine = new ReplicationEngine(dataManager);
+        //replicationEngine = new TotalReplication(dataManager);
+        replicationEngine = new PartialReplication(dataManager);
 
         Publisher publisher = new KafkaPublisher();
 

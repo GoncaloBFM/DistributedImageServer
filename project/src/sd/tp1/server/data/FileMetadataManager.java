@@ -67,9 +67,13 @@ public class FileMetadataManager implements MetadataManager {
         return serverId;
     }
 
+    private File openMetaAlbum(String album){
+        return new File(root, album + META_EXT);
+    }
+
     protected SharedAlbum readAlbumMeta(String album){
         try {
-            File file = new File(root, album + META_EXT);
+            File file = openMetaAlbum(album);
             if(!file.exists())
                 return null;
 
@@ -86,9 +90,17 @@ public class FileMetadataManager implements MetadataManager {
         }
     }
 
+    private File openMetaPicture(String album, String picture){
+        File albumFolder = openAlbum(album);
+        if(!albumFolder.exists())
+            albumFolder.mkdir(); //todo discuss
+
+        return new File(albumFolder, picture + META_EXT);
+    }
+
     protected SharedPicture readPictureMeta(String album, String picture){
         try {
-            File file = new File(openAlbum(album), picture + META_EXT);
+            File file = openMetaPicture(album, picture);
             if(!file.exists())
                 return null;
 
@@ -108,7 +120,7 @@ public class FileMetadataManager implements MetadataManager {
 
     protected void writeAlbumMeta(Album album){
         try{
-            File file = new File(root, album.getName() + META_EXT);
+            File file = openMetaAlbum(album.getName());
             //ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
             //out.writeObject(album);
 
@@ -129,11 +141,7 @@ public class FileMetadataManager implements MetadataManager {
     protected void writePictureMeta(Album album, Picture picture){
         writeAlbumMeta(album);
         try{
-            File albumFolder = openAlbum(album);
-            if(!albumFolder.exists())
-                albumFolder.mkdir(); //todo discuss
-
-            File file = new File(albumFolder, picture.getPictureName() + META_EXT);
+            File file = openMetaPicture(album.getName(), picture.getPictureName());
             //ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
             //out.writeObject(picture);
 
@@ -245,6 +253,26 @@ public class FileMetadataManager implements MetadataManager {
             return true; //TODO discuss
 
         return actual.compareTo(picture) < 0;
+    }
+
+    @Override
+    public void dispose(String album) {
+        openMetaAlbum(album).delete();
+    }
+
+    @Override
+    public void dispose(String album, String picture) {
+        openMetaPicture(album, picture).delete();
+    }
+
+    @Override
+    public Album getMetadata(String album) {
+        return readAlbumMeta(album);
+    }
+
+    @Override
+    public Picture getMetadata(String album, String picture) {
+        return readPictureMeta(album, picture);
     }
 
     protected boolean isMetafile(File file){

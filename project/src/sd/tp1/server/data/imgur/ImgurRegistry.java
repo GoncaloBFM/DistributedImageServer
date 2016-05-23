@@ -64,5 +64,7 @@ public abstract class ImgurRegistry {
     public Collection<String> getIds() {
         return idName.keySet();
     }
-
+    public Collection<String> getNames() {
+        return nameId.keySet();
+    }
 }

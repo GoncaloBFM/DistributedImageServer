@@ -161,7 +161,8 @@ public class RestClient implements Endpoint {
     public boolean deletePicture(Album album, Picture picture) {
         logger.deletePicture(album, picture);
 
-        Invocation.Builder request = this.target.path("/deletePicture").request();
+        Invocation.Builder request =
+                requestPointcut(this.target.path("/deletePicture").request());
 
         DeletePictureEnvelop message = new DeletePictureEnvelop(album, picture);
         Response response = SafeInvoker.invoke(this, () ->

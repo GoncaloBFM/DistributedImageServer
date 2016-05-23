@@ -11,4 +11,8 @@ package sd.tp1.common.data;
  */
 public interface Album extends Metadata{
     String getName();
+
+    default boolean equals(Album album){
+        return this.getName().equals(album.getName());
+    }
 }

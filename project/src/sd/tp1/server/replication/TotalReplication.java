@@ -21,7 +21,7 @@ public class TotalReplication implements ReplicationEngine{
     private static final int MILLIS_BETWEEN_SERVERS = 1; //5000;
     private static final int MILLIS_BETWEEN_ROUNDS = 5000; //60000;
 
-    private final Logger logger = Logger.getLogger(TotalReplication.class.getName());
+    protected Logger logger = Logger.getLogger(TotalReplication.class.getName());
 
     protected final DataManager local;
     private final Map<URL, Endpoint> endpointMap = new ConcurrentHashMap<>();

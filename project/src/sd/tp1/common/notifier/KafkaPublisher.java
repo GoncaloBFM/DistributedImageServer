@@ -22,8 +22,10 @@ public class KafkaPublisher implements Publisher {
     public KafkaPublisher(){
         Properties props = new Properties();
 
+        String kafka = System.getProperty("kafka_server", "localhost:9092");
+
         //props.put("bootstrap.servers", "240.255.255.255:9092");
-        props.put("bootstrap.servers", "localhost:9092");
+        props.put("bootstrap.servers", kafka);
 
         props.put("key.serializer", StringSerializer.class.getName());
         props.put("value.serializer", StringSerializer.class.getName());
@@ -38,7 +40,8 @@ public class KafkaPublisher implements Publisher {
             public void run(){
                 for(;;){
                     try {
-                        producer.send(queue.take());
+                        ProducerRecord<String, String> record = queue.take();
+                        producer.send(record);
                         producer.flush();
                     } catch (InterruptedException e) {
                         //

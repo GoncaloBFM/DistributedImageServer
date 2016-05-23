@@ -17,8 +17,10 @@ public class KafkaSubscriber implements Subscriber {
     public KafkaSubscriber(){
         Properties props = new Properties();
 
+        String kafka = System.getProperty("kafka_server", "localhost:9092");
+
         //props.put("bootstrap.servers", "240.255.255.255:9092");
-        props.put("bootstrap.servers", "localhost:9092");
+        props.put("bootstrap.servers", kafka);
 
 
         props.put("key.deserializer", StringDeserializer.class.getName());

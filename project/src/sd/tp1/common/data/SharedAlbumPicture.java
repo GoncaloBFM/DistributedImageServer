@@ -41,7 +41,12 @@ public class SharedAlbumPicture implements AlbumPicture {
     }
 
     @Override
-    public boolean equals(AlbumPicture albumPicture) {
-        return album.equals(albumPicture.getAlbum()) && picture.equals(albumPicture.getPicture());
+    public boolean equals(Object obj) {
+        if(obj instanceof AlbumPicture){
+            AlbumPicture ap = (AlbumPicture) obj;
+            return album.equals(ap.getAlbum()) && picture.equals(ap.getPicture());
+        }
+
+        return super.equals(obj);
     }
 }

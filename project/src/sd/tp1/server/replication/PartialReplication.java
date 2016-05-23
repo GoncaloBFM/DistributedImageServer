@@ -203,7 +203,7 @@ class AlbumPictureRegistry {
 
         try{
             MetadataBundle meta = local.getMetadata();
-            put(localId, meta.getAlbumList(), meta.getPictureList());
+            putUnlocked(localId, meta.getAlbumList(), meta.getPictureList());
 
             Set<SharedAlbum> remoteAlbum = new HashSet<>();
             Set<SharedAlbumPicture> remotePicture = new HashSet<>();
@@ -281,16 +281,14 @@ class AlbumPictureRegistry {
         }
     }
 
-    public Bundle put(String remoteId, List<SharedAlbum> albumList, List<SharedAlbumPicture> pictureList){
+    public Bundle putUnlocked(String remoteId, List<SharedAlbum> albumList, List<SharedAlbumPicture> pictureList){
         if(remoteId == null || albumList == null || pictureList == null)
             return new Bundle();
 
         Bundle toDispose = new Bundle();
 
-        lock.lock();
-        try{
-            List<SharedAlbum> oldAlbum = albumHistory.get(remoteId);
-            if(oldAlbum != null)
+        List<SharedAlbum> oldAlbum = albumHistory.get(remoteId);
+        if(oldAlbum != null)
             oldAlbum
                     .parallelStream()
                     .filter(a -> !albumList.contains(a))
@@ -300,10 +298,10 @@ class AlbumPictureRegistry {
                             album.remSouce(remoteId);
                     });
 
-            albumHistory.put(remoteId, albumList);
+        albumHistory.put(remoteId, albumList);
 
-            List<SharedAlbumPicture> oldPicture = pictureHistory.get(remoteId);
-            if(oldPicture != null)
+        List<SharedAlbumPicture> oldPicture = pictureHistory.get(remoteId);
+        if(oldPicture != null)
             oldPicture
                     .parallelStream()
                     .filter(p -> !pictureList.contains(p))
@@ -313,40 +311,47 @@ class AlbumPictureRegistry {
                             picture.remSouce(remoteId);
                     });
 
-            pictureHistory.put(remoteId, pictureList);
+        pictureHistory.put(remoteId, pictureList);
 
 
-            albumList.parallelStream()
-                    .forEach(a -> {
-                        PartialReplicatedAlbum album = albumMap.get(a);
-                        if(album == null){
-                            album = new PartialReplicatedAlbum(a, localId);
-                            albumMap.put(a, album);
-                        }
+        albumList.parallelStream()
+                .forEach(a -> {
+                    PartialReplicatedAlbum album = albumMap.get(a);
+                    if(album == null){
+                        album = new PartialReplicatedAlbum(a, localId);
+                        albumMap.put(a, album);
+                    }
 
-                        album.addSource(remoteId);
+                    album.addSource(remoteId);
 
-                        int canDispose = album.canDispose();
-                        if(canDispose > 0)
-                            toDispose.album.put(album, canDispose);
-                    });
+                    int canDispose = album.canDispose();
+                    if(canDispose > 0)
+                        toDispose.album.put(album, canDispose);
+                });
 
 
-            pictureList.parallelStream()
-                    .forEach(p -> {
-                        PartialReplicatedPicture picture = pictureMap.get(p);
-                        if(picture == null){
-                            picture = new PartialReplicatedPicture(p, localId);
-                            pictureMap.put(p, picture);
-                        }
+        pictureList.parallelStream()
+                .forEach(p -> {
+                    PartialReplicatedPicture picture = pictureMap.get(p);
+                    if(picture == null){
+                        picture = new PartialReplicatedPicture(p, localId);
+                        pictureMap.put(p, picture);
+                    }
 
-                        picture.addSource(remoteId);
+                    picture.addSource(remoteId);
 
-                        int canDispose = picture.canDispose();
-                        if(canDispose > 0)
-                            toDispose.pictures.put(picture, canDispose);
-                    });
+                    int canDispose = picture.canDispose();
+                    if(canDispose > 0)
+                        toDispose.pictures.put(picture, canDispose);
+                });
 
+        return toDispose;
+    }
+
+    public Bundle put(String remoteId, List<SharedAlbum> albumList, List<SharedAlbumPicture> pictureList){
+        lock.lock();
+        try{
+            Bundle toDispose = putUnlocked(remoteId, albumList, pictureList);
             lock.unlock();
             return toDispose;
         }
@@ -360,8 +365,10 @@ class AlbumPictureRegistry {
         lock.lock();
         try{
             PartialReplicatedAlbum rAlbum =albumMap.get(album);
-            if(rAlbum == null)
+            if(rAlbum == null) {
+                lock.unlock();
                 return new LinkedList<>();
+            }
 
             Collection<String> targets = rAlbum.findReplicationTargets(available);
             lock.unlock();
@@ -376,9 +383,17 @@ class AlbumPictureRegistry {
     public Collection<String> getPossibleTargets(SharedAlbumPicture picture, Collection<String> available){
         lock.lock();
         try{
+
+            if(pictureMap.size() > 2){
+                pictureMap.keySet()
+                        .forEach(k -> k.equals(pictureMap.keySet().iterator().next()));
+            }
+
             PartialReplicatedPicture rPicture = pictureMap.get(picture);
-            if(rPicture == null)
+            if(rPicture == null) {
+                lock.unlock();
                 return new LinkedList<>();
+            }
 
             Collection<String> targets = rPicture.findReplicationTargets(available);
             lock.unlock();

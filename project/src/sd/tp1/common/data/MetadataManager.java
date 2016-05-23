@@ -20,4 +20,10 @@ public interface MetadataManager {
 
     boolean needUpdate(Album album);
     boolean needUpdate(Album album, Picture picture);
+
+    void dispose(String album);
+    void dispose(String album, String picture);
+
+    Album getMetadata(String album);
+    Picture getMetadata(String album, String picture);
 }

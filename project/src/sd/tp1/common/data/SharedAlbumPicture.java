@@ -34,4 +34,19 @@ public class SharedAlbumPicture implements AlbumPicture {
     public void setPicture(SharedPicture picture) {
         this.picture = picture;
     }
+
+    @Override
+    public int hashCode() {
+        return String.format("%s/%s", album.getName(), picture.getPictureName()).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof AlbumPicture){
+            AlbumPicture ap = (AlbumPicture) obj;
+            return album.equals(ap.getAlbum()) && picture.equals(ap.getPicture());
+        }
+
+        return super.equals(obj);
+    }
 }

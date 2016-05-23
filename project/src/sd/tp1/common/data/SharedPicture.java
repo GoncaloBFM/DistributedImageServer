@@ -1,5 +1,7 @@
 package sd.tp1.common.data;
 
+import sun.security.provider.SHA;
+
 import java.io.Serializable;
 
 /**
@@ -31,5 +33,18 @@ public class SharedPicture extends LogicClockMetadata implements Picture, Serial
 
 	public void setPictureName(String pictureName) {
 		this.pictureName = pictureName;
+	}
+
+	@Override
+	public int hashCode() {
+		return pictureName.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Picture)
+			return pictureName.equals(((Picture) obj).getPictureName());
+
+		return super.equals(obj);
 	}
 }

@@ -39,4 +39,9 @@ public class SharedAlbumPicture implements AlbumPicture {
     public int hashCode() {
         return String.format("%s/%s", album.getName(), picture.getPictureName()).hashCode();
     }
+
+    @Override
+    public boolean equals(AlbumPicture albumPicture) {
+        return album.equals(albumPicture.getAlbum()) && picture.equals(albumPicture.getPicture());
+    }
 }

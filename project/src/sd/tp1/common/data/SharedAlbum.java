@@ -35,5 +35,13 @@ public class SharedAlbum extends LogicClockMetadata implements Album, Serializab
 	public int hashCode() {
 		return name.hashCode();
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Album)
+			return name.equals(((Album)obj).getName());
+
+		return super.equals(obj);
+	}
 }
 

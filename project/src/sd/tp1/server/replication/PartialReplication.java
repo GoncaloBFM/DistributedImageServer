@@ -219,7 +219,7 @@ class AlbumPictureRegistry {
                     .forEach(r -> {
                         SharedAlbum album = getLocalMetadata(r);
                         if(album != null)
-                            bundle.album.put(album, r.canDispose());
+                            bundle.album.put(album, r.needReplicate());
                     });
 
             pictureMap.values()
@@ -229,7 +229,7 @@ class AlbumPictureRegistry {
                     .forEach(r -> {
                         SharedAlbumPicture picture = getLocalMetadata(r);
                         if(picture != null)
-                            bundle.pictures.put(picture, r.canDispose());
+                            bundle.pictures.put(picture, r.needReplicate());
                     });
 
             lock.unlock();
@@ -359,7 +359,11 @@ class AlbumPictureRegistry {
     public Collection<String> getPossibleTargets(SharedAlbum album, Collection<String> available){
         lock.lock();
         try{
-            Collection<String> targets = albumMap.get(album).findReplicationTargets(available);
+            PartialReplicatedAlbum rAlbum =albumMap.get(album);
+            if(rAlbum == null)
+                return new LinkedList<>();
+
+            Collection<String> targets = rAlbum.findReplicationTargets(available);
             lock.unlock();
             return targets;
         }
@@ -372,7 +376,11 @@ class AlbumPictureRegistry {
     public Collection<String> getPossibleTargets(SharedAlbumPicture picture, Collection<String> available){
         lock.lock();
         try{
-            Collection<String> targets = pictureMap.get(picture).findReplicationTargets(available);
+            PartialReplicatedPicture rPicture = pictureMap.get(picture);
+            if(rPicture == null)
+                return new LinkedList<>();
+
+            Collection<String> targets = rPicture.findReplicationTargets(available);
             lock.unlock();
             return targets;
         }

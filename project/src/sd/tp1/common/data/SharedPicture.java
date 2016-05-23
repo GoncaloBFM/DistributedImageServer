@@ -32,4 +32,9 @@ public class SharedPicture extends LogicClockMetadata implements Picture, Serial
 	public void setPictureName(String pictureName) {
 		this.pictureName = pictureName;
 	}
+
+	@Override
+	public int hashCode() {
+		return pictureName.hashCode();
+	}
 }

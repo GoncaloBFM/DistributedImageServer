@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
@@ -24,46 +25,24 @@ public class PartialReplication extends TotalReplication {
     private AlbumPictureRegistry registry;
     private Map<URL, String> idMap = new ConcurrentHashMap<>();
 
-    private Map<URL, Endpoint> activeEndpoints = new ConcurrentHashMap<>();
+    private Map<String, Endpoint> activeEndpoints = new ConcurrentHashMap<>();
 
     public PartialReplication(DataManager local) {
         super(local);
-        registry = new AlbumPictureRegistry(local.getServerId(), NR_REPLIC, local);
+        registry = new AlbumPictureRegistry(local.getServerId(), local);
         logger = Logger.getLogger(PartialReplication.class.getName());
 
-    }
-
-    private Queue<Endpoint> active = new ConcurrentLinkedQueue<>();
-    private Endpoint getRandomEndpoint(){
-        int i = 0;
-        while(i++ < 5){
-            if(active.isEmpty()){
-                Collection<Endpoint> list = activeEndpoints.values();
-                if(!list.isEmpty())
-                    active.addAll(list);
-                else
-                    try{ Thread.sleep(MILLIS_SLEEP); }
-                    catch (InterruptedException e){}
-            }
-
-            Endpoint remote = active.poll();
-            if(remote != null && remote.getServerId() != null)
-                return remote;
-
-        }
-
-        return null;
     }
 
     @Override
     protected void onServerAdd(URL url, Endpoint remote) {
         super.onServerAdd(url, remote);
-        activeEndpoints.put(url, remote);
 
         String remoteId = remote.getServerId();
         if(remoteId == null)
             return;
 
+        activeEndpoints.put(remoteId, remote);
         idMap.put(url, remoteId);
 
         MetadataBundle meta = remote.getMetadata();
@@ -74,7 +53,8 @@ public class PartialReplication extends TotalReplication {
     @Override
     protected void onServerDel(URL url) {
         super.onServerDel(url);
-        activeEndpoints.remove(url);
+        activeEndpoints.remove(
+                idMap.get(url));
 
         replicate(registry.remove(idMap.remove(url)));
 
@@ -102,25 +82,39 @@ public class PartialReplication extends TotalReplication {
     }
 
     private void replicate(Album album, int count){
-        while(count > 0){
-            Endpoint remote = getRandomEndpoint();
+        SharedAlbum sAlbum = new SharedAlbum(album);
+        List<Endpoint> targets = registry.getPossibleTargets(sAlbum, idMap.values())
+                .parallelStream()
+                .map(id -> activeEndpoints.get(id))
+                .collect(Collectors.toList());
+
+        Iterator<Endpoint> iterator = targets.iterator();
+        while(count > 0 && iterator.hasNext()){
+            Endpoint remote = iterator.next();
             if(remote == null)
-                return;
+                continue;
 
             if(!album.isDeleted()){
-                if(remote.createAlbum(album));
+                if(remote.createAlbum(album))
                     count--;
             }
             else{
-                if(remote.deleteAlbum(album));
+                if(remote.deleteAlbum(album))
                     count--;
             }
         }
     }
 
     private void replicate(Album album, Picture picture, int count){
-        while(count > 0){
-            Endpoint remote = getRandomEndpoint();
+        SharedAlbumPicture albumPicture = new SharedAlbumPicture(album, picture);
+        List<Endpoint> targets = registry.getPossibleTargets(albumPicture, idMap.values())
+                .parallelStream()
+                .map(id -> activeEndpoints.get(id))
+                .collect(Collectors.toList());
+
+        Iterator<Endpoint> iterator = targets.iterator();
+        while(count > 0 && iterator.hasNext()){
+            Endpoint remote = iterator.next();
             if(remote == null)
                 return;
 
@@ -129,10 +123,10 @@ public class PartialReplication extends TotalReplication {
                 while(data == null)
                     data = local.loadPictureData(album.getName(), picture.getPictureName());
 
-                if(remote.uploadPicture(album, picture, data));
+                if(remote.uploadPicture(album, picture, data))
                     count--;
             }
-            else if(remote.deletePicture(album, picture));
+            else if(remote.deletePicture(album, picture))
                 count--;
         }
     }
@@ -172,115 +166,113 @@ public class PartialReplication extends TotalReplication {
 class AlbumPictureRegistry {
 
     private String localId;
-    private int nrReplics;
     private DataManager local;
 
-    AlbumPictureRegistry(String localId, int nrReplics, DataManager local){
+    AlbumPictureRegistry(String localId, DataManager local){
         this.localId = localId;
-        this.nrReplics = nrReplics;
         this.local = local;
     }
 
-    private Map<String, Set<String>> albumSourcesMap = new ConcurrentHashMap<>();
-    private Map<String, Set<String>> pictureSourcesMap = new ConcurrentHashMap<>();
+    private Map<SharedAlbum, PartialReplicatedAlbum> albumMap = new ConcurrentHashMap<>();
+    private Map<SharedAlbumPicture, PartialReplicatedPicture> pictureMap = new ConcurrentHashMap<>();
 
-    private Map<String, List<SharedAlbum>> sourceAlbumMap = new ConcurrentHashMap<>();
-    private Map<String, List<SharedAlbumPicture>> sourcePictureMap = new ConcurrentHashMap<>();
+    private Map<String, List<SharedAlbum>> albumHistory = new ConcurrentHashMap<>();
+    private Map<String, List<SharedAlbumPicture>> pictureHistory = new ConcurrentHashMap<>();
 
     private Lock lock = new ReentrantLock(false);
 
-    private String hash(Album album){
-        return album.getName();
+    private SharedAlbum getLocalMetadata(SharedAlbum album){
+        Album lAlbum = local.getMetadata(album.getName());
+        if(lAlbum != null)
+            return new SharedAlbum();
+
+        return null;
     }
 
-    private String hash(AlbumPicture picture){
-        return String.format("%s/%s", picture.getAlbum().getName(), picture.getPicture().getPictureName());
-    }
+    private SharedAlbumPicture getLocalMetadata(SharedAlbumPicture picture){
+        Album lAlbum = local.getMetadata(picture.getAlbum().getName());
+        Picture lPicture = local.getMetadata(picture.getAlbum().getName(), picture.getPicture().getPictureName());
+        if(lAlbum != null && lPicture != null)
+            return new SharedAlbumPicture(lAlbum, lPicture);
 
-    private String[] unHash(String picture){
-        return picture.split("/");
+        return null;
     }
 
     public Bundle needReplicate(List<SharedAlbum> albumList, List<SharedAlbumPicture> pictureList){
+        lock.lock();
 
-        MetadataBundle meta = local.getMetadata();
-        put(localId, meta.getAlbumList(), meta.getPictureList());
+        try{
+            MetadataBundle meta = local.getMetadata();
+            put(localId, meta.getAlbumList(), meta.getPictureList());
 
-        Set<String> remoteAlbum = new HashSet<>();
-        Set<String> remotePicture = new HashSet<>();
+            Set<SharedAlbum> remoteAlbum = new HashSet<>();
+            Set<SharedAlbumPicture> remotePicture = new HashSet<>();
 
-        albumList.forEach(a -> remoteAlbum.add(hash(a)));
-        pictureList.forEach(p -> remotePicture.add(hash(p)));
+            albumList.forEach(a -> remoteAlbum.add(a));
+            pictureList.forEach(p -> remotePicture.add(p));
 
-        Bundle bundle = new Bundle();
-        albumSourcesMap.entrySet()
-                .parallelStream()
-                .filter(e -> e.getValue().size() < nrReplics)
-                .filter(e -> !remoteAlbum.contains(e.getKey()))
-                .forEach(e -> {
-                    Album album = local.getMetadata(e.getKey());
-                    if(album != null)
-                        bundle.album.put(new SharedAlbum(album), nrReplics - e.getValue().size());
-                });
+            Bundle bundle = new Bundle();
+            albumMap.values()
+                    .parallelStream()
+                    .filter(r -> r.needReplicate() > 0)
+                    .filter(r -> !remoteAlbum.contains(r))
+                    .forEach(r -> {
+                        SharedAlbum album = getLocalMetadata(r);
+                        if(album != null)
+                            bundle.album.put(album, r.canDispose());
+                    });
 
-        pictureSourcesMap.entrySet()
-                .parallelStream()
-                .filter(e -> e.getValue().size() < nrReplics)
-                .filter(e -> !remotePicture.contains(e.getKey()))
-                .forEach(e -> {
-                    String[] unHash = unHash(e.getKey());
-                    Album album = local.getMetadata(unHash[0]);
-                    Picture picture = local.getMetadata(unHash[0], unHash[1]);
-                    if(album != null && picture != null)
-                        bundle.pictures.put(new SharedAlbumPicture(album, picture),
-                                nrReplics - e.getValue().size());
-                });
+            pictureMap.values()
+                    .parallelStream()
+                    .filter(r -> r.needReplicate() > 0)
+                    .filter(r -> !remotePicture.contains(r))
+                    .forEach(r -> {
+                        SharedAlbumPicture picture = getLocalMetadata(r);
+                        if(picture != null)
+                            bundle.pictures.put(picture, r.canDispose());
+                    });
 
-        if(bundle.album.size() > 0 || bundle.pictures.size() > 0)
+            lock.unlock();
+
+            if(bundle.album.size() > 0 || bundle.pictures.size() > 0)
+                return bundle;
+
             return bundle;
-
-        return bundle;
+        }
+        catch (Throwable e){
+            lock.unlock();
+            throw e;
+        }
     }
 
     public Bundle remove(String remoteId){
         lock.lock();
 
         try{
-            List<SharedAlbum> albumList = sourceAlbumMap.remove(remoteId);
-            List<SharedAlbumPicture> pictureList = sourcePictureMap.remove(remoteId);
-
-            Map<SharedAlbum, Integer> albumToReplicate = new HashMap<>();
-            Map<SharedAlbumPicture, Integer> pictureToReplicate = new HashMap<>();
-
-            albumList.forEach(a -> {
-                Set<String> sources = albumSourcesMap.get(hash(a));
-                sources.remove(remoteId);
-                int needReplicate = 0;
-                if(sources != null
-                        && (needReplicate = nrReplics - sources.size()) > 0
-                        && localId.equals(sources.parallelStream().max(Comparator.naturalOrder()).orElse(null))){
-
-                    albumToReplicate.put(a, needReplicate);
-                }
-            });
-
-            pictureList.forEach(p -> {
-                Set<String> sources = pictureSourcesMap.get(hash(p));
-                sources.remove(remoteId);
-                int needReplicate = 0;
-                if(sources != null
-                        && (needReplicate = nrReplics - sources.size()) > 0
-                        && localId.equals(sources.parallelStream().max(Comparator.naturalOrder()).orElse(null))){
-
-                    pictureToReplicate.put(p, needReplicate);
-                }
-            });
+            List<SharedAlbum> albumList = albumHistory.remove(remoteId);
+            List<SharedAlbumPicture> pictureList = pictureHistory.remove(remoteId);
 
             Bundle toReplicate = new Bundle();
-            toReplicate.album = albumToReplicate;
-            toReplicate.pictures = pictureToReplicate;
-            lock.unlock();
 
+            albumList.parallelStream()
+                    .forEach(a -> {
+                        PartialReplicatedAlbum album = albumMap.get(a);
+                        album.remSouce(remoteId);
+                        int needReplicate = album.needReplicate();
+                        if(needReplicate > 0)
+                            toReplicate.album.put(getLocalMetadata(a), needReplicate);
+                    });
+
+            pictureList.parallelStream()
+                    .forEach(p -> {
+                        PartialReplicatedPicture picture = pictureMap.get(p);
+                        picture.remSouce(remoteId);
+                        int needReplicate = picture.needReplicate();
+                        if(needReplicate > 0)
+                            toReplicate.pictures.put(getLocalMetadata(p), needReplicate);
+                    });
+
+            lock.unlock();
             return toReplicate;
         }
         catch (Throwable e){
@@ -297,54 +289,49 @@ class AlbumPictureRegistry {
 
         lock.lock();
         try{
-            List<SharedAlbum> oldAlbum = sourceAlbumMap.get(remoteId);
+            List<SharedAlbum> oldAlbum = albumHistory.get(remoteId);
             if(oldAlbum != null)
             oldAlbum
                     .parallelStream()
-                    .filter(x -> !albumList.contains(x))
-                    .forEach(a -> albumSourcesMap.get(hash(a)).remove(remoteId));
+                    .filter(a -> !albumList.contains(a))
+                    .forEach(a -> {
+                        PartialReplicatedAlbum album = albumMap.get(a);
+                        if(album != null)
+                            album.remSouce(remoteId);
+                    });
 
-            sourceAlbumMap.put(remoteId, albumList);
+            albumHistory.put(remoteId, albumList);
 
-            List<SharedAlbumPicture> oldPicture = sourcePictureMap.get(remoteId);
+            List<SharedAlbumPicture> oldPicture = pictureHistory.get(remoteId);
             if(oldPicture != null)
             oldPicture
                     .parallelStream()
-                    .filter(x -> !pictureList.contains(x))
-                    .filter(p -> pictureSourcesMap.get(hash(p)).remove(remoteId));
+                    .filter(p -> !pictureList.contains(p))
+                    .forEach(p -> {
+                        PartialReplicatedPicture picture = pictureMap.get(p);
+                        if(picture != null)
+                            picture.remSouce(remoteId);
+                    });
 
-            sourcePictureMap.put(remoteId, pictureList);
-
-
-            albumList.forEach(a -> {
-                Set<String> sources = albumSourcesMap.get(hash(a));
-                if(sources == null){
-                    sources = new LinkedHashSet<>();
-                    albumSourcesMap.put(hash(a), sources);
-                }
-                sources.add(remoteId);
-
-                int dispose = 0;
-                if((dispose = sources.size() - nrReplics) > 0
-                        && localId.equals(sources.parallelStream().min(Comparator.naturalOrder()).orElse(null)))
-                    toDispose.album.put(a, dispose);
-            });
-
-            pictureList.forEach(p -> {
-                Set<String> sources = pictureSourcesMap.get(hash(p));
-                if(sources == null){
-                    sources = new LinkedHashSet<>();
-                    pictureSourcesMap.put(hash(p), sources);
-                }
-
-                sources.add(remoteId);
+            pictureHistory.put(remoteId, pictureList);
 
 
-                int dispose = 0;
-                if((dispose = sources.size() - nrReplics) > 0
-                        && localId.equals(sources.parallelStream().min(Comparator.naturalOrder()).orElse(null)))
-                    toDispose.pictures.put(p, dispose);
-            });
+            albumList.parallelStream()
+                    .forEach(a -> {
+                        PartialReplicatedAlbum album = albumMap.get(a);
+                        int canDispose = album.canDispose();
+                        if(canDispose > 0)
+                            toDispose.album.put(album, canDispose);
+                    });
+
+
+            pictureList.parallelStream()
+                    .forEach(p -> {
+                        PartialReplicatedPicture picture = pictureMap.get(p);
+                        int canDispose = picture.canDispose();
+                        if(canDispose > 0)
+                            toDispose.pictures.put(picture, canDispose);
+                    });
 
             lock.unlock();
             return toDispose;
@@ -352,6 +339,32 @@ class AlbumPictureRegistry {
         catch (Throwable e){
             lock.unlock();
             throw e;
+        }
+    }
+
+    public Collection<String> getPossibleTargets(SharedAlbum album, Collection<String> available){
+        lock.lock();
+        try{
+            Collection<String> targets = albumMap.get(album).findReplicationTargets(available);
+            lock.unlock();
+            return targets;
+        }
+        catch(Throwable t){
+            lock.unlock();
+            throw t;
+        }
+    }
+
+    public Collection<String> getPossibleTargets(SharedAlbumPicture picture, Collection<String> available){
+        lock.lock();
+        try{
+            Collection<String> targets = pictureMap.get(picture).findReplicationTargets(available);
+            lock.unlock();
+            return targets;
+        }
+        catch(Throwable t){
+            lock.unlock();
+            throw t;
         }
     }
 

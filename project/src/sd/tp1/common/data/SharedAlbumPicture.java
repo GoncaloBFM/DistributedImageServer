@@ -34,4 +34,9 @@ public class SharedAlbumPicture implements AlbumPicture {
     public void setPicture(SharedPicture picture) {
         this.picture = picture;
     }
+
+    @Override
+    public int hashCode() {
+        return String.format("%s/%s", album.getName(), picture.getPictureName()).hashCode();
+    }
 }

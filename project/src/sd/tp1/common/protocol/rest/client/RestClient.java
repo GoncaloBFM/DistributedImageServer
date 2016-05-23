@@ -8,10 +8,8 @@ import sd.tp1.common.protocol.Endpoint;
 import sd.tp1.common.protocol.rest.envelops.DeletePictureEnvelop;
 import sd.tp1.common.protocol.rest.envelops.UploadPictureEnvelop;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.*;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URISyntaxException;
@@ -24,6 +22,8 @@ import java.util.List;
  * Created by gbfm on 4/4/16.
  */
 public class RestClient implements Endpoint {
+
+    public static final String PASSWORD = "p@ssword66";
 
     private final URL url;
     private WebTarget target;
@@ -55,6 +55,10 @@ public class RestClient implements Endpoint {
         }
     }
 
+    protected Invocation.Builder requestPointcut(Invocation.Builder builder){
+        return builder.cookie(new Cookie("password", PASSWORD));
+    }
+
     @Override
     public URL getUrl() {
         return this.url;
@@ -65,8 +69,10 @@ public class RestClient implements Endpoint {
         if(serverId != null)
             return serverId;
 
-        serverId = SafeInvoker.invoke(this, () ->
-            this.target.path("/getServerId").request().accept(MediaType.APPLICATION_JSON).get(String.class));
+        Invocation.Builder request =
+                requestPointcut(this.target.path("/getServerId").request().accept(MediaType.APPLICATION_JSON));
+
+        serverId = SafeInvoker.invoke(this, () ->request.get(String.class));
 
         return serverId;
     }
@@ -74,8 +80,11 @@ public class RestClient implements Endpoint {
     @Override
     public List<Album> loadListOfAlbums() {
         logger.loadListOfAlbums();
-        SharedAlbum[] list = SafeInvoker.invoke(this, () ->
-            this.target.path("/getListOfAlbums").request().accept(MediaType.APPLICATION_JSON).get(SharedAlbum[].class));
+
+        Invocation.Builder request =
+                requestPointcut(this.target.path("/getListOfAlbums").request().accept(MediaType.APPLICATION_JSON));
+
+        SharedAlbum[] list = SafeInvoker.invoke(this, () -> request.get(SharedAlbum[].class));
 
         return list == null ? null : new LinkedList<>(Arrays.asList(list));
     }
@@ -83,8 +92,11 @@ public class RestClient implements Endpoint {
     @Override
     public List<Picture> loadListOfPictures(String album) {
         logger.loadListOfPictures(album);
-        Response response = SafeInvoker.invoke(this, () ->
-                this.target.path("/getListOfPictures/" + album).request().accept(MediaType.APPLICATION_JSON).buildGet().invoke());
+
+        Invocation.Builder request =
+                requestPointcut(this.target.path("/getListOfPictures/" + album).request().accept(MediaType.APPLICATION_JSON));
+
+        Response response = SafeInvoker.invoke(this, () -> request.buildGet().invoke());
 
         if (response != null && response.getStatus() == Response.Status.OK.getStatusCode()) {
             return new LinkedList<>(Arrays.asList(response.readEntity(SharedPicture[].class)));
@@ -96,8 +108,11 @@ public class RestClient implements Endpoint {
     @Override
     public byte[] loadPictureData(String album, String picture) {
         logger.loadPictureData(album, picture);
-        byte[] bytes = SafeInvoker.invoke(this, () ->
-                this.target.path("/getPictureData/" + album + "/" + picture).request().accept(MediaType.APPLICATION_OCTET_STREAM).get(byte[].class));
+
+        Invocation.Builder request =
+                requestPointcut(this.target.path("/getPictureData/" + album + "/" + picture).request().accept(MediaType.APPLICATION_OCTET_STREAM));
+
+        byte[] bytes = SafeInvoker.invoke(this, () -> request.get(byte[].class));
         return bytes;
     }
 
@@ -105,9 +120,11 @@ public class RestClient implements Endpoint {
     public boolean createAlbum(Album album) {
         logger.createAlbum(album);
 
+        Invocation.Builder request =
+                requestPointcut(target.path("/createAlbum").request());
+
         SharedAlbum sharedAlbum = new SharedAlbum(album);
-        Response response = SafeInvoker.invoke(this, () ->
-                target.path("/createAlbum").request().post(Entity.entity(sharedAlbum, MediaType.APPLICATION_JSON)));
+        Response response = SafeInvoker.invoke(this, () -> request.post(Entity.entity(sharedAlbum, MediaType.APPLICATION_JSON)));
 
         return response != null && response.getStatus() == Response.Status.OK.getStatusCode();
 
@@ -118,8 +135,10 @@ public class RestClient implements Endpoint {
         logger.uploadPicture(album, picture, data);
         UploadPictureEnvelop message = new UploadPictureEnvelop(album, picture, data);
 
-        Response response = SafeInvoker.invoke(this, ()->
-                this.target.path("/uploadPicture").request().post(Entity.entity(message, MediaType.APPLICATION_JSON)));
+        Invocation.Builder request =
+                requestPointcut(this.target.path("/uploadPicture").request());
+
+        Response response = SafeInvoker.invoke(this, ()-> request.post(Entity.entity(message, MediaType.APPLICATION_JSON)));
 
         return response != null && response.getStatus() == Response.Status.OK.getStatusCode();
     }
@@ -128,9 +147,12 @@ public class RestClient implements Endpoint {
     public boolean deleteAlbum(Album album) {
         logger.deleteAlbum(album);
 
+        Invocation.Builder request =
+                requestPointcut(this.target.path("/deleteAlbum").request());
+
         SharedAlbum sharedAlbum = new SharedAlbum(album);
         Response response = SafeInvoker.invoke(this, () ->
-            this.target.path("/deleteAlbum").request().post(Entity.entity(sharedAlbum, MediaType.APPLICATION_JSON)));
+            request.post(Entity.entity(sharedAlbum, MediaType.APPLICATION_JSON)));
 
         return response != null && response.getStatus() == Response.Status.OK.getStatusCode();
     }
@@ -139,9 +161,11 @@ public class RestClient implements Endpoint {
     public boolean deletePicture(Album album, Picture picture) {
         logger.deletePicture(album, picture);
 
+        Invocation.Builder request = this.target.path("/deletePicture").request();
+
         DeletePictureEnvelop message = new DeletePictureEnvelop(album, picture);
         Response response = SafeInvoker.invoke(this, () ->
-                this.target.path("/deletePicture").request().post(Entity.entity(message, MediaType.APPLICATION_JSON)));
+                request.post(Entity.entity(message, MediaType.APPLICATION_JSON)));
 
         return response != null && response.getStatus() == Response.Status.OK.getStatusCode();
     }
@@ -150,8 +174,10 @@ public class RestClient implements Endpoint {
     public MetadataBundle getMetadata() {
         logger.getMetadata();
 
-        Response response = SafeInvoker.invoke(this, () ->
-                this.target.path("/getMetadata").request().accept(MediaType.APPLICATION_JSON).buildGet().invoke());
+        Invocation.Builder request =
+                requestPointcut(this.target.path("/getMetadata").request().accept(MediaType.APPLICATION_JSON));
+
+        Response response = SafeInvoker.invoke(this, () -> request.buildGet().invoke());
 
         if(response != null && response.getStatus() == Response.Status.OK.getStatusCode())
             return response.readEntity(MetadataBundle.class);

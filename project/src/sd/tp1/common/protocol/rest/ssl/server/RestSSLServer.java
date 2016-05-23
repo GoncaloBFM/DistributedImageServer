@@ -4,15 +4,25 @@ import com.sun.net.httpserver.HttpServer;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import sd.tp1.common.data.DataManager;
+import sd.tp1.common.data.SharedAlbum;
+import sd.tp1.common.data.SharedPicture;
+import sd.tp1.common.protocol.rest.envelops.DeletePictureEnvelop;
+import sd.tp1.common.protocol.rest.envelops.UploadPictureEnvelop;
 import sd.tp1.common.protocol.rest.server.RestServer;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.*;
 import java.net.URI;
+import java.net.URL;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by apontes on 5/17/16.
@@ -20,6 +30,9 @@ import java.security.cert.CertificateException;
 public class RestSSLServer extends RestServer {
 
     public static final String SERVER_TYPE = "REST_SSL";
+    public static final String PASSWORD = "p@ssword66";
+
+    private static final Logger logger = Logger.getLogger(RestSSLServer.class.getName());
 
     private final File keystore;
     private final char[] jksPassword;

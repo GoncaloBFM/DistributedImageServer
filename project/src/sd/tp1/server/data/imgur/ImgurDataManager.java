@@ -26,6 +26,8 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by gbfm on 5/17/16.
@@ -60,6 +62,8 @@ public class ImgurDataManager extends FileMetadataManager implements DataManager
 
     private GsonBuilder builder = new GsonBuilder();
     private Gson gson = builder.create();
+
+    private Lock lock = new ReentrantLock(false);
 
     public ImgurDataManager() throws IOException {
         super();

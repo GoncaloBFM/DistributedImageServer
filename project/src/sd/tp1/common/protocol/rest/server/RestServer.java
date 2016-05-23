@@ -22,6 +22,7 @@ import java.util.List;
 @Path("/{serverPath}")
 public class RestServer implements EndpointServer{
 
+    public static final String PASSWORD = "p@ssword66";
     public final static String SERVER_TYPE = "REST";
 
     private final LoggedAbstractEndpoint logger = new LoggedAbstractEndpoint(RestServer.class.getSimpleName()) {
@@ -87,51 +88,71 @@ public class RestServer implements EndpointServer{
         return response;
     }
 
+    private Response responsePointcut(Response response){
+        return accessControllAllowOrigin(response);
+    }
+
+    protected boolean checkPassword(String password){
+        return PASSWORD.equals(password);
+    }
+
     @POST
     @Path("/createAlbum")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createAlbum(SharedAlbum album) {
+    public Response createAlbum(SharedAlbum album, @CookieParam("password") String password) {
         logger.createAlbum(album);
 
-        return this.dataManager.createAlbum(album) ?
+        if(!checkPassword(password))
+            return responsePointcut(Response.status(Response.Status.UNAUTHORIZED).build());
+
+        return responsePointcut(this.dataManager.createAlbum(album) ?
             Response.ok().build() :
-                Response.status(Response.Status.BAD_REQUEST).build();
+                Response.status(Response.Status.BAD_REQUEST).build());
     }
 
     @GET
     @Path("/getListOfAlbums")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getListOfAlbums() {
+    public Response getListOfAlbums(@CookieParam("password") String password) {
         logger.loadListOfAlbums();
+
+        if(!checkPassword(password))
+            return responsePointcut(Response.status(Response.Status.UNAUTHORIZED).build());
 
         List<SharedAlbum> listOfAlbums = this.dataManager.loadListOfAlbums();
         if(listOfAlbums == null)
-            return Response.serverError().build();
+            return responsePointcut(Response.serverError().build());
 
         SharedAlbum[] array = listOfAlbums.toArray(new SharedAlbum[listOfAlbums.size()]);
-        return Response.ok(array).build();
+        return responsePointcut(Response.ok(array).build());
     }
 
     @GET
     @Path("/getListOfPictures/{album}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getListOfPictures(@PathParam("album") String album) {
+    public Response getListOfPictures(@PathParam("album") String album, @CookieParam("password") String password) {
         logger.loadListOfPictures(album);
+
+        if(!checkPassword(password))
+            return responsePointcut(Response.status(Response.Status.UNAUTHORIZED).build());
 
         List<SharedPicture> listOfPictures = this.dataManager.loadListOfPictures(album);
         if (listOfPictures != null) {
             SharedPicture[] array = listOfPictures.toArray(new SharedPicture[listOfPictures.size()]);
-            return Response.ok(array).build();
+            return responsePointcut(Response.ok(array).build());
         }
 
-        return Response.status(Response.Status.BAD_REQUEST).build();
+        return responsePointcut(Response.status(Response.Status.BAD_REQUEST).build());
     }
 
     @POST
     @Path("/deleteAlbum")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteAlbum(SharedAlbum album) {
+    public Response deleteAlbum(SharedAlbum album, @CookieParam("password") String password) {
         logger.deleteAlbum(album);
+
+        if(!checkPassword(password))
+            return responsePointcut(Response.status(Response.Status.UNAUTHORIZED).build());
 
         return this.dataManager.deleteAlbum(album) ?
             Response.ok().build() : Response.status(Response.Status.BAD_REQUEST).build();
@@ -140,52 +161,67 @@ public class RestServer implements EndpointServer{
     @POST
     @Path("/deletePicture")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deletePicture(DeletePictureEnvelop env) {
+    public Response deletePicture(DeletePictureEnvelop env, @CookieParam("password") String password) {
         logger.deletePicture(env.album, env.picture);
 
-        return this.dataManager.deletePicture(env.album, env.picture) ?
-            Response.ok().build() : Response.status(Response.Status.BAD_REQUEST).build();
+        if(!checkPassword(password))
+            return responsePointcut(Response.status(Response.Status.UNAUTHORIZED).build());
+
+        return responsePointcut(this.dataManager.deletePicture(env.album, env.picture) ?
+            Response.ok().build() : Response.status(Response.Status.BAD_REQUEST).build());
     }
 
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Path("/getPictureData/{album}/{picture}")
-    public Response getPictureData(@PathParam("album") String album, @PathParam("picture") String picture) {
+    public Response getPictureData(@PathParam("album") String album, @PathParam("picture") String picture, @CookieParam("password") String password) {
         logger.loadPictureData(album, picture);
 
+        if(!checkPassword(password))
+            return responsePointcut(Response.status(Response.Status.UNAUTHORIZED).build());
+
         byte[] bytes = dataManager.loadPictureData(album, picture);
-        return Response.ok(bytes).build();
+        return responsePointcut(Response.ok(bytes).build());
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/uploadPicture")
-    public Response uploadPicture(UploadPictureEnvelop env) {
+    public Response uploadPicture(UploadPictureEnvelop env, @CookieParam("password") String password) {
         logger.uploadPicture(env.album, env.picture, env.data);
 
-        return dataManager.uploadPicture(env.album, env.picture, env.data) ?
+        if(!checkPassword(password))
+            return responsePointcut(Response.status(Response.Status.UNAUTHORIZED).build());
+
+        return responsePointcut(dataManager.uploadPicture(env.album, env.picture, env.data) ?
             Response.ok().build()
-                : Response.status(Response.Status.BAD_REQUEST).build();
+                : Response.status(Response.Status.BAD_REQUEST).build());
     }
 
     @GET
     @Path("/getServerId")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getServerId(){
+    public Response getServerId(@CookieParam("password") String password){
         logger.getServerId();
+
+        if(!checkPassword(password))
+            return responsePointcut(Response.status(Response.Status.UNAUTHORIZED).build());
 
         String serverId = dataManager.getServerId();
 
-        return serverId != null ?
+        return responsePointcut(serverId != null ?
                 Response.ok(serverId).build()
-                : Response.serverError().build();
+                : Response.serverError().build());
     }
 
     @GET
     @Path("/getMetadata")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMetadata(){
+    public Response getMetadata(@CookieParam("password") String password){
+        if(!checkPassword(password))
+            return responsePointcut(Response.status(Response.Status.UNAUTHORIZED).build());
+
         logger.getMetadata();
-        return Response.ok(dataManager.getMetadata()).build();
+        return responsePointcut(Response.ok(dataManager.getMetadata()).build());
     }
 }
